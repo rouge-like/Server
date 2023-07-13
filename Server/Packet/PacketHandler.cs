@@ -18,18 +18,25 @@ class PacketHandler
 	}
     public static void C_MoveHandler(PacketSession session, IMessage packet)
     {
-        C_Move c_MovePakcet = packet as C_Move;
+        C_Move c_MovePacket = packet as C_Move;
         ClientSession clientSession = session as ClientSession;
 
-        Console.WriteLine($"{clientSession.MyPlayer.Info.Name} : {c_MovePakcet.PosInfo.PosX}, {c_MovePakcet.PosInfo.PosY}");
+        Console.WriteLine($"{clientSession.MyPlayer.Info.Name} : {c_MovePacket.PosInfo.PosX}, {c_MovePacket.PosInfo.PosY}");
 
         if (clientSession.MyPlayer == null)
+        {
+            Console.WriteLine("NULL PLAYER");
             return;
+        }
         if (clientSession.MyPlayer.Room == null)
+        {
+            Console.WriteLine("NULL ROOM");
             return;
+        }
 
-        PlayerInfo info = clientSession.MyPlayer.Info;
-        info.PosInfo = info.PosInfo;
+        // 검증
+
+        clientSession.MyPlayer.Info.PosInfo = c_MovePacket.PosInfo; 
 
         S_Move s_MovePacket = new S_Move();
         s_MovePacket.PlayerId = clientSession.MyPlayer.Info.PlayerId;

@@ -29,27 +29,29 @@ namespace Google.Protobuf.Protocol {
             "R2FtZSIwCgdTX1NwYXduEiUKB3BsYXllcnMYASADKAsyFC5Qcm90b2NvbC5Q",
             "bGF5ZXJJbmZvIh4KCVNfRGVzcGF3bhIRCglwbGF5ZXJJZHMYASADKAUiUAoK",
             "UGxheWVySW5mbxIQCghwbGF5ZXJJZBgBIAEoBRIMCgRuYW1lGAIgASgJEiIK",
-            "B3Bvc0luZm8YAyABKAsyES5Qcm90b2NvbC5Qb3NJbmZvIkEKB1Bvc0luZm8S",
+            "B3Bvc0luZm8YAyABKAsyES5Qcm90b2NvbC5Qb3NJbmZvImEKB1Bvc0luZm8S",
             "DAoEcG9zWBgBIAEoBRIMCgRwb3NZGAIgASgFEhoKA2RpchgDIAEoDjINLlBy",
-            "b3RvY29sLkRpciI9CgZDX1Rlc3QSDQoFdmFsdWUYASABKAkSJAoGcGxheWVy",
-            "GAIgASgLMhQuUHJvdG9jb2wuUGxheWVySW5mbyI+CgZTX01vdmUSEAoIcGxh",
-            "eWVySWQYASABKAUSIgoHcG9zSW5mbxgCIAEoCzIRLlByb3RvY29sLlBvc0lu",
-            "Zm8iLAoGQ19Nb3ZlEiIKB3Bvc0luZm8YASABKAsyES5Qcm90b2NvbC5Qb3NJ",
-            "bmZvKmsKBU1zZ0lkEhAKDFNfRU5URVJfR0FNRRAAEhAKDFNfTEVBVkVfR0FN",
-            "RRABEgsKB1NfU1BBV04QAhINCglTX0RFU1BBV04QAxIKCgZDX1RFU1QQBBIK",
-            "CgZTX01PVkUQBRIKCgZDX01PVkUQBipsCgNEaXISCAoETk9ORRAAEgYKAlVQ",
-            "EAESCAoERE9XThACEgkKBVJJR0hUEAMSCAoETEVGVBAEEgsKB1VQUklHSFQQ",
-            "BRIKCgZVUExFRlQQBhINCglET1dOUklHSFQQBxIMCghET1dOTEVGVBAIQhuq",
-            "AhhHb29nbGUuUHJvdG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
+            "b3RvY29sLkRpchIeCgVzdGF0ZRgEIAEoDjIPLlByb3RvY29sLlN0YXRlIj0K",
+            "BkNfVGVzdBINCgV2YWx1ZRgBIAEoCRIkCgZwbGF5ZXIYAiABKAsyFC5Qcm90",
+            "b2NvbC5QbGF5ZXJJbmZvIj4KBlNfTW92ZRIQCghwbGF5ZXJJZBgBIAEoBRIi",
+            "Cgdwb3NJbmZvGAIgASgLMhEuUHJvdG9jb2wuUG9zSW5mbyIsCgZDX01vdmUS",
+            "IgoHcG9zSW5mbxgBIAEoCzIRLlByb3RvY29sLlBvc0luZm8qawoFTXNnSWQS",
+            "EAoMU19FTlRFUl9HQU1FEAASEAoMU19MRUFWRV9HQU1FEAESCwoHU19TUEFX",
+            "ThACEg0KCVNfREVTUEFXThADEgoKBkNfVEVTVBAEEgoKBlNfTU9WRRAFEgoK",
+            "BkNfTU9WRRAGKjQKBVN0YXRlEggKBElkbGUQABIKCgZNb3ZpbmcQARIKCgZB",
+            "dHRhY2sQAhIJCgVTa2lsbBADKmwKA0RpchIICgROT05FEAASBgoCVVAQARII",
+            "CgRET1dOEAISCQoFUklHSFQQAxIICgRMRUZUEAQSCwoHVVBSSUdIVBAFEgoK",
+            "BlVQTEVGVBAGEg0KCURPV05SSUdIVBAHEgwKCERPV05MRUZUEAhCG6oCGEdv",
+            "b2dsZS5Qcm90b2J1Zi5Qcm90b2NvbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.Dir), }, null, new pbr::GeneratedClrTypeInfo[] {
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_EnterGame), global::Google.Protobuf.Protocol.S_EnterGame.Parser, new[]{ "Player" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_LeaveGame), global::Google.Protobuf.Protocol.S_LeaveGame.Parser, null, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Spawn), global::Google.Protobuf.Protocol.S_Spawn.Parser, new[]{ "Players" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Despawn), global::Google.Protobuf.Protocol.S_Despawn.Parser, new[]{ "PlayerIds" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.PlayerInfo), global::Google.Protobuf.Protocol.PlayerInfo.Parser, new[]{ "PlayerId", "Name", "PosInfo" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.PosInfo), global::Google.Protobuf.Protocol.PosInfo.Parser, new[]{ "PosX", "PosY", "Dir" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.PosInfo), global::Google.Protobuf.Protocol.PosInfo.Parser, new[]{ "PosX", "PosY", "Dir", "State" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_Test), global::Google.Protobuf.Protocol.C_Test.Parser, new[]{ "Value", "Player" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Move), global::Google.Protobuf.Protocol.S_Move.Parser, new[]{ "PlayerId", "PosInfo" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_Move), global::Google.Protobuf.Protocol.C_Move.Parser, new[]{ "PosInfo" }, null, null, null, null)
@@ -67,6 +69,13 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("C_TEST")] CTest = 4,
     [pbr::OriginalName("S_MOVE")] SMove = 5,
     [pbr::OriginalName("C_MOVE")] CMove = 6,
+  }
+
+  public enum State {
+    [pbr::OriginalName("Idle")] Idle = 0,
+    [pbr::OriginalName("Moving")] Moving = 1,
+    [pbr::OriginalName("Attack")] Attack = 2,
+    [pbr::OriginalName("Skill")] Skill = 3,
   }
 
   public enum Dir {
@@ -782,6 +791,7 @@ namespace Google.Protobuf.Protocol {
       posX_ = other.posX_;
       posY_ = other.posY_;
       dir_ = other.dir_;
+      state_ = other.state_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -823,6 +833,17 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
+    /// <summary>Field number for the "state" field.</summary>
+    public const int StateFieldNumber = 4;
+    private global::Google.Protobuf.Protocol.State state_ = global::Google.Protobuf.Protocol.State.Idle;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Google.Protobuf.Protocol.State State {
+      get { return state_; }
+      set {
+        state_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as PosInfo);
@@ -839,6 +860,7 @@ namespace Google.Protobuf.Protocol {
       if (PosX != other.PosX) return false;
       if (PosY != other.PosY) return false;
       if (Dir != other.Dir) return false;
+      if (State != other.State) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -848,6 +870,7 @@ namespace Google.Protobuf.Protocol {
       if (PosX != 0) hash ^= PosX.GetHashCode();
       if (PosY != 0) hash ^= PosY.GetHashCode();
       if (Dir != global::Google.Protobuf.Protocol.Dir.None) hash ^= Dir.GetHashCode();
+      if (State != global::Google.Protobuf.Protocol.State.Idle) hash ^= State.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -873,6 +896,10 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(24);
         output.WriteEnum((int) Dir);
       }
+      if (State != global::Google.Protobuf.Protocol.State.Idle) {
+        output.WriteRawTag(32);
+        output.WriteEnum((int) State);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -889,6 +916,9 @@ namespace Google.Protobuf.Protocol {
       }
       if (Dir != global::Google.Protobuf.Protocol.Dir.None) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Dir);
+      }
+      if (State != global::Google.Protobuf.Protocol.State.Idle) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) State);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -909,6 +939,9 @@ namespace Google.Protobuf.Protocol {
       }
       if (other.Dir != global::Google.Protobuf.Protocol.Dir.None) {
         Dir = other.Dir;
+      }
+      if (other.State != global::Google.Protobuf.Protocol.State.Idle) {
+        State = other.State;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -931,6 +964,10 @@ namespace Google.Protobuf.Protocol {
           }
           case 24: {
             Dir = (global::Google.Protobuf.Protocol.Dir) input.ReadEnum();
+            break;
+          }
+          case 32: {
+            State = (global::Google.Protobuf.Protocol.State) input.ReadEnum();
             break;
           }
         }

@@ -48,7 +48,6 @@ namespace Server
 
 			while (true)
 			{
-
 				Thread.Sleep(100);
 			}
 		}

@@ -17,6 +17,7 @@ namespace Server.Contents
             if (newPlayer == null)
                 return;
             _players.Add(newPlayer);
+            newPlayer.Room = this;
 
             {
                 S_EnterGame enterPacket = new S_EnterGame();
