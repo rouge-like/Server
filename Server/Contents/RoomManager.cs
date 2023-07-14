@@ -15,6 +15,7 @@ namespace Server.Contents
         public Room Add()
         {
             Room room = new Room();
+            room.Init();
             lock (_lock)
             {
                 room.RoomId = _roomId;

@@ -21,28 +21,21 @@ class PacketHandler
         C_Move c_MovePacket = packet as C_Move;
         ClientSession clientSession = session as ClientSession;
 
-        Console.WriteLine($"{clientSession.MyPlayer.Info.Name} : {c_MovePacket.PosInfo.PosX}, {c_MovePacket.PosInfo.PosY}");
-
-        if (clientSession.MyPlayer == null)
+        Player myPlayer = clientSession.MyPlayer;
+        if (myPlayer == null)
         {
             Console.WriteLine("NULL PLAYER");
             return;
         }
-        if (clientSession.MyPlayer.Room == null)
+
+        Room room = myPlayer.Room;
+        if (room == null)
         {
             Console.WriteLine("NULL ROOM");
             return;
         }
 
-        // 검증
-
-        clientSession.MyPlayer.Info.PosInfo = c_MovePacket.PosInfo; 
-
-        S_Move s_MovePacket = new S_Move();
-        s_MovePacket.PlayerId = clientSession.MyPlayer.Info.PlayerId;
-        s_MovePacket.PosInfo = clientSession.MyPlayer.Info.PosInfo;
-
-        clientSession.MyPlayer.Room.Broadcast(s_MovePacket);
-
+        room.HandleMove(myPlayer, c_MovePacket);
+        
     }
 }
