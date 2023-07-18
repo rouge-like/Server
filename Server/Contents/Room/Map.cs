@@ -61,27 +61,48 @@ namespace Server.Contents
         }
         public void RemovePlayer(int id)
         {
+            Vector2Int pos = _players[id];
+            _map[pos.x, pos.y] = 0;
             _players.Remove(id);
         }
-        public bool Cango(Vector2Int pos, int id)
+        public bool CanGo(Vector2Int pos)
         {
-            if (pos.x >= SizeX || pos.y >= SizeY || pos.x < 0 || pos.y < 0)
-                return false;
-
             int x = pos.x;
             int y = pos.y;
 
-            if (_map[x, y] == 0)
-            {
-                Vector2Int preVec = _players[id];
-                _players[id] = new Vector2Int(x, y);
-                _map[preVec.x, preVec.y] = 0;
-                _map[x, y] = id;
+            if (x >= SizeX || y >= SizeY || x < 0 || y < 0)
+                return false;
 
+            if (_map[x, y] == 0)
                 return true;
-            }
             else
                 return false;
+        }
+        public void MovePlayer(Vector2Int pos, int id)
+        {
+            int x = pos.x;
+            int y = pos.y;
+
+            if (x >= SizeX || y >= SizeY || x < 0 || y < 0)
+                return;
+
+            Vector2Int preVec = _players[id];
+            _players[id] = new Vector2Int(x, y);
+            _map[preVec.x, preVec.y] = 0;
+            _map[x, y] = id;
+        }
+
+        public int FindId(Vector2Int pos)
+        {
+            int x = pos.x;
+            int y = pos.y;
+
+            if (x >= SizeX || y >= SizeY || x < 0 || y < 0)
+                return 0;
+
+            int id = _map[x, y];
+
+            return id;
         }
 
         public void LoadMap(int mapid)

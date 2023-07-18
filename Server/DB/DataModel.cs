@@ -19,6 +19,5 @@ namespace Server.DB
         public int PlayerDbId { get; set; }
         public string PlayerName { get; set; }
         public AccountDb Account { get; set; }
-
     }
 }

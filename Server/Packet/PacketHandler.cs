@@ -9,13 +9,6 @@ using System.Text;
 
 class PacketHandler
 {
-	public static void C_TestHandler(PacketSession session, IMessage packet)
-	{
-        C_Test testPacket = packet as C_Test;
-        ClientSession clientSession = session as ClientSession;
-
-        Console.WriteLine($"Value : {testPacket.Value} // From : {testPacket.Player.Name} ID : {testPacket.Player.PlayerId}");
-	}
     public static void C_MoveHandler(PacketSession session, IMessage packet)
     {
         C_Move c_MovePacket = packet as C_Move;
@@ -37,5 +30,27 @@ class PacketHandler
 
         room.HandleMove(myPlayer, c_MovePacket);
         
+    }
+
+    public static void C_SkillHandler(PacketSession session, IMessage packet)
+    {
+        C_Skill c_SkillPacket = packet as C_Skill;
+        ClientSession clientSession = session as ClientSession;
+
+        Player myPlayer = clientSession.MyPlayer;
+        if (myPlayer == null)
+        {
+            Console.WriteLine("NULL PLAYER");
+            return;
+        }
+
+        Room room = myPlayer.Room;
+        if (room == null)
+        {
+            Console.WriteLine("NULL ROOM");
+            return;
+        }
+
+        room.HandleSkill(myPlayer, c_SkillPacket);
     }
 }

@@ -5,10 +5,8 @@ using System.Text;
 
 namespace Server.Contents
 {
-    public class Player
+    public class Player : GameObject
     {
-        public PlayerInfo Info { get; set; } = new PlayerInfo() { PosInfo = new PosInfo() };
-        public Room Room { get; set; }
         public ClientSession Session { get; set; }
     }
 }

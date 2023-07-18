@@ -36,9 +36,9 @@ namespace Server
 			Console.WriteLine($"OnConnected : {endPoint}");
 
 			// PROTO Test
-			MyPlayer = PlayerManager.Instance.Add();
+			MyPlayer = ObjectManager.Instance.Add<Player>();
             {
-				MyPlayer.Info.Name = $"Player_{MyPlayer.Info.PlayerId}";
+				MyPlayer.Info.Name = $"Player_{MyPlayer.Info.ObjectId}";
 				MyPlayer.Info.PosInfo = MyPlayer.Info.PosInfo;
 				MyPlayer.Session = this;
 			}
@@ -56,7 +56,7 @@ namespace Server
 		{
 			SessionManager.Instance.Remove(this);
 			Room room = RoomManager.Instance.Find(1);
-			room.Push(room.LeaveRoom, MyPlayer.Info.PlayerId);
+			room.Push(room.LeaveRoom, MyPlayer.Info.ObjectId);
 
 			Console.WriteLine($"OnDisconnected : {endPoint}");
 		}

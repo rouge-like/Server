@@ -36,7 +36,7 @@ namespace Server
 			TickRoom(room, 50);
 
 			// DNS (Domain Name System)
-			string host = "DESKTOP-AI2VP3A";
+			string host = Dns.GetHostName();
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
 			IPAddress ipAddr = ipHost.AddressList[0];
 			IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
@@ -48,6 +48,8 @@ namespace Server
 
 			while (true)
 			{
+				RoomManager.Instance.Find(1).Update();
+
 				Thread.Sleep(100);
 			}
 		}
