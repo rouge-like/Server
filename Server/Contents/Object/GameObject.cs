@@ -13,14 +13,17 @@ namespace Server.Contents
             get { return Info.ObjectId; }
             set { Info.ObjectId = value; }
         }
-        public Room Room { get; set; }
-        public ObjectInfo Info { get; set; } = new ObjectInfo();
-        public PosInfo PosInfo { get; private set; } = new PosInfo();
+		public float Speed
+		{
+			get { return StatInfo.Speed; }
+			set { StatInfo.Speed = value; }
+		}
+		public Room Room { get; set; }
+		public ObjectInfo Info { get; set; } = new ObjectInfo() { PosInfo = new PosInfo(), StatInfo = new StatInfo() };
+        public PosInfo PosInfo { get { return Info.PosInfo; } set { Info.PosInfo = value; } }
+		public StatInfo StatInfo { get { return Info.StatInfo; } set { Info.StatInfo = value; } }
 
-        public GameObject()
-        {
-            Info.PosInfo = PosInfo;
-        }
+
 
 		public Vector2Int CellPos
 		{
@@ -53,10 +56,10 @@ namespace Server.Contents
 					cellPos += Vector2Int.down;
 					break;
 				case Dir.Right:
-					cellPos += Vector2Int.left;
+					cellPos += Vector2Int.right;
 					break;
 				case Dir.Left:
-					cellPos += Vector2Int.right;
+					cellPos += Vector2Int.left;
 					break;
 				case Dir.Upright:
 					cellPos += Vector2Int.upRight;
@@ -75,5 +78,26 @@ namespace Server.Contents
 
 			return cellPos;
 		}
+
+		public virtual void OnDamaged(GameObject attacker ,int damage)
+        {
+			StatInfo.Hp -= damage;
+			StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
+
+			S_ChangeHp packet = new S_ChangeHp();
+			packet.ObjectId = Id;
+			packet.Hp = StatInfo.Hp;
+			Room.Broadcast(packet);
+
+			if(StatInfo.Hp <= 0)
+            {
+				OnDead(attacker);
+            }
+
+        }
+		public virtual void OnDead(GameObject attacker)
+        {
+            Console.WriteLine($"{Id} DEAD");
+        }
 	}
 }

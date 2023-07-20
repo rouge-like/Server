@@ -6,10 +6,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Google.Protobuf;
 using Google.Protobuf.Protocol;
-using Google.Protobuf.WellKnownTypes;
 using Server.Contents;
+using Server.Data;
 using ServerCore;
 
 namespace Server
@@ -32,6 +31,9 @@ namespace Server
 
 		static void Main(string[] args)
 		{
+			ConfigManager.LoadConfig();
+			DataManager.LoadData();
+
 			Room room = RoomManager.Instance.Add();
 			TickRoom(room, 50);
 
@@ -48,9 +50,7 @@ namespace Server
 
 			while (true)
 			{
-				RoomManager.Instance.Find(1).Update();
 
-				Thread.Sleep(100);
 			}
 		}
 	}

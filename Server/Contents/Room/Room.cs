@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Server.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,8 +21,10 @@ namespace Server.Contents
             Map.LoadMap(num);
         }
 
-        public void Update()
+        public override void Update()
         {
+            base.Update();
+
             lock (_lock)
             {
                 foreach(Projectile projectile in _projectiles.Values)
@@ -57,6 +60,10 @@ namespace Server.Contents
                         {
                             if (player != p)
                                 spawnPacket.Objects.Add(p.Info);
+                        }
+                        foreach(Projectile p in _projectiles.Values)
+                        {
+                            spawnPacket.Objects.Add(p.Info);
                         }
                         player.Session.Send(spawnPacket);
                     }
@@ -126,24 +133,47 @@ namespace Server.Contents
                 }
             }       
         }
+        public GameObject Find(int objectId)
+        {
+            GameObjectType objectType = ObjectManager.GetObjectTypeById(objectId);
+
+            lock (_lock)
+            {
+                if (objectType == GameObjectType.Player)
+                {
+                    Player player = null;
+                    if (_players.TryGetValue(objectId, out player))
+                        return player;
+                }
+
+                if (objectType == GameObjectType.Projectile)
+                {
+                    Projectile projectile = null;
+                    if (_projectiles.TryGetValue(objectId, out projectile))
+                        return projectile;
+                }
+                return null;
+            }
+        }
         public void HandleMove(Player player, C_Move movePacket)
         {
             if (player == null)
-                return;
-
-            S_Move s_MovePacket = new S_Move();
+                return;          
 
             lock (_lock)
-            {               
+            {
+                S_Move s_MovePacket = new S_Move();
+                ObjectInfo info = player.Info;
+
                 if (Map.CanGo(new Vector2Int(movePacket.PosInfo.PosX, movePacket.PosInfo.PosY)))
                 {
                     Map.MovePlayer(new Vector2Int(movePacket.PosInfo.PosX, movePacket.PosInfo.PosY), player.Id);
 
-                    player.Info.PosInfo = movePacket.PosInfo;
+                    info.PosInfo = movePacket.PosInfo;
                     s_MovePacket.ObjectId = player.Info.ObjectId;
                     s_MovePacket.PosInfo = movePacket.PosInfo;
 
-                    Console.WriteLine($"{player.Info.Name} : Move to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}");
+                    Console.WriteLine($"{player.Info.Name} : Move to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {s_MovePacket.PosInfo.Dir}");
                 }
                 else
                 {                   
@@ -151,7 +181,7 @@ namespace Server.Contents
                     s_MovePacket.PosInfo = player.Info.PosInfo;
                     s_MovePacket.PosInfo.State = State.Idle;
 
-                    Console.WriteLine($"{player.Info.Name} : Stay to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}");
+                    Console.WriteLine($"{player.Info.Name} : Stay to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {player.Info.PosInfo.Dir}");
                 }
                 Broadcast(s_MovePacket);
             }
@@ -173,25 +203,44 @@ namespace Server.Contents
                 skill.Info.SkillId = skillPacket.Info.SkillId;
                 Broadcast(skill);
 
-                if(skillPacket.Info.SkillId == 1)
+                Data.Skill skillData = null;
+                if (DataManager.SkillDict.TryGetValue(skillPacket.Info.SkillId, out skillData))
                 {
-                    Vector2Int skillPos = player.GetFrontCellPos();
-                    int targetId = Map.FindId(skillPos);
-                    if(targetId != 0)
-                        Console.WriteLine("TESTING SKILL 1");
-                }
+                    switch (skillData.skillType)
+                    {
+                        case SkillType.SkillNone:
+                            {
+                                Vector2Int skillPos = player.GetFrontCellPos();
+                                int targetId = Map.FindId(skillPos);
+                                if (targetId != 0)
+                                    Console.WriteLine("TESTING SKILL 1");
+                            }
+                            break;
+                        case SkillType.SkillProjectile:
+                            {
+                                Console.WriteLine($"{skill.ObjectId} Player Use Skill {skill.Info.SkillId}");
+                                Projectile projectile = ObjectManager.Instance.Add<Projectile>();
+                                if (projectile == null)
+                                    return;
 
-                else if(skillPacket.Info.SkillId == 2)
-                {
-                    Projectile projectile = ObjectManager.Instance.Add<Projectile>();
-                    if(projectile == null)
-                        return;
+                                projectile.Owner = player;
+                                projectile.Data = skillData;
+                                projectile.Info.Name = $"Projectile_{projectile.Id}";
+                                projectile.PosInfo.State = State.Moving;
+                                projectile.SetDir(player.PosInfo.Dir);
+                                projectile.PosInfo.PosX = player.PosInfo.PosX;
+                                projectile.PosInfo.PosY = player.PosInfo.PosY;
+                                projectile.Speed = skillData.projectile.speed;
 
-                    projectile.Owner = player;
-                    projectile.PosInfo.State = State.Moving;
-                    projectile.PosInfo.Dir = player.PosInfo.Dir;
-                    projectile.PosInfo.PosX = player.PosInfo.PosX;
-                    projectile.PosInfo.PosY = player.PosInfo.PosY;
+                                EnterRoom(projectile);
+                            }
+                            break;
+                        case SkillType.SkillArea:
+                            {
+
+                            }
+                            break;
+                    }
                 }
             }
         }

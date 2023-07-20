@@ -1,0 +1,24 @@
+{
+  "skills": [
+    {
+      "id": "1",
+      "name": "Skill1",
+      "cooldown": "0.2",
+      "damage": "10",
+      "skillType": "SkillNone"
+    },
+    {
+      "id": "2",
+      "name": "Skill2",
+      "cooldown": "0.2",
+      "damage": "10",
+      "skillType": "SkillProjectile",
+      "projectile": {
+        "name": "Basic",
+        "speed": "10.0",
+        "range": "10",
+        "prefab": "Cylinder"
+      }
+    }
+  ]
+} 

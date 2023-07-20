@@ -48,10 +48,8 @@ namespace Server.Contents
 
         }
 
-		public void Update()
+		public virtual void Update()
         {
-			// 오브젝트들을 돌면서 각각 Update문 실행
-
 			Flush();
         }
 

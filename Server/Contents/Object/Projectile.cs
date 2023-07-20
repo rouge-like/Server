@@ -7,6 +7,7 @@ namespace Server.Contents
 {
     public class Projectile : GameObject
     {
+        public Data.Skill Data { get; set; }
         public Projectile()
         {
             ObjectType = GameObjectType.Projectile;
@@ -16,13 +17,14 @@ namespace Server.Contents
         long _nextMoveTick = 0;
         public virtual void Update()
         {
-            if (Owner == null || Room == null)
+            if (Data == null || Owner == null || Room == null)
                 return;
 
             if (_nextMoveTick >= Environment.TickCount64)
                 return;
 
-            _nextMoveTick = Environment.TickCount64 + 50;
+            long tick= (long)(1000 / Data.projectile.speed);
+            _nextMoveTick = Environment.TickCount64 + tick;
 
             Vector2Int desPos = GetFrontCellPos();
 
@@ -35,17 +37,37 @@ namespace Server.Contents
                 movePakcet.PosInfo = PosInfo;
                 Room.Broadcast(movePakcet);
 
-                Console.WriteLine("Move Projectile");
+                Console.WriteLine($"Projectile {Id}_Player{Owner.Id} : {PosInfo.PosX}, {PosInfo.PosY} , {PosInfo.Dir}");
             }
             else
             {
                 int targetId = Room.Map.FindId(desPos);
                 if(targetId != 0)
                 {
-                    // Find By Id in Room?
+                    GameObject target = Room.Find(targetId);
+                    target.OnDamaged(Owner, Data.damage);
                 }
 
                 Room.LeaveRoom(Id);
+            }
+        }
+        public void SetDir(Dir dir)
+        {
+            PosInfo.Dir = dir;
+            switch (dir)
+            {
+                case Dir.Upright:
+                    PosInfo.Dir = Dir.Up;
+                    break;
+                case Dir.Upleft:
+                    PosInfo.Dir = Dir.Up;
+                    break;
+                case Dir.Downright:
+                    PosInfo.Dir = Dir.Down;
+                    break;
+                case Dir.Downleft:
+                    PosInfo.Dir = Dir.Down;
+                    break;
             }
         }
     }

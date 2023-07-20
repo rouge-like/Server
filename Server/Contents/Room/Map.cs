@@ -109,7 +109,7 @@ namespace Server.Contents
         {
             _players = new Dictionary<int, Vector2Int>();
 
-            string text = File.ReadAllText("../../../map.txt");
+            string text = File.ReadAllText("../../../Data/map.txt");
             StringReader reader = new StringReader(text);
 
             SizeX = int.Parse(reader.ReadLine());

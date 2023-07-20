@@ -42,7 +42,7 @@ namespace Server.Contents
 
         public static GameObjectType GetObjectTypeById(int id)
         {
-            int type = (id >> 24) & 127;
+            int type = (id >> 24) & 0x7F;
 
             return (GameObjectType)type;
         }
@@ -56,23 +56,6 @@ namespace Server.Contents
                     return _players.Remove(objectId);
             }
             return false;
-        }
-
-        public Player Find(int objectId)
-        {
-            GameObjectType objectType = GetObjectTypeById(objectId);
-
-            lock (_lock)
-            {
-                if (objectType == GameObjectType.Player)
-                {
-                    Player player = null;
-                    if (_players.TryGetValue(objectId, out player))
-                        return player;
-                }
-                
-                return null;
-            }
         }
     }
 }
