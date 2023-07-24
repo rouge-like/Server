@@ -87,7 +87,7 @@ namespace Server.Contents
 			S_ChangeHp packet = new S_ChangeHp();
 			packet.ObjectId = Id;
 			packet.Hp = StatInfo.Hp;
-			Room.Broadcast(packet);
+			Room.Broadcast(CellPos, packet);
 
 			if(StatInfo.Hp <= 0)
             {

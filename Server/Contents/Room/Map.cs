@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Protobuf.Protocol;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -49,22 +50,11 @@ namespace Server.Contents
     }
     public class Map
     {
+        public Room Room { get; set; }
         public int SizeX { get; set; }
         public int SizeY { get; set; }
 
         int[,] _map;
-        Dictionary<int, Vector2Int> _players;
-
-        public void AddPlayer(Vector2Int pos, int id)
-        {
-            _players.Add(id, pos);
-        }
-        public void RemovePlayer(int id)
-        {
-            Vector2Int pos = _players[id];
-            _map[pos.x, pos.y] = 0;
-            _players.Remove(id);
-        }
         public bool CanGo(Vector2Int pos)
         {
             int x = pos.x;
@@ -78,7 +68,7 @@ namespace Server.Contents
             else
                 return false;
         }
-        public void MovePlayer(Vector2Int pos, int id)
+        public void MoveObject(GameObject go,Vector2Int pos)
         {
             int x = pos.x;
             int y = pos.y;
@@ -86,10 +76,35 @@ namespace Server.Contents
             if (x >= SizeX || y >= SizeY || x < 0 || y < 0)
                 return;
 
-            Vector2Int preVec = _players[id];
-            _players[id] = new Vector2Int(x, y);
-            _map[preVec.x, preVec.y] = 0;
-            _map[x, y] = id;
+            GameObjectType type = ObjectManager.GetObjectTypeById(go.Id);
+
+            if(type == GameObjectType.Player)
+            {
+                Player p = (Player)go;
+
+                Zone now = Room.GetZone(go.CellPos);
+                Zone after = Room.GetZone(pos);
+                if (now != after)
+                {
+                    now.Players.Remove(p);
+                    after.Players.Add(p);
+                }
+            }
+            else if (type == GameObjectType.Projectile)
+            {
+                Projectile p = (Projectile)go;
+
+                Zone now = Room.GetZone(go.CellPos);
+                Zone after = Room.GetZone(pos);
+                if (now != after)
+                {
+                    now.Projectiles.Remove(p);
+                    after.Projectiles.Add(p);
+                }
+            }
+
+            _map[go.CellPos.x, go.CellPos.y] = 0;
+            _map[x, y] = go.Id;
         }
 
         public int FindId(Vector2Int pos)
@@ -107,8 +122,6 @@ namespace Server.Contents
 
         public void LoadMap(int mapid)
         {
-            _players = new Dictionary<int, Vector2Int>();
-
             string text = File.ReadAllText("../../../Data/map.txt");
             StringReader reader = new StringReader(text);
 

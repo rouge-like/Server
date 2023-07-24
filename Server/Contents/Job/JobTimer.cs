@@ -24,7 +24,7 @@ namespace Server.Contents
 		public void Push(IJob job, int tickAfter = 0)
 		{
 			JobTimerElem jobElement;
-			jobElement.execTick = System.Environment.TickCount + tickAfter;
+			jobElement.execTick = Environment.TickCount + tickAfter;
 			jobElement.job = job;
 
 			lock (_lock)
@@ -37,7 +37,7 @@ namespace Server.Contents
 		{
 			while (true)
 			{
-				int now = System.Environment.TickCount;
+				int now = Environment.TickCount;
 
 				JobTimerElem jobElement;
 

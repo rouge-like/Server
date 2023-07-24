@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Server.Contents
 {
-    public class RoomManager
+    public class RoomManager : JobSerializer
     {
         public static RoomManager Instance { get; } = new RoomManager();
 
@@ -12,37 +12,36 @@ namespace Server.Contents
         Dictionary<int, Room> _rooms = new Dictionary<int, Room>();
         int _roomId = 1;
 
-        public Room Add()
+        public void Update()
+        {
+            Flush();
+
+            foreach (Room room in _rooms.Values)
+                room.Update();
+        }
+        public Room Add(int mapId)
         {
             Room room = new Room();
-            room.Init(0);
-            lock (_lock)
-            {
-                room.RoomId = _roomId;
-                _rooms.Add(_roomId, room);
-                _roomId++;
-            }
+            room.Push(room.Init, mapId, 10);
 
+            room.RoomId = _roomId;
+            _rooms.Add(_roomId, room);
+            _roomId++;
+            
             return room;
         }
 
         public bool Remove(int roomId)
         {
-            lock (_lock)
-            {
-                return _rooms.Remove(roomId);
-            }
+            return _rooms.Remove(roomId);
         }
 
         public Room Find(int roomId)
         {
-            lock (_lock)
-            {
-                Room room = null;
-                if (_rooms.TryGetValue(roomId, out room))
-                    return room;
-                return null;
-            }
+            Room room = null;
+            if (_rooms.TryGetValue(roomId, out room))
+                return room;
+            return null;           
         }
     }
 }

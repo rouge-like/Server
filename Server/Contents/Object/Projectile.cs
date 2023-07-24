@@ -20,11 +20,8 @@ namespace Server.Contents
             if (Data == null || Owner == null || Room == null)
                 return;
 
-            if (_nextMoveTick >= Environment.TickCount64)
-                return;
-
-            long tick= (long)(1000 / Data.projectile.speed);
-            _nextMoveTick = Environment.TickCount64 + tick;
+            int tick = (int)(1000 / Data.projectile.speed);
+            Room.PushAfter(tick, Update);
 
             Vector2Int desPos = GetFrontCellPos();
 
@@ -35,7 +32,7 @@ namespace Server.Contents
                 S_Move movePakcet = new S_Move();
                 movePakcet.ObjectId = Id;
                 movePakcet.PosInfo = PosInfo;
-                Room.Broadcast(movePakcet);
+                Room.Broadcast(CellPos, movePakcet);
 
                 Console.WriteLine($"Projectile {Id}_Player{Owner.Id} : {PosInfo.PosX}, {PosInfo.PosY} , {PosInfo.Dir}");
             }

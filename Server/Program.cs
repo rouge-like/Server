@@ -16,17 +16,22 @@ namespace Server
 	class Program
 	{
 		static Listener _listener = new Listener();
-		static List<System.Timers.Timer> _timers = new List<System.Timers.Timer>();
-
-		static void TickRoom(Room room, int tick = 100)
+		static void RoomTask()
         {
-			var timer = new System.Timers.Timer();
-			timer.Interval = tick;
-			timer.Elapsed += (sender, e) => { room.Update(); }; // Object sender, ElapsedEventArgs e
-			timer.AutoReset = true;
-			timer.Enabled = true;
-
-			_timers.Add(timer);
+            while (true)
+            {
+				RoomManager.Instance.Update();
+				Thread.Sleep(0);
+            }
+        }
+		static void NetworkTask()
+        {
+            while (true)
+            {
+				List<ClientSession> sessions = SessionManager.Instance.GetSessions();
+				foreach (ClientSession session in sessions)
+					session.Flush();
+            }
         }
 
 		static void Main(string[] args)
@@ -34,8 +39,7 @@ namespace Server
 			ConfigManager.LoadConfig();
 			DataManager.LoadData();
 
-			Room room = RoomManager.Instance.Add();
-			TickRoom(room, 50);
+			RoomManager.Instance.Push(() => { RoomManager.Instance.Add(0); });
 
 			// DNS (Domain Name System)
 			string host = Dns.GetHostName();
@@ -48,10 +52,16 @@ namespace Server
             Console.WriteLine("IP Adress : " + ipAddr.ToString());
 			Console.WriteLine("Listening...");
 
-			while (true)
-			{
+			Task roomTask = new Task(RoomTask, TaskCreationOptions.LongRunning);
+			roomTask.Start();
 
-			}
+			Task networkTask = new Task(NetworkTask, TaskCreationOptions.LongRunning);
+			networkTask.Start();
+
+            while (true)
+            {
+
+            }
 		}
 	}
 }

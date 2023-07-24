@@ -5,7 +5,13 @@
       "name": "Skill1",
       "cooldown": "0.2",
       "damage": "10",
-      "skillType": "SkillNone"
+      "skillType": "SkillArea",
+      "area": {
+        "posList": [
+          [ 1, 1 ],
+          [ 2, 2 ]
+        ]
+      }
     },
     {
       "id": "2",

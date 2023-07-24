@@ -28,7 +28,7 @@ class PacketHandler
             return;
         }
 
-        room.HandleMove(myPlayer, c_MovePacket);
+        room.Push(room.HandleMove,myPlayer, c_MovePacket);
         
     }
 
@@ -51,6 +51,6 @@ class PacketHandler
             return;
         }
 
-        room.HandleSkill(myPlayer, c_SkillPacket);
+        room.Push(room.HandleSkill,myPlayer, c_SkillPacket);
     }
 }

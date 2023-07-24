@@ -32,6 +32,7 @@ namespace Server.Data
 		public int damage;
 		public SkillType skillType;
 		public ProjectileInfo projectile;
+		public AreaInfo area;
 
     }
 
@@ -41,6 +42,11 @@ namespace Server.Data
 		public float speed;
 		public int range;
 		public string prefab;
+    }
+
+	public class AreaInfo
+    {
+		public List<List<int>> posList;
     }
 
 	[Serializable]

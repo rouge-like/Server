@@ -17,7 +17,8 @@ namespace Server
 	{
 		public Player MyPlayer { get; set; }
 		public int SessionId { get; set; }
-
+		object _lock = new object();
+		List<ArraySegment<byte>> _reserveQueue = new List<ArraySegment<byte>>();
 		public void Send(IMessage packet)
         {
 			string msgName = packet.Descriptor.Name.Replace("_", string.Empty);
@@ -29,9 +30,25 @@ namespace Server
 			Array.Copy(BitConverter.GetBytes((ushort)msgId), 0, sendBuffer, 2, sizeof(ushort));
 			Array.Copy(packet.ToByteArray(), 0, sendBuffer, 4, size);
 
-			Send(new ArraySegment<byte>(sendBuffer));
+            lock (_lock)
+            {
+				_reserveQueue.Add(sendBuffer);
+            }
 
 		}
+		public void Flush()
+        {
+			List<ArraySegment<byte>> sendList = null;
+            lock (_lock)
+            {
+				if (_reserveQueue.Count == 0)
+					return;
+
+				sendList = _reserveQueue;
+				_reserveQueue = new List<ArraySegment<byte>>();
+            }
+			Send(sendList);
+        }
 		public override void OnConnected(EndPoint endPoint)
 		{
 			Console.WriteLine($"OnConnected : {endPoint}");
@@ -49,8 +66,11 @@ namespace Server
 				MyPlayer.Session = this;
 			}
 
-			Room room = RoomManager.Instance.Find(1);
-			room.Push(room.EnterRoom, MyPlayer);
+			RoomManager.Instance.Push(() =>
+			{
+				Room room = RoomManager.Instance.Find(1);
+				room.Push(room.EnterRoom, MyPlayer);
+			});			
 		}
 
 		public override void OnRecvPacket(ArraySegment<byte> buffer)
@@ -60,9 +80,13 @@ namespace Server
 
 		public override void OnDisconnected(EndPoint endPoint)
 		{
+			RoomManager.Instance.Push(() =>
+			{
+				Room room = RoomManager.Instance.Find(1);
+				room.Push(room.LeaveRoom, MyPlayer.Info.ObjectId);
+			});
+
 			SessionManager.Instance.Remove(this);
-			Room room = RoomManager.Instance.Find(1);
-			room.Push(room.LeaveRoom, MyPlayer.Info.ObjectId);
 
 			Console.WriteLine($"OnDisconnected : {endPoint}");
 		}
