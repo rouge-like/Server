@@ -88,6 +88,8 @@ namespace Server.Contents
             PreviousObjects = currentObjects;
 
             Owner.Room.PushAfter(500, Update);
+
+            //test
         }
     }
 }
