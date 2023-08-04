@@ -53,4 +53,10 @@ class PacketHandler
 
         room.Push(room.HandleSkill,myPlayer, c_SkillPacket);
     }
+
+    public static void C_PongHandler(PacketSession session, IMessage packet) 
+    {
+        ClientSession clientSession = (ClientSession)session;
+        clientSession.HandlePong();
+    }
 }

@@ -19,6 +19,29 @@ namespace Server
 		public int SessionId { get; set; }
 		object _lock = new object();
 		List<ArraySegment<byte>> _reserveQueue = new List<ArraySegment<byte>>();
+		long _pingpongTick = 0;
+		public void Ping()
+		{
+			if (_pingpongTick > 0)
+			{
+				long delta = System.Environment.TickCount64 - _pingpongTick;
+				if (delta > 30 * 1000)
+				{
+					Console.WriteLine("Disconnected by PingCheck");
+					Disconnect();
+					return;
+				}
+			}
+
+			S_Ping pingPacket = new S_Ping();
+			Send(pingPacket);
+
+			RoomManager.Instance.PushAfter(5000, Ping);
+		}
+		public void HandlePong() 
+		{
+			_pingpongTick = System.Environment.TickCount64;
+		}
 		public void Send(IMessage packet)
         {
 			string msgName = packet.Descriptor.Name.Replace("_", string.Empty);
@@ -70,7 +93,9 @@ namespace Server
 			{
 				Room room = RoomManager.Instance.Find(1);
 				room.Push(room.EnterRoom, MyPlayer);
-			});			
+			});
+
+			RoomManager.Instance.PushAfter(5000, Ping);
 		}
 
 		public override void OnRecvPacket(ArraySegment<byte> buffer)
@@ -82,7 +107,10 @@ namespace Server
 		{
 			RoomManager.Instance.Push(() =>
 			{
-				Room room = RoomManager.Instance.Find(1);
+				if (MyPlayer == null)
+					return;
+
+				Room room = RoomManager.Instance.Find(1);				
 				room.Push(room.LeaveRoom, MyPlayer.Info.ObjectId);
 			});
 

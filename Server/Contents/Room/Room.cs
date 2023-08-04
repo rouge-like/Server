@@ -84,17 +84,25 @@ namespace Server.Contents
                 projectile.Room = this;
 
                 GetZone(projectile.CellPos).Projectiles.Add(projectile);
+
                 projectile.Update();
             }
             else if(type == GameObjectType.Monster)
             {
                     
             }
+
+            {
+                S_Spawn spawnPacket = new S_Spawn();
+                spawnPacket.Objects.Add(gameObject.Info);
+                Broadcast(gameObject.CellPos, spawnPacket);
+            }
         }
 
         public void LeaveRoom(int objectId)
         {
             GameObjectType type = ObjectManager.GetObjectTypeById(objectId);
+            Vector2Int cellPos;
             if (type == GameObjectType.Player)
             {
 
@@ -102,23 +110,35 @@ namespace Server.Contents
                 if (_players.Remove(objectId, out player) == false)
                     return;
 
+                cellPos = player.CellPos;
+                Map.LeaveObject(player);
                 player.Room = null;
-                GetZone(player.CellPos).Players.Remove(player);
 
                 {
                     S_LeaveGame leavePacket = new S_LeaveGame();
                     player.Session.Send(leavePacket);
                 }
             }
-            else if(type == GameObjectType.Projectile)
+            else if (type == GameObjectType.Projectile)
             {
                 Projectile projectile = null;
                 if (_projectiles.Remove(objectId, out projectile) == false)
                     return;
 
-                GetZone(projectile.CellPos).Projectiles.Remove(projectile);
+                cellPos = projectile.CellPos;
+                Map.LeaveObject(projectile);
                 projectile.Room = null;
-            }  
+            }
+            else
+            {
+                return;
+            }
+
+            {
+                S_Despawn despawnPacket = new S_Despawn();
+                despawnPacket.ObjectIds.Add(objectId);
+                Broadcast(cellPos, despawnPacket);
+            }
         }
         public GameObject Find(int objectId)
         {
@@ -212,7 +232,11 @@ namespace Server.Contents
                             projectile.PosInfo.PosY = player.PosInfo.PosY;
                             projectile.Speed = skillData.projectile.speed;
 
-                            EnterRoom(projectile);
+                            Vector2Int desPos = projectile.GetFrontCellPos();
+                            if (Map.CanGo(desPos))
+                                EnterRoom(projectile);
+                            else
+								Console.WriteLine("Cannot Enter Projectile : Wrong Position");
                         }
                         break;
                     case SkillType.SkillArea:

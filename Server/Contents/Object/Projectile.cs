@@ -14,7 +14,6 @@ namespace Server.Contents
         }
 
         public GameObject Owner;
-        long _nextMoveTick = 0;
         public virtual void Update()
         {
             if (Data == null || Owner == null || Room == null)
@@ -27,7 +26,7 @@ namespace Server.Contents
 
             if (Room.Map.CanGo(desPos))
             {
-                CellPos = desPos;
+                Room.Map.MoveObject(this, desPos);
 
                 S_Move movePakcet = new S_Move();
                 movePakcet.ObjectId = Id;
@@ -39,7 +38,7 @@ namespace Server.Contents
             else
             {
                 int targetId = Room.Map.FindId(desPos);
-                if(targetId != 0)
+                if(targetId != 0 && targetId != 1)
                 {
                     GameObject target = Room.Find(targetId);
                     target.OnDamaged(Owner, Data.damage);

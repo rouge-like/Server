@@ -68,6 +68,25 @@ namespace Server.Contents
             else
                 return false;
         }
+        public bool LeaveObject(GameObject go)
+        {
+            if (go.Room == null)
+                return false;
+            if (go.Room.Map != this)
+                return false;
+
+            PosInfo posInfo = go.PosInfo;
+            if (posInfo.PosX >= SizeX || posInfo.PosY >= SizeY || posInfo.PosX < 0 || posInfo.PosY < 0)
+                return false;
+
+            Zone zone = go.Room.GetZone(go.CellPos);
+            zone.Remove(go);
+
+            if (_map[posInfo.PosX, posInfo.PosY] == go.Id)
+                _map[posInfo.PosX, posInfo.PosY] = 0;
+            
+            return true;
+        }
         public void MoveObject(GameObject go,Vector2Int pos)
         {
             int x = pos.x;
@@ -77,6 +96,7 @@ namespace Server.Contents
                 return;
 
             GameObjectType type = ObjectManager.GetObjectTypeById(go.Id);
+            PosInfo posInfo = go.PosInfo;
 
             if(type == GameObjectType.Player)
             {
@@ -89,6 +109,9 @@ namespace Server.Contents
                     now.Players.Remove(p);
                     after.Players.Add(p);
                 }
+
+                _map[go.CellPos.x, go.CellPos.y] = 0;
+                _map[x, y] = go.Id;
             }
             else if (type == GameObjectType.Projectile)
             {
@@ -103,8 +126,8 @@ namespace Server.Contents
                 }
             }
 
-            _map[go.CellPos.x, go.CellPos.y] = 0;
-            _map[x, y] = go.Id;
+            posInfo.PosX = pos.x;
+            posInfo.PosY = pos.y;
         }
 
         public int FindId(Vector2Int pos)
