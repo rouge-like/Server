@@ -12,6 +12,8 @@ namespace Server.Contents
 
         public HashSet<Player> Players { get; set; } = new HashSet<Player>();
         public HashSet<Projectile> Projectiles { get; set; } = new HashSet<Projectile>();
+        public HashSet<Area> Areas { get; set; } = new HashSet<Area>();
+        public HashSet<Circler> Circlers { get; set; } = new HashSet<Circler>();
 
         public Zone(int x, int y)
         {
@@ -33,6 +35,12 @@ namespace Server.Contents
                 case GameObjectType.Projectile:
                     Projectiles.Remove((Projectile)go);
                     break;
+                case GameObjectType.Area:
+                    Areas.Remove((Area)go);
+                    break;
+                case GameObjectType.Circler:
+                    Circlers.Remove((Circler)go);
+                    break;
             }
 
         }
@@ -53,6 +61,15 @@ namespace Server.Contents
             {
                 if (condition.Invoke(player))
                     players.Add(player);
+            }
+            return players;
+        }
+        public List<Player> FindAll()
+        {
+            List<Player> players = new List<Player>();
+            foreach (Player player in Players)
+            {
+                players.Add(player);
             }
             return players;
         }

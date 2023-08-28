@@ -3,28 +3,50 @@
     {
       "id": "1",
       "name": "Skill1",
-      "cooldown": "0.2",
+      "cooldown": "1",
       "damage": "10",
       "skillType": "SkillArea",
       "area": {
         "posList": [
-          [ 1, 1 ],
-          [ 2, 2 ]
+            [ 1, 0 ],
+            [ 0, 1 ],
+            [ -1, 0 ],
+            [ 0, -1 ]
         ]
       }
     },
     {
-      "id": "2",
-      "name": "Skill2",
-      "cooldown": "0.2",
-      "damage": "10",
-      "skillType": "SkillProjectile",
-      "projectile": {
-        "name": "Basic",
-        "speed": "10.0",
-        "range": "10",
-        "prefab": "Cylinder"
-      }
+        "id": "2",
+        "name": "Skill2",
+        "cooldown": "0.2",
+        "damage": "10",
+        "skillType": "SkillProjectile",
+        "projectile": {
+            "name": "Basic",
+            "speed": "10.0",
+            "range": "10",
+            "prefab": "Cylinder"
+        }
+    },
+    {
+        "id": "3",
+        "name": "circle",
+        "cooldown": "5",
+        "damage": "10",
+        "skillType": "SkillCircler",
+        "circle": {
+            "len": "8",
+            "posList": [
+                [ 0, 1 ],
+                [ 1, 1 ],
+                [ 1, 0 ],
+                [ 1, -1 ],
+                [ 0, -1 ],
+                [ -1, -1 ],
+                [ -1, 0 ],
+                [ -1, 1 ]
+            ]
+        }
     }
   ]
 } 

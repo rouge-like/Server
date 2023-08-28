@@ -55,6 +55,25 @@ namespace Server.Contents
         public int SizeY { get; set; }
 
         int[,] _map;
+        public void LoadMap(int mapid)
+        {
+            string text = File.ReadAllText("../../../Data/map.txt");
+            StringReader reader = new StringReader(text);
+
+            SizeX = int.Parse(reader.ReadLine());
+            SizeY = int.Parse(reader.ReadLine());
+
+            _map = new int[SizeX, SizeY];
+
+            for (int y = 0; y < SizeY; y++)
+            {
+                string line = reader.ReadLine();
+                for (int x = 0; x < SizeX; x++)
+                {
+                    _map[x, y] = (int)Char.GetNumericValue(line[x]);
+                }
+            }
+        }
         public bool CanGo(Vector2Int pos)
         {
             int x = pos.x;
@@ -142,26 +161,5 @@ namespace Server.Contents
 
             return id;
         }
-
-        public void LoadMap(int mapid)
-        {
-            string text = File.ReadAllText("../../../Data/map.txt");
-            StringReader reader = new StringReader(text);
-
-            SizeX = int.Parse(reader.ReadLine());
-            SizeY = int.Parse(reader.ReadLine());
-
-            _map = new int[SizeX, SizeY];
-
-            for (int y = 0; y < SizeY; y++)
-            {
-                string line = reader.ReadLine();
-                for (int x = 0; x < SizeX; x++)
-                {
-                    _map[x, y] = (int)Char.GetNumericValue(line[x]);
-                }
-            }
-        }
-
     }
 }

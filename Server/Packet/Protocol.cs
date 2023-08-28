@@ -50,11 +50,12 @@ namespace Google.Protobuf.Protocol {
             "Kj4KBVN0YXRlEggKBElkbGUQABIKCgZNb3ZpbmcQARIKCgZBdHRhY2sQAhIJ",
             "CgVTa2lsbBADEggKBERlYWQQBCpiCgNEaXISBgoCVVAQABIICgRET1dOEAES",
             "CQoFUklHSFQQAhIICgRMRUZUEAMSCwoHVVBSSUdIVBAEEgoKBlVQTEVGVBAF",
-            "Eg0KCURPV05SSUdIVBAGEgwKCERPV05MRUZUEAcqTQoOR2FtZU9iamVjdFR5",
+            "Eg0KCURPV05SSUdIVBAGEgwKCERPV05MRUZUEAcqWgoOR2FtZU9iamVjdFR5",
             "cGUSCAoETk9ORRAAEgoKBlBMQVlFUhABEgsKB01PTlNURVIQAhIOCgpQUk9K",
-            "RUNUSUxFEAMSCAoEQVJFQRAEKkEKCVNraWxsVHlwZRIOCgpTS0lMTF9OT05F",
-            "EAASFAoQU0tJTExfUFJPSkVDVElMRRABEg4KClNLSUxMX0FSRUEQAkIbqgIY",
-            "R29vZ2xlLlByb3RvYnVmLlByb3RvY29sYgZwcm90bzM="));
+            "RUNUSUxFEAMSCAoEQVJFQRAEEgsKB0NJUkNMRVIQBSpUCglTa2lsbFR5cGUS",
+            "DgoKU0tJTExfTk9ORRAAEhQKEFNLSUxMX1BST0pFQ1RJTEUQARIOCgpTS0lM",
+            "TF9BUkVBEAISEQoNU0tJTExfQ0lSQ0xFUhADQhuqAhhHb29nbGUuUHJvdG9i",
+            "dWYuUHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -120,12 +121,14 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("MONSTER")] Monster = 2,
     [pbr::OriginalName("PROJECTILE")] Projectile = 3,
     [pbr::OriginalName("AREA")] Area = 4,
+    [pbr::OriginalName("CIRCLER")] Circler = 5,
   }
 
   public enum SkillType {
     [pbr::OriginalName("SKILL_NONE")] SkillNone = 0,
     [pbr::OriginalName("SKILL_PROJECTILE")] SkillProjectile = 1,
     [pbr::OriginalName("SKILL_AREA")] SkillArea = 2,
+    [pbr::OriginalName("SKILL_CIRCLER")] SkillCircler = 3,
   }
 
   #endregion

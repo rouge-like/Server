@@ -45,11 +45,29 @@ namespace Server.Contents
                         continue;
                     objects.Add(projectile);
                 }
+                foreach (Area area in zone.Areas)
+                {
+                    int dx = area.CellPos.x - pos.x;
+                    int dy = area.CellPos.y - pos.y;
+
+                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
+                        continue;
+                    objects.Add(area);
+                }
+                foreach (Circler circler in zone.Circlers)
+                {
+                    int dx = circler.CellPos.x - pos.x;
+                    int dy = circler.CellPos.y - pos.y;
+
+                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
+                        continue;
+                    objects.Add(circler);
+                }
             }
 
             return objects;
         }
-
+        IJob _job;
         public void Update()
         {
             if (Owner == null || Owner.Room == null)
@@ -87,7 +105,53 @@ namespace Server.Contents
 
             PreviousObjects = currentObjects;
 
-            Owner.Room.PushAfter(500, Update);
+            _job = Owner.Room.PushAfter(300, Update);
+        }
+        public void UpdateImmediately()
+        {
+            if (Owner == null || Owner.Room == null)
+                return;
+            if (_job != null) {
+                _job.Cancel = true;
+                _job = null;
+            }
+
+            HashSet<GameObject> currentObjects = GatherObjects();
+
+            List<GameObject> added = currentObjects.Except(PreviousObjects).ToList();
+            if (added.Count > 0)
+            {
+                S_Spawn spawnPacket = new S_Spawn();
+
+                foreach (GameObject go in added)
+                {
+                    ObjectInfo info = new ObjectInfo();
+                    info.MergeFrom(go.Info);
+                    spawnPacket.Objects.Add(info);
+                }
+
+                Owner.Session.Send(spawnPacket);
+            }
+
+            List<GameObject> removed = PreviousObjects.Except(currentObjects).ToList();
+            if (removed.Count > 0)
+            {
+                S_Despawn despawnPacket = new S_Despawn();
+
+                foreach (GameObject go in removed)
+                {
+                    despawnPacket.ObjectIds.Add(go.Id);
+                }
+
+                Owner.Session.Send(despawnPacket);
+            }
+
+            PreviousObjects = currentObjects;
+            _job = Owner.Room.PushAfter(300, Update);
+        }
+        public void Clear()
+        {
+            PreviousObjects.Clear();
         }
     }
 }

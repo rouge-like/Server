@@ -14,7 +14,7 @@ namespace Server.Contents
         }
 
         public GameObject Owner;
-        public virtual void Update()
+        public override void Update()
         {
             if (Data == null || Owner == null || Room == null)
                 return;
@@ -44,7 +44,7 @@ namespace Server.Contents
                     target.OnDamaged(Owner, Data.damage);
                 }
 
-                Room.LeaveRoom(Id);
+                Room.Push(Room.LeaveRoom, Id);
             }
         }
         public void SetDir(Dir dir)

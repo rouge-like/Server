@@ -15,6 +15,8 @@ namespace Server.Contents
 
         Dictionary<int, Player> _players = new Dictionary<int, Player>();
         Dictionary<int, Projectile> _projectiles = new Dictionary<int, Projectile>();
+        Dictionary<int, Area> _areas = new Dictionary<int, Area>();
+        Dictionary<int, Circler> _circlers = new Dictionary<int, Circler>();
 
         public Zone[,] Zones { get; private set; }
         public int ZoneCells { get; private set; }
@@ -60,42 +62,67 @@ namespace Server.Contents
                 return;
 
             GameObjectType type = ObjectManager.GetObjectTypeById(gameObject.Id);
-            if(type == GameObjectType.Player)
+            Zone zone = GetZone(gameObject.CellPos);
+            if (type == GameObjectType.Player)
             {
                 Player player = gameObject as Player;
                 _players.Add(player.Id, player);
                 player.Room = this;
+                //player.UpdatePassive(1);
+                //player.UpdatePassive(3);
 
                 Map.MoveObject(player, new Vector2Int(player.CellPos.x, player.CellPos.y));
-                GetZone(player.CellPos).Players.Add(player);
+                zone.Players.Add(player);
 
                 {
                     S_EnterGame enterPacket = new S_EnterGame();
                     enterPacket.Player = player.Info;
                     player.Session.Send(enterPacket);
 
+                    player.Vision.Clear();
                     player.Vision.Update();
                 }
             }
-            else if(type == GameObjectType.Projectile)
+            else if (type == GameObjectType.Projectile)
             {
                 Projectile projectile = gameObject as Projectile;
                 _projectiles.Add(projectile.Id, projectile);
                 projectile.Room = this;
 
-                GetZone(projectile.CellPos).Projectiles.Add(projectile);
+                zone.Projectiles.Add(projectile);
 
                 projectile.Update();
             }
-            else if(type == GameObjectType.Monster)
+            else if (type == GameObjectType.Area)
             {
-                    
-            }
+                Area area = gameObject as Area;
+                _areas.Add(area.Id, area);
+                area.Room = this;
 
+                zone.Areas.Add(area);
+
+                area.Init();
+
+            }
+            else if (type == GameObjectType.Circler)
             {
-                S_Spawn spawnPacket = new S_Spawn();
-                spawnPacket.Objects.Add(gameObject.Info);
-                Broadcast(gameObject.CellPos, spawnPacket);
+                Circler circler = gameObject as Circler;
+                _circlers.Add(circler.Id, circler);
+                circler.Room = this;
+
+                zone.Circlers.Add(circler);
+
+                circler.Update();
+            }
+            else if (type == GameObjectType.Monster)
+            {
+
+            }
+            {
+                foreach (Player p in zone.FindAll())
+                {
+                    p.Vision.UpdateImmediately();
+                }
             }
         }
 
@@ -129,15 +156,37 @@ namespace Server.Contents
                 Map.LeaveObject(projectile);
                 projectile.Room = null;
             }
+            else if (type == GameObjectType.Area)
+            {
+                Area area = null;
+                if (_areas.Remove(objectId, out area) == false)
+                    return;
+
+                cellPos = area.CellPos;
+                GetZone(area.CellPos).Remove(area);
+                area.Room = null;
+                
+            }
+            else if (type == GameObjectType.Circler)
+            {
+                Circler circler = null;
+                if (_circlers.Remove(objectId, out circler) == false)
+                    return;
+
+                cellPos = circler.CellPos;
+                GetZone(circler.CellPos).Remove(circler);
+                circler.Room = null;
+            }
             else
             {
                 return;
             }
 
-            {
-                S_Despawn despawnPacket = new S_Despawn();
-                despawnPacket.ObjectIds.Add(objectId);
-                Broadcast(cellPos, despawnPacket);
+            {                
+                foreach (Player p in GetZone(cellPos).FindAll())
+                {
+                    p.Vision.UpdateImmediately();
+                }
             }
         }
         public GameObject Find(int objectId)
@@ -174,6 +223,8 @@ namespace Server.Contents
                 info.PosInfo = movePacket.PosInfo;
                 s_MovePacket.ObjectId = player.Info.ObjectId;
                 s_MovePacket.PosInfo = movePacket.PosInfo;
+                foreach (Circler circler in player.Drones)
+                    circler.UpdateByPlayer();
 
                 Console.WriteLine($"{player.Info.Name} : Move to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {s_MovePacket.PosInfo.Dir}");
             }
@@ -182,6 +233,7 @@ namespace Server.Contents
                 s_MovePacket.ObjectId = player.Info.ObjectId;
                 s_MovePacket.PosInfo = player.Info.PosInfo;
                 s_MovePacket.PosInfo.State = State.Idle;
+                s_MovePacket.PosInfo.Dir = movePacket.PosInfo.Dir;
 
                 Console.WriteLine($"{player.Info.Name} : Stay to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {player.Info.PosInfo.Dir}");
             }
@@ -241,7 +293,7 @@ namespace Server.Contents
                         break;
                     case SkillType.SkillArea:
                         {
-
+                            
                         }
                         break;
                 }
@@ -261,7 +313,6 @@ namespace Server.Contents
 
                     if (Math.Abs(dx) > VisionCells || Math.Abs(dy) > VisionCells)
                         continue;
-
                     p.Session.Send(packet);
                 }
             }

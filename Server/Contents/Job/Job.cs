@@ -4,9 +4,10 @@ using System.Text;
 
 namespace Server.Contents
 {
-    public interface IJob
+    public abstract class IJob
     {
-        void Excute();
+        public abstract void Excute();
+        public bool Cancel { get; set; }
     }
     public class Job : IJob
     {
@@ -15,9 +16,10 @@ namespace Server.Contents
         {
             _action = action;
         }
-        public void Excute()
+        public override void Excute()
         {
-            _action.Invoke();
+            if(Cancel == false)
+                _action.Invoke();
         }
     }
     public class Job<T> : IJob
@@ -29,9 +31,10 @@ namespace Server.Contents
             _action = action;
             _t = t;
         }
-        public void Excute()
+        public override void Excute()
         {
-            _action.Invoke(_t);
+            if (Cancel == false)
+                _action.Invoke(_t);
         }
     }
     public class Job<T1,T2> : IJob
@@ -45,9 +48,10 @@ namespace Server.Contents
             _t1 = t1;
             _t2 = t2;
         }
-        public void Excute()
+        public override void Excute()
         {
-            _action.Invoke(_t1,_t2);
+            if (Cancel == false)
+                _action.Invoke(_t1,_t2);
         }
     }
     public class Job<T1, T2, T3> : IJob
@@ -63,9 +67,10 @@ namespace Server.Contents
             _t2 = t2;
             _t3 = t3;
         }
-        public void Excute()
+        public override void Excute()
         {
-            _action.Invoke(_t1, _t2, _t3);
+            if (Cancel == false)
+                _action.Invoke(_t1, _t2, _t3);
         }
     }
 }

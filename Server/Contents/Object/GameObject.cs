@@ -24,6 +24,7 @@ namespace Server.Contents
 		public StatInfo StatInfo { get { return Info.StatInfo; } set { Info.StatInfo = value; } }
 
 
+		public virtual void Update() { }
 
 		public Vector2Int CellPos
 		{
@@ -81,6 +82,9 @@ namespace Server.Contents
 
 		public virtual void OnDamaged(GameObject attacker ,int damage)
         {
+			if (Room == null)
+				return;
+
 			StatInfo.Hp -= damage;
 			StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
 
@@ -95,9 +99,37 @@ namespace Server.Contents
             }
 
         }
+		protected bool _onDead = false;
 		public virtual void OnDead(GameObject attacker)
         {
+			if (Room == null)
+				return;
+			if (_onDead)
+				return;
+
+			S_Die packet = new S_Die();
+			packet.ObjectId = Id;
+			packet.AttackerId = attacker.Id;
+			Room.Broadcast(CellPos, packet);
             Console.WriteLine($"{Id} DEAD");
+			_onDead = true;
+
+			Room.PushAfter(2000, Respone);
         }
+
+		public void Respone()
+		{
+			_onDead = false;
+			if (Room == null)
+				return;
+
+			Room room = Room;
+			room.LeaveRoom(Id);
+
+			StatInfo.Hp = StatInfo.MaxHp;
+			PosInfo = new PosInfo();
+
+			room.EnterRoom(this);
+		}
 	}
 }

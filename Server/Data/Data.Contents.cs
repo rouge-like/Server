@@ -33,6 +33,7 @@ namespace Server.Data
 		public SkillType skillType;
 		public ProjectileInfo projectile;
 		public AreaInfo area;
+		public CircleInfo circle;
 
     }
 
@@ -49,6 +50,11 @@ namespace Server.Data
 		public List<List<int>> posList;
     }
 
+	public class CircleInfo
+	{
+		public int len;
+		public List<List<int>> posList;
+	}
 	[Serializable]
 	public class SkillData : ILoader<int, Skill>
 	{
