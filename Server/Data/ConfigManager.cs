@@ -16,7 +16,7 @@ namespace Server.Data
 
         public static void LoadConfig()
         {
-            string txt = File.ReadAllText("config.json");
+            string txt = File.ReadAllText("../../../Data/config.json");
             Config =  Newtonsoft.Json.JsonConvert.DeserializeObject<ServerConfig>(txt);
         }
     }

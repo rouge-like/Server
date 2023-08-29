@@ -44,7 +44,7 @@ namespace Server
 			// DNS (Domain Name System)
 			string host = Dns.GetHostName();
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
-			IPAddress ipAddr = ipHost.AddressList[1];
+			IPAddress ipAddr = ipHost.AddressList[3];
 			IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
@@ -61,7 +61,7 @@ namespace Server
 
             while (true)
             {
-
+				Thread.Sleep(1);
             }
 		}
 	}

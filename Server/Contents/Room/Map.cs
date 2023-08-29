@@ -48,6 +48,25 @@ namespace Server.Contents
             return new Vector2Int(a.x + b.x, a.y + b.y);
         }
     }
+    public struct Vector2
+    {
+        public float x;
+        public float y;
+
+        public Vector2(float x, float y) { this.x = x; this.y = y; }
+        public static Vector2 operator + (Vector2 a, Vector2 b)
+        {
+            return new Vector2(a.x + b.x, a.y + b.y);
+        }
+        public static Vector2 operator - (Vector2 a, Vector2 b)
+        {
+            return new Vector2(a.x - b.x, a.y - b.y);
+        }
+        public static float operator * (Vector2 a, Vector2 b)
+        {
+            return (a.x * b.y) - (a.y * b.x);
+        }
+    }
     public class Map
     {
         public Room Room { get; set; }
