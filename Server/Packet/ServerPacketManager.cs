@@ -19,6 +19,8 @@ class PacketManager
 	public Action<PacketSession, IMessage, ushort> CustomHandler { get; set;}	
 	public void Register()
 	{		
+		_onRecv.Add((ushort)MsgId.CPong, MakePacket<C_Pong>);
+		_handler.Add((ushort)MsgId.CPong, PacketHandler.C_PongHandler);		
 		_onRecv.Add((ushort)MsgId.CMove, MakePacket<C_Move>);
 		_handler.Add((ushort)MsgId.CMove, PacketHandler.C_MoveHandler);		
 		_onRecv.Add((ushort)MsgId.CSkill, MakePacket<C_Skill>);

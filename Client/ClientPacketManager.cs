@@ -27,6 +27,8 @@ class PacketManager
 		_handler.Add((ushort)MsgId.SSpawn, PacketHandler.S_SpawnHandler);		
 		_onRecv.Add((ushort)MsgId.SDespawn, MakePacket<S_Despawn>);
 		_handler.Add((ushort)MsgId.SDespawn, PacketHandler.S_DespawnHandler);		
+		_onRecv.Add((ushort)MsgId.SPing, MakePacket<S_Ping>);
+		_handler.Add((ushort)MsgId.SPing, PacketHandler.S_PingHandler);		
 		_onRecv.Add((ushort)MsgId.SMove, MakePacket<S_Move>);
 		_handler.Add((ushort)MsgId.SMove, PacketHandler.S_MoveHandler);		
 		_onRecv.Add((ushort)MsgId.SSkill, MakePacket<S_Skill>);
