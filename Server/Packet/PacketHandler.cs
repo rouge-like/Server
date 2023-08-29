@@ -59,4 +59,10 @@ class PacketHandler
         ClientSession clientSession = (ClientSession)session;
         clientSession.HandlePong();
     }
+
+    public static void C_MoveFloatHandler(PacketSession session, IMessage packet)
+    {
+        ClientSession clientSession = (ClientSession)session;
+        C_MoveFloat c_move = (C_MoveFloat)packet;
+    }
 }
