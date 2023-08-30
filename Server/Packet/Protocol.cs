@@ -55,9 +55,10 @@ namespace Google.Protobuf.Protocol {
             "VBADEgsKB1VQUklHSFQQBBIKCgZVUExFRlQQBRINCglET1dOUklHSFQQBhIM",
             "CghET1dOTEVGVBAHKmYKDkdhbWVPYmplY3RUeXBlEggKBE5PTkUQABIKCgZQ",
             "TEFZRVIQARILCgdNT05TVEVSEAISDgoKUFJPSkVDVElMRRADEggKBEFSRUEQ",
-            "BBIKCgZUUklHT04QBRILCgdDSVJDTEVSEAYqQQoJU2tpbGxUeXBlEg4KClNL",
+            "BBIKCgZUUklHT04QBRILCgdDSVJDTEVSEAYqZgoJU2tpbGxUeXBlEg4KClNL",
             "SUxMX05PTkUQABIUChBTS0lMTF9QUk9KRUNUSUxFEAESDgoKU0tJTExfQVJF",
-            "QRACQhuqAhhHb29nbGUuUHJvdG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
+            "QRACEhEKDVNLSUxMX0NJUkNMRVIQAxIQCgxTS0lMTF9UUklHT04QBEIbqgIY",
+            "R29vZ2xlLlByb3RvYnVmLlByb3RvY29sYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -134,6 +135,8 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("SKILL_NONE")] SkillNone = 0,
     [pbr::OriginalName("SKILL_PROJECTILE")] SkillProjectile = 1,
     [pbr::OriginalName("SKILL_AREA")] SkillArea = 2,
+    [pbr::OriginalName("SKILL_CIRCLER")] SkillCircler = 3,
+    [pbr::OriginalName("SKILL_TRIGON")] SkillTrigon = 4,
   }
 
   #endregion
