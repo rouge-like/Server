@@ -10,7 +10,7 @@ namespace Server.Contents
     {
         public ClientSession Session { get; set; }
         public VisionCube Vision { get; private set; }
-        public HashSet<Circler> Drones { get; set; } = new HashSet<Circler>();
+        public Dictionary<int, Trigon> Drones { get; set; } = new Dictionary<int, Trigon>();
 
         public Player()
         {
@@ -72,7 +72,7 @@ namespace Server.Contents
                             if (circler.PosInfo.PosX < 0 || circler.PosInfo.PosX >= Room.Map.SizeX || circler.PosInfo.PosY < 0 || circler.PosInfo.PosY >= Room.Map.SizeY)
                                 return;
 
-                            Drones.Add(circler);
+                            //Drones.Add(circler);
                             Room.Push(Room.EnterRoom, circler);
                         }
                         break;

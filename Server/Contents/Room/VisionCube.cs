@@ -63,6 +63,15 @@ namespace Server.Contents
                         continue;
                     objects.Add(circler);
                 }
+                foreach(Trigon trigon in zone.Trigons)
+                {
+                    int dx = trigon.CellPos.x - pos.x;
+                    int dy = trigon.CellPos.y - pos.y;
+
+                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
+                        continue;
+                    objects.Add(trigon);
+                }
             }
 
             return objects;
@@ -87,7 +96,8 @@ namespace Server.Contents
                     spawnPacket.Objects.Add(info);
                 }
 
-                Owner.Session.Send(spawnPacket);
+                if(Owner.Session != null)
+                    Owner.Session.Send(spawnPacket);
             }
 
             List<GameObject> removed = PreviousObjects.Except(currentObjects).ToList();
@@ -99,8 +109,8 @@ namespace Server.Contents
                 {
                     despawnPacket.ObjectIds.Add(go.Id);
                 }
-
-                Owner.Session.Send(despawnPacket);
+                if(Owner.Session != null)
+                    Owner.Session.Send(despawnPacket);
             }
 
             PreviousObjects = currentObjects;
@@ -130,7 +140,8 @@ namespace Server.Contents
                     spawnPacket.Objects.Add(info);
                 }
 
-                Owner.Session.Send(spawnPacket);
+                if(Owner.Session != null)
+                    Owner.Session.Send(spawnPacket);
             }
 
             List<GameObject> removed = PreviousObjects.Except(currentObjects).ToList();
@@ -142,9 +153,9 @@ namespace Server.Contents
                 {
                     despawnPacket.ObjectIds.Add(go.Id);
                 }
-
-                Owner.Session.Send(despawnPacket);
-            }
+                if(Owner.Session != null)
+                    Owner.Session.Send(despawnPacket);
+            }   
 
             PreviousObjects = currentObjects;
             _job = Owner.Room.PushAfter(300, Update);

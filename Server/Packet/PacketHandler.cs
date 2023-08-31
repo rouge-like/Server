@@ -64,5 +64,18 @@ class PacketHandler
     {
         ClientSession clientSession = (ClientSession)session;
         C_MoveFloat c_move = (C_MoveFloat)packet;
+
+        Player myPlayer = clientSession.MyPlayer;
+        foreach (Trigon t in myPlayer.Drones.Values)
+            t.Update();
+    }
+
+    public static void C_EquipHandler(PacketSession session, IMessage packet)
+    {
+        ClientSession clientSession = (ClientSession)session;
+        C_Equip c_equip = (C_Equip)packet;
+
+        Player myPlayer = clientSession.MyPlayer;
+        
     }
 }

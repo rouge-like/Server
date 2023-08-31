@@ -17,6 +17,7 @@ namespace Server.Contents
         Dictionary<int, Projectile> _projectiles = new Dictionary<int, Projectile>();
         Dictionary<int, Area> _areas = new Dictionary<int, Area>();
         Dictionary<int, Circler> _circlers = new Dictionary<int, Circler>();
+        Dictionary<int, Trigon> _trigons = new Dictionary<int, Trigon>();
 
         public Zone[,] Zones { get; private set; }
         public int ZoneCells { get; private set; }
@@ -49,6 +50,21 @@ namespace Server.Contents
                 }
             }
 
+            Player DummyPlayer = ObjectManager.Instance.Add<Player>();
+            {
+                DummyPlayer.Info.Name = $"Player_{DummyPlayer.Info.ObjectId}";
+                DummyPlayer.Info.PosInfo = new PosInfo();
+
+                StatInfo stat = null;
+                DataManager.StatDict.TryGetValue(1, out stat);
+                DummyPlayer.StatInfo.MergeFrom(stat);
+
+                DummyPlayer.Session = null;
+            }
+            EnterRoom(DummyPlayer);
+            Map.MoveObject(DummyPlayer, new Vector2Int(10, 0));
+            foreach (Trigon t in DummyPlayer.Drones.Values)
+                t.Update();
         }
 
         public void Update()
@@ -71,13 +87,28 @@ namespace Server.Contents
                 //player.UpdatePassive(1);
                 //player.UpdatePassive(3);
 
+                Trigon t = ObjectManager.Instance.Add<Trigon>();
+                t.Owner = player;
+                t.Room = this;
+                t.Info.Name = player.Id.ToString();
+                S_Equip packet = new S_Equip();
+                packet.ObjectId = t.Id;
+                packet.PlayerId = player.Id;
+
+                EnterRoom(t);
+                Broadcast(player.CellPos, packet);
+
+                player.Drones.Add(t.Id, t);
+
                 Map.MoveObject(player, new Vector2Int(player.CellPos.x, player.CellPos.y));
                 zone.Players.Add(player);
 
+                if(player.Session != null)
                 {
                     S_EnterGame enterPacket = new S_EnterGame();
                     enterPacket.Player = player.Info;
                     player.Session.Send(enterPacket);
+                    player.Session.Send(packet);
 
                     player.Vision.Clear();
                     player.Vision.Update();
@@ -114,6 +145,14 @@ namespace Server.Contents
 
                 circler.Update();
             }
+            else if (type == GameObjectType.Trigon)
+            {
+                Trigon trigon = gameObject as Trigon;
+                _trigons.Add(trigon.Id, trigon);
+                trigon.Room = this;
+
+                zone.Trigons.Add(trigon);
+            }
             else if (type == GameObjectType.Monster)
             {
 
@@ -140,6 +179,10 @@ namespace Server.Contents
                 cellPos = player.CellPos;
                 Map.LeaveObject(player);
                 player.Room = null;
+                foreach(Trigon t in player.Drones.Values)
+                {
+                    t.Destroy();
+                }
 
                 {
                     S_LeaveGame leavePacket = new S_LeaveGame();
@@ -176,6 +219,16 @@ namespace Server.Contents
                 cellPos = circler.CellPos;
                 GetZone(circler.CellPos).Remove(circler);
                 circler.Room = null;
+            }
+            else if (type == GameObjectType.Trigon)
+            {
+                Trigon trigon = null;
+                if (_trigons.Remove(objectId, out trigon) == false)
+                    return;
+
+                cellPos = trigon.CellPos;
+                GetZone(trigon.CellPos).Remove(trigon);
+                trigon.Room = null;
             }
             else
             {
@@ -223,8 +276,8 @@ namespace Server.Contents
                 info.PosInfo = movePacket.PosInfo;
                 s_MovePacket.ObjectId = player.Info.ObjectId;
                 s_MovePacket.PosInfo = movePacket.PosInfo;
-                foreach (Circler circler in player.Drones)
-                    circler.UpdateByPlayer();
+                //foreach (Circler circler in player.Drones)
+                    //circler.UpdateByPlayer();
 
                 Console.WriteLine($"{player.Info.Name} : Move to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {s_MovePacket.PosInfo.Dir}");
             }
@@ -313,7 +366,8 @@ namespace Server.Contents
 
                     if (Math.Abs(dx) > VisionCells || Math.Abs(dy) > VisionCells)
                         continue;
-                    p.Session.Send(packet);
+                    if(p.Session != null)
+                        p.Session.Send(packet);
                 }
             }
         }

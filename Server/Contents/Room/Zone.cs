@@ -14,6 +14,7 @@ namespace Server.Contents
         public HashSet<Projectile> Projectiles { get; set; } = new HashSet<Projectile>();
         public HashSet<Area> Areas { get; set; } = new HashSet<Area>();
         public HashSet<Circler> Circlers { get; set; } = new HashSet<Circler>();
+        public HashSet<Trigon> Trigons { get; set; } = new HashSet<Trigon>();
 
         public Zone(int x, int y)
         {
@@ -40,6 +41,9 @@ namespace Server.Contents
                     break;
                 case GameObjectType.Circler:
                     Circlers.Remove((Circler)go);
+                    break;
+                case GameObjectType.Trigon:
+                    Trigons.Remove((Trigon)go);
                     break;
             }
 
