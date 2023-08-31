@@ -116,8 +116,7 @@ namespace Server.Contents
             AfterX = (float)(Math.Cos((_deg + Speed) * 2 * pi / 360) * R);
             AfterY = (float)(Math.Sin((_deg + Speed) * 2 * pi / 360) * R);
             S_MoveFloat packet = new S_MoveFloat();
-			packet.X = ownerX + X;
-			packet.Y = ownerY + Y;
+			packet.Degree = _deg;
 
 			Room.Push(Room.Broadcast, Owner.CellPos, packet);
 
