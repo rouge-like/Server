@@ -45,20 +45,23 @@ namespace Google.Protobuf.Protocol {
             "KAUiNQoLU19Nb3ZlRmxvYXQSEAoIb2JqZWN0SWQYASABKAUSCQoBeBgCIAEo",
             "AhIJCgF5GAMgASgCIiMKC0NfTW92ZUZsb2F0EgkKAXgYASABKAISCQoBeRgC",
             "IAEoAiItCgVTX0RpZRIQCghvYmplY3RJZBgBIAEoBRISCgphdHRhY2tlcklk",
-            "GAIgASgFKtEBCgVNc2dJZBIQCgxTX0VOVEVSX0dBTUUQABIQCgxTX0xFQVZF",
-            "X0dBTUUQARILCgdTX1NQQVdOEAISDQoJU19ERVNQQVdOEAMSCgoGU19QSU5H",
-            "EAQSCgoGQ19QT05HEAUSCgoGU19NT1ZFEAYSCgoGQ19NT1ZFEAcSCwoHU19T",
-            "S0lMTBAIEgsKB0NfU0tJTEwQCRIPCgtTX0NIQU5HRV9IUBAKEhAKDFNfTU9W",
-            "RV9GTE9BVBALEhAKDENfTU9WRV9GTE9BVBAMEgkKBVNfRElFEA0qNAoFU3Rh",
-            "dGUSCAoESWRsZRAAEgoKBk1vdmluZxABEgoKBkF0dGFjaxACEgkKBVNraWxs",
-            "EAMqYgoDRGlyEgYKAlVQEAASCAoERE9XThABEgkKBVJJR0hUEAISCAoETEVG",
-            "VBADEgsKB1VQUklHSFQQBBIKCgZVUExFRlQQBRINCglET1dOUklHSFQQBhIM",
-            "CghET1dOTEVGVBAHKmYKDkdhbWVPYmplY3RUeXBlEggKBE5PTkUQABIKCgZQ",
-            "TEFZRVIQARILCgdNT05TVEVSEAISDgoKUFJPSkVDVElMRRADEggKBEFSRUEQ",
-            "BBIKCgZUUklHT04QBRILCgdDSVJDTEVSEAYqZgoJU2tpbGxUeXBlEg4KClNL",
-            "SUxMX05PTkUQABIUChBTS0lMTF9QUk9KRUNUSUxFEAESDgoKU0tJTExfQVJF",
-            "QRACEhEKDVNLSUxMX0NJUkNMRVIQAxIQCgxTS0lMTF9UUklHT04QBEIbqgIY",
-            "R29vZ2xlLlByb3RvYnVmLlByb3RvY29sYgZwcm90bzM="));
+            "GAIgASgFIlUKC1NfSGl0VHJpZ29uEhEKCXRyaWdvbjFJZBgBIAEoBRIRCgl0",
+            "cmlnb24ySWQYAiABKAUSDwoHYXR0YWNrMRgDIAEoBRIPCgdhdHRhY2syGAQg",
+            "ASgFKuMBCgVNc2dJZBIQCgxTX0VOVEVSX0dBTUUQABIQCgxTX0xFQVZFX0dB",
+            "TUUQARILCgdTX1NQQVdOEAISDQoJU19ERVNQQVdOEAMSCgoGU19QSU5HEAQS",
+            "CgoGQ19QT05HEAUSCgoGU19NT1ZFEAYSCgoGQ19NT1ZFEAcSCwoHU19TS0lM",
+            "TBAIEgsKB0NfU0tJTEwQCRIPCgtTX0NIQU5HRV9IUBAKEhAKDFNfTU9WRV9G",
+            "TE9BVBALEhAKDENfTU9WRV9GTE9BVBAMEgkKBVNfRElFEA0SEAoMU19ISVRf",
+            "VFJJR09OEA4qNAoFU3RhdGUSCAoESWRsZRAAEgoKBk1vdmluZxABEgoKBkF0",
+            "dGFjaxACEgkKBVNraWxsEAMqYgoDRGlyEgYKAlVQEAASCAoERE9XThABEgkK",
+            "BVJJR0hUEAISCAoETEVGVBADEgsKB1VQUklHSFQQBBIKCgZVUExFRlQQBRIN",
+            "CglET1dOUklHSFQQBhIMCghET1dOTEVGVBAHKmYKDkdhbWVPYmplY3RUeXBl",
+            "EggKBE5PTkUQABIKCgZQTEFZRVIQARILCgdNT05TVEVSEAISDgoKUFJPSkVD",
+            "VElMRRADEggKBEFSRUEQBBIKCgZUUklHT04QBRILCgdDSVJDTEVSEAYqZgoJ",
+            "U2tpbGxUeXBlEg4KClNLSUxMX05PTkUQABIUChBTS0lMTF9QUk9KRUNUSUxF",
+            "EAESDgoKU0tJTExfQVJFQRACEhEKDVNLSUxMX0NJUkNMRVIQAxIQCgxTS0lM",
+            "TF9UUklHT04QBEIbqgIYR29vZ2xlLlByb3RvYnVmLlByb3RvY29sYgZwcm90",
+            "bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -79,7 +82,8 @@ namespace Google.Protobuf.Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_ChangeHp), global::Google.Protobuf.Protocol.S_ChangeHp.Parser, new[]{ "ObjectId", "Hp" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_MoveFloat), global::Google.Protobuf.Protocol.S_MoveFloat.Parser, new[]{ "ObjectId", "X", "Y" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_MoveFloat), global::Google.Protobuf.Protocol.C_MoveFloat.Parser, new[]{ "X", "Y" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Die), global::Google.Protobuf.Protocol.S_Die.Parser, new[]{ "ObjectId", "AttackerId" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Die), global::Google.Protobuf.Protocol.S_Die.Parser, new[]{ "ObjectId", "AttackerId" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_HitTrigon), global::Google.Protobuf.Protocol.S_HitTrigon.Parser, new[]{ "Trigon1Id", "Trigon2Id", "Attack1", "Attack2" }, null, null, null, null)
           }));
     }
     #endregion
@@ -101,6 +105,7 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("S_MOVE_FLOAT")] SMoveFloat = 11,
     [pbr::OriginalName("C_MOVE_FLOAT")] CMoveFloat = 12,
     [pbr::OriginalName("S_DIE")] SDie = 13,
+    [pbr::OriginalName("S_HIT_TRIGON")] SHitTrigon = 14,
   }
 
   public enum State {
@@ -2903,6 +2908,219 @@ namespace Google.Protobuf.Protocol {
           }
           case 16: {
             AttackerId = input.ReadInt32();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class S_HitTrigon : pb::IMessage<S_HitTrigon> {
+    private static readonly pb::MessageParser<S_HitTrigon> _parser = new pb::MessageParser<S_HitTrigon>(() => new S_HitTrigon());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<S_HitTrigon> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Google.Protobuf.Protocol.ProtocolReflection.Descriptor.MessageTypes[18]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public S_HitTrigon() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public S_HitTrigon(S_HitTrigon other) : this() {
+      trigon1Id_ = other.trigon1Id_;
+      trigon2Id_ = other.trigon2Id_;
+      attack1_ = other.attack1_;
+      attack2_ = other.attack2_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public S_HitTrigon Clone() {
+      return new S_HitTrigon(this);
+    }
+
+    /// <summary>Field number for the "trigon1Id" field.</summary>
+    public const int Trigon1IdFieldNumber = 1;
+    private int trigon1Id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Trigon1Id {
+      get { return trigon1Id_; }
+      set {
+        trigon1Id_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "trigon2Id" field.</summary>
+    public const int Trigon2IdFieldNumber = 2;
+    private int trigon2Id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Trigon2Id {
+      get { return trigon2Id_; }
+      set {
+        trigon2Id_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "attack1" field.</summary>
+    public const int Attack1FieldNumber = 3;
+    private int attack1_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Attack1 {
+      get { return attack1_; }
+      set {
+        attack1_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "attack2" field.</summary>
+    public const int Attack2FieldNumber = 4;
+    private int attack2_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Attack2 {
+      get { return attack2_; }
+      set {
+        attack2_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as S_HitTrigon);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(S_HitTrigon other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Trigon1Id != other.Trigon1Id) return false;
+      if (Trigon2Id != other.Trigon2Id) return false;
+      if (Attack1 != other.Attack1) return false;
+      if (Attack2 != other.Attack2) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Trigon1Id != 0) hash ^= Trigon1Id.GetHashCode();
+      if (Trigon2Id != 0) hash ^= Trigon2Id.GetHashCode();
+      if (Attack1 != 0) hash ^= Attack1.GetHashCode();
+      if (Attack2 != 0) hash ^= Attack2.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Trigon1Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Trigon1Id);
+      }
+      if (Trigon2Id != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(Trigon2Id);
+      }
+      if (Attack1 != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Attack1);
+      }
+      if (Attack2 != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(Attack2);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Trigon1Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Trigon1Id);
+      }
+      if (Trigon2Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Trigon2Id);
+      }
+      if (Attack1 != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Attack1);
+      }
+      if (Attack2 != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Attack2);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(S_HitTrigon other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Trigon1Id != 0) {
+        Trigon1Id = other.Trigon1Id;
+      }
+      if (other.Trigon2Id != 0) {
+        Trigon2Id = other.Trigon2Id;
+      }
+      if (other.Attack1 != 0) {
+        Attack1 = other.Attack1;
+      }
+      if (other.Attack2 != 0) {
+        Attack2 = other.Attack2;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Trigon1Id = input.ReadInt32();
+            break;
+          }
+          case 16: {
+            Trigon2Id = input.ReadInt32();
+            break;
+          }
+          case 24: {
+            Attack1 = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            Attack2 = input.ReadInt32();
             break;
           }
         }

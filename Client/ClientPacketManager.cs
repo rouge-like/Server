@@ -38,7 +38,9 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.SMoveFloat, MakePacket<S_MoveFloat>);
 		_handler.Add((ushort)MsgId.SMoveFloat, PacketHandler.S_MoveFloatHandler);		
 		_onRecv.Add((ushort)MsgId.SDie, MakePacket<S_Die>);
-		_handler.Add((ushort)MsgId.SDie, PacketHandler.S_DieHandler);
+		_handler.Add((ushort)MsgId.SDie, PacketHandler.S_DieHandler);		
+		_onRecv.Add((ushort)MsgId.SHitTrigon, MakePacket<S_HitTrigon>);
+		_handler.Add((ushort)MsgId.SHitTrigon, PacketHandler.S_HitTrigonHandler);
 	}
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{
