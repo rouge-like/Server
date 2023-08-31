@@ -40,7 +40,9 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.SDie, MakePacket<S_Die>);
 		_handler.Add((ushort)MsgId.SDie, PacketHandler.S_DieHandler);		
 		_onRecv.Add((ushort)MsgId.SHitTrigon, MakePacket<S_HitTrigon>);
-		_handler.Add((ushort)MsgId.SHitTrigon, PacketHandler.S_HitTrigonHandler);
+		_handler.Add((ushort)MsgId.SHitTrigon, PacketHandler.S_HitTrigonHandler);		
+		_onRecv.Add((ushort)MsgId.SEquip, MakePacket<S_Equip>);
+		_handler.Add((ushort)MsgId.SEquip, PacketHandler.S_EquipHandler);
 	}
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{
