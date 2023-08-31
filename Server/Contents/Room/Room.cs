@@ -63,8 +63,6 @@ namespace Server.Contents
             }
             EnterRoom(DummyPlayer);
             Map.MoveObject(DummyPlayer, new Vector2Int(10, 0));
-            foreach (Trigon t in DummyPlayer.Drones.Values)
-                t.Update();
         }
 
         public void Update()
@@ -152,6 +150,8 @@ namespace Server.Contents
                 trigon.Room = this;
 
                 zone.Trigons.Add(trigon);
+
+                trigon.Update();
             }
             else if (type == GameObjectType.Monster)
             {
@@ -186,7 +186,8 @@ namespace Server.Contents
 
                 {
                     S_LeaveGame leavePacket = new S_LeaveGame();
-                    player.Session.Send(leavePacket);
+                    if(player.Session != null)
+                        player.Session.Send(leavePacket);
                 }
             }
             else if (type == GameObjectType.Projectile)

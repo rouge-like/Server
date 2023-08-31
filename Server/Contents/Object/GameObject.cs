@@ -119,6 +119,7 @@ namespace Server.Contents
 
 		public void Respone()
 		{
+			Random rand = new Random();
 			_onDead = false;
 			if (Room == null)
 				return;
@@ -128,7 +129,10 @@ namespace Server.Contents
 
 			StatInfo.Hp = StatInfo.MaxHp;
 			PosInfo = new PosInfo();
+			PosInfo.PosX = rand.Next(5);
+			PosInfo.PosY = rand.Next(10);
 
+			Console.WriteLine($"Respone {Id} HP {StatInfo.Hp}");
 			room.EnterRoom(this);
 		}
 	}

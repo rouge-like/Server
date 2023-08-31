@@ -12,7 +12,8 @@ namespace Server.Contents
 			ObjectType = GameObjectType.Trigon;
 			R = 3.0f;
 			_deg = 0;
-			Speed = 4.0f;
+			Speed = 15.0f;
+			StatInfo.Attack = 50;
 			_coolTime = false;
 		}
 
@@ -90,9 +91,16 @@ namespace Server.Contents
 							continue;
                         foreach (Trigon t in p.Drones.Values)
                         {
-                            Vector2 d = new Vector2(t.X + t.Owner.PosInfo.PosX, t.Y + t.Owner.PosInfo.PosY);
-							Vector2 pos = new Vector2(t.Owner.PosInfo.PosX, t.Owner.PosInfo.PosY);
-							if(intersection(a, b, pos, d))
+							if (t.Owner == null)
+								continue;
+
+							GameObject t_Owner = t.Owner;
+							GameObject my_Owner = Owner;
+                            Vector2 d = new Vector2(t.X + t_Owner.PosInfo.PosX, t.Y + t_Owner.PosInfo.PosY);
+							Vector2 e = new Vector2(t.AfterX + t_Owner.PosInfo.PosX, t.AfterY + t_Owner.PosInfo.PosY);
+							Vector2 pos = new Vector2(t_Owner.PosInfo.PosX, t_Owner.PosInfo.PosY);
+
+							if(intersection(a, b, pos, d) || intersection(a, c, pos, e))
 							{
 								Console.WriteLine($"{Id} : HIT BY INTERSECTION");
                                 Speed = Speed * -1;
@@ -104,19 +112,27 @@ namespace Server.Contents
 								hit.Trigon1Id = Id;
 								hit.Trigon2Id = t.Id;
 
-								Room.Push(Room.Broadcast, Owner.CellPos, hit);
+                                Room.Push(Room.Broadcast, my_Owner.CellPos, hit);
+
+                                my_Owner.OnDamaged(t_Owner, t.StatInfo.Attack);
+								t_Owner.OnDamaged(my_Owner, StatInfo.Attack);
                             }
                         }
                     }
                 }
             }
 
+			if (Room == null) // Owner 사망시 Room 초기
+				return;
+
 			X = (float)(Math.Cos(_deg * 2 * pi / 360) * R);
 			Y = (float)(Math.Sin(_deg * 2 * pi / 360) * R);
+
             AfterX = (float)(Math.Cos((_deg + Speed) * 2 * pi / 360) * R);
             AfterY = (float)(Math.Sin((_deg + Speed) * 2 * pi / 360) * R);
             S_MoveFloat packet = new S_MoveFloat();
 			packet.Degree = _deg;
+			packet.ObjectId = Id;
 
 			Room.Push(Room.Broadcast, Owner.CellPos, packet);
 
@@ -131,8 +147,6 @@ namespace Server.Contents
 			{
 				_job.Cancel = true;
 				_job = null;
-				Room = null;
-				Owner = null;
 			}
 		}
 
@@ -145,6 +159,9 @@ namespace Server.Contents
 		{
 			if(_coolTime == false)
 			{
+				if (Room == null)
+					return;
+
                 Speed = Speed * -1;
                 _coolTime = true;
                 Room.PushAfter(2000, CoolTimeOver);

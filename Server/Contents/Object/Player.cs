@@ -88,6 +88,11 @@ namespace Server.Contents
 		public override void OnDead(GameObject attacker)
 		{
             base.OnDead(attacker);
+            foreach(Trigon t in Drones.Values)
+            {
+                t.Destroy();
+                Room.LeaveRoom(t.Id);
+            }
             if (_job != null)
             {
                 _job.Cancel = true;
