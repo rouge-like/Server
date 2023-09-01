@@ -93,6 +93,9 @@ namespace Server.Contents
                 t.Destroy();
                 Room.LeaveRoom(t.Id);
             }
+
+            Drones.Clear();
+
             if (_job != null)
             {
                 _job.Cancel = true;

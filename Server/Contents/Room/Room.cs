@@ -179,10 +179,6 @@ namespace Server.Contents
                 cellPos = player.CellPos;
                 Map.LeaveObject(player);
                 player.Room = null;
-                foreach(Trigon t in player.Drones.Values)
-                {
-                    t.Destroy();
-                }
 
                 {
                     S_LeaveGame leavePacket = new S_LeaveGame();

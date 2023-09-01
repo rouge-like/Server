@@ -12,7 +12,7 @@ namespace Server.Contents
 			ObjectType = GameObjectType.Trigon;
 			R = 3.0f;
 			_deg = 0;
-			Speed = 15.0f;
+			Speed = 75.0f;
 			StatInfo.Attack = 50;
 			_coolTime = false;
 		}
@@ -55,6 +55,8 @@ namespace Server.Contents
 
 		public override void Update()
 		{
+			if (Room == null)
+				return;
 			if (Owner == null || Owner.Room == null)
 				return;
 
@@ -116,6 +118,8 @@ namespace Server.Contents
 
                                 my_Owner.OnDamaged(t_Owner, t.StatInfo.Attack);
 								t_Owner.OnDamaged(my_Owner, StatInfo.Attack);
+
+								break;
                             }
                         }
                     }
@@ -138,13 +142,13 @@ namespace Server.Contents
 
             if (_deg > 360)
                 _deg -= 360;
-			Console.WriteLine($"{Id} : {X},{Y}");
-            _job = Room.PushAfter(100, Update);
+            _job = Room.PushAfter(500, Update);
 		}
 		public void Destroy()
 		{
 			if(_job != null)
 			{
+                Console.WriteLine("Cancel Job");
 				_job.Cancel = true;
 				_job = null;
 			}
