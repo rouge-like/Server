@@ -42,26 +42,27 @@ namespace Google.Protobuf.Protocol {
             "Zm8SDQoFbGV2ZWwYASABKAUSCgoCaHAYAiABKAUSDQoFbWF4SHAYAyABKAUS",
             "DgoGYXR0YWNrGAQgASgFEg0KBXNwZWVkGAUgASgCEhAKCHRvdGFsRXhwGAYg",
             "ASgFIioKClNfQ2hhbmdlSHASEAoIb2JqZWN0SWQYASABKAUSCgoCaHAYAiAB",
-            "KAUiLwoLU19Nb3ZlRmxvYXQSEAoIb2JqZWN0SWQYASABKAUSDgoGZGVncmVl",
-            "GAIgASgCIi0KBVNfRGllEhAKCG9iamVjdElkGAEgASgFEhIKCmF0dGFja2Vy",
-            "SWQYAiABKAUiVQoLU19IaXRUcmlnb24SEQoJdHJpZ29uMUlkGAEgASgFEhEK",
-            "CXRyaWdvbjJJZBgCIAEoBRIPCgdhdHRhY2sxGAMgASgFEg8KB2F0dGFjazIY",
-            "BCABKAUiLQoHU19FcXVpcBIQCghvYmplY3RJZBgBIAEoBRIQCghwbGF5ZXJJ",
-            "ZBgCIAEoBSIbCgdDX0VxdWlwEhAKCG9iamVjdElkGAEgASgFKusBCgVNc2dJ",
-            "ZBIQCgxTX0VOVEVSX0dBTUUQABIQCgxTX0xFQVZFX0dBTUUQARILCgdTX1NQ",
-            "QVdOEAISDQoJU19ERVNQQVdOEAMSCgoGU19QSU5HEAQSCgoGQ19QT05HEAUS",
-            "CgoGU19NT1ZFEAYSCgoGQ19NT1ZFEAcSCwoHU19TS0lMTBAIEgsKB0NfU0tJ",
-            "TEwQCRIPCgtTX0NIQU5HRV9IUBAKEhAKDFNfTU9WRV9GTE9BVBALEgkKBVNf",
-            "RElFEAwSEAoMU19ISVRfVFJJR09OEA0SCwoHU19FUVVJUBAOEgsKB0NfRVFV",
-            "SVAQDyo0CgVTdGF0ZRIICgRJZGxlEAASCgoGTW92aW5nEAESCgoGQXR0YWNr",
-            "EAISCQoFU2tpbGwQAypiCgNEaXISBgoCVVAQABIICgRET1dOEAESCQoFUklH",
-            "SFQQAhIICgRMRUZUEAMSCwoHVVBSSUdIVBAEEgoKBlVQTEVGVBAFEg0KCURP",
-            "V05SSUdIVBAGEgwKCERPV05MRUZUEAcqZgoOR2FtZU9iamVjdFR5cGUSCAoE",
-            "Tk9ORRAAEgoKBlBMQVlFUhABEgsKB01PTlNURVIQAhIOCgpQUk9KRUNUSUxF",
-            "EAMSCAoEQVJFQRAEEgoKBlRSSUdPThAFEgsKB0NJUkNMRVIQBipmCglTa2ls",
-            "bFR5cGUSDgoKU0tJTExfTk9ORRAAEhQKEFNLSUxMX1BST0pFQ1RJTEUQARIO",
-            "CgpTS0lMTF9BUkVBEAISEQoNU0tJTExfQ0lSQ0xFUhADEhAKDFNLSUxMX1RS",
-            "SUdPThAEQhuqAhhHb29nbGUuUHJvdG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
+            "KAUiPAoLU19Nb3ZlRmxvYXQSEAoIb2JqZWN0SWQYASABKAUSDgoGZGVncmVl",
+            "GAIgASgCEgsKA0RpchgDIAEoCCItCgVTX0RpZRIQCghvYmplY3RJZBgBIAEo",
+            "BRISCgphdHRhY2tlcklkGAIgASgFIlUKC1NfSGl0VHJpZ29uEhEKCXRyaWdv",
+            "bjFJZBgBIAEoBRIRCgl0cmlnb24ySWQYAiABKAUSDwoHYXR0YWNrMRgDIAEo",
+            "BRIPCgdhdHRhY2syGAQgASgFIi0KB1NfRXF1aXASEAoIb2JqZWN0SWQYASAB",
+            "KAUSEAoIcGxheWVySWQYAiABKAUiGwoHQ19FcXVpcBIQCghvYmplY3RJZBgB",
+            "IAEoBSrrAQoFTXNnSWQSEAoMU19FTlRFUl9HQU1FEAASEAoMU19MRUFWRV9H",
+            "QU1FEAESCwoHU19TUEFXThACEg0KCVNfREVTUEFXThADEgoKBlNfUElORxAE",
+            "EgoKBkNfUE9ORxAFEgoKBlNfTU9WRRAGEgoKBkNfTU9WRRAHEgsKB1NfU0tJ",
+            "TEwQCBILCgdDX1NLSUxMEAkSDwoLU19DSEFOR0VfSFAQChIQCgxTX01PVkVf",
+            "RkxPQVQQCxIJCgVTX0RJRRAMEhAKDFNfSElUX1RSSUdPThANEgsKB1NfRVFV",
+            "SVAQDhILCgdDX0VRVUlQEA8qNAoFU3RhdGUSCAoESWRsZRAAEgoKBk1vdmlu",
+            "ZxABEgoKBkF0dGFjaxACEgkKBVNraWxsEAMqYgoDRGlyEgYKAlVQEAASCAoE",
+            "RE9XThABEgkKBVJJR0hUEAISCAoETEVGVBADEgsKB1VQUklHSFQQBBIKCgZV",
+            "UExFRlQQBRINCglET1dOUklHSFQQBhIMCghET1dOTEVGVBAHKmYKDkdhbWVP",
+            "YmplY3RUeXBlEggKBE5PTkUQABIKCgZQTEFZRVIQARILCgdNT05TVEVSEAIS",
+            "DgoKUFJPSkVDVElMRRADEggKBEFSRUEQBBIKCgZUUklHT04QBRILCgdDSVJD",
+            "TEVSEAYqZgoJU2tpbGxUeXBlEg4KClNLSUxMX05PTkUQABIUChBTS0lMTF9Q",
+            "Uk9KRUNUSUxFEAESDgoKU0tJTExfQVJFQRACEhEKDVNLSUxMX0NJUkNMRVIQ",
+            "AxIQCgxTS0lMTF9UUklHT04QBEIbqgIYR29vZ2xlLlByb3RvYnVmLlByb3Rv",
+            "Y29sYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -80,7 +81,7 @@ namespace Google.Protobuf.Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_Skill), global::Google.Protobuf.Protocol.C_Skill.Parser, new[]{ "Info" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.StatInfo), global::Google.Protobuf.Protocol.StatInfo.Parser, new[]{ "Level", "Hp", "MaxHp", "Attack", "Speed", "TotalExp" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_ChangeHp), global::Google.Protobuf.Protocol.S_ChangeHp.Parser, new[]{ "ObjectId", "Hp" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_MoveFloat), global::Google.Protobuf.Protocol.S_MoveFloat.Parser, new[]{ "ObjectId", "Degree" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_MoveFloat), global::Google.Protobuf.Protocol.S_MoveFloat.Parser, new[]{ "ObjectId", "Degree", "Dir" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Die), global::Google.Protobuf.Protocol.S_Die.Parser, new[]{ "ObjectId", "AttackerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_HitTrigon), global::Google.Protobuf.Protocol.S_HitTrigon.Parser, new[]{ "Trigon1Id", "Trigon2Id", "Attack1", "Attack2" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Equip), global::Google.Protobuf.Protocol.S_Equip.Parser, new[]{ "ObjectId", "PlayerId" }, null, null, null, null),
@@ -2446,6 +2447,7 @@ namespace Google.Protobuf.Protocol {
     public S_MoveFloat(S_MoveFloat other) : this() {
       objectId_ = other.objectId_;
       degree_ = other.degree_;
+      dir_ = other.dir_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -2476,6 +2478,17 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
+    /// <summary>Field number for the "Dir" field.</summary>
+    public const int DirFieldNumber = 3;
+    private bool dir_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Dir {
+      get { return dir_; }
+      set {
+        dir_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as S_MoveFloat);
@@ -2491,6 +2504,7 @@ namespace Google.Protobuf.Protocol {
       }
       if (ObjectId != other.ObjectId) return false;
       if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Degree, other.Degree)) return false;
+      if (Dir != other.Dir) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2499,6 +2513,7 @@ namespace Google.Protobuf.Protocol {
       int hash = 1;
       if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (Degree != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Degree);
+      if (Dir != false) hash ^= Dir.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2520,6 +2535,10 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(21);
         output.WriteFloat(Degree);
       }
+      if (Dir != false) {
+        output.WriteRawTag(24);
+        output.WriteBool(Dir);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -2533,6 +2552,9 @@ namespace Google.Protobuf.Protocol {
       }
       if (Degree != 0F) {
         size += 1 + 4;
+      }
+      if (Dir != false) {
+        size += 1 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2551,6 +2573,9 @@ namespace Google.Protobuf.Protocol {
       if (other.Degree != 0F) {
         Degree = other.Degree;
       }
+      if (other.Dir != false) {
+        Dir = other.Dir;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -2568,6 +2593,10 @@ namespace Google.Protobuf.Protocol {
           }
           case 21: {
             Degree = input.ReadFloat();
+            break;
+          }
+          case 24: {
+            Dir = input.ReadBool();
             break;
           }
         }
