@@ -10,7 +10,7 @@ namespace Server.Contents
 {
     public class Room : JobSerializer
     {
-        public const int VisionCells = 5;
+        public const int VisionCells = 10;
         public int RoomId  { get; set; }
 
         Dictionary<int, Player> _players = new Dictionary<int, Player>();
@@ -18,6 +18,7 @@ namespace Server.Contents
         Dictionary<int, Area> _areas = new Dictionary<int, Area>();
         Dictionary<int, Circler> _circlers = new Dictionary<int, Circler>();
         Dictionary<int, Trigon> _trigons = new Dictionary<int, Trigon>();
+        Dictionary<int, Item> _items = new Dictionary<int, Item>();
 
         public Zone[,] Zones { get; private set; }
         public int ZoneCells { get; private set; }
@@ -27,7 +28,7 @@ namespace Server.Contents
         {
             int x = pos.x / ZoneCells;
             int y = pos.y / ZoneCells;
-
+            
             if (x < 0 || x >= Zones.GetLength(0) || y < 0 || y >= Zones.GetLength(1))
                 return null;
 
@@ -52,7 +53,7 @@ namespace Server.Contents
 
             Player DummyPlayer = ObjectManager.Instance.Add<Player>();
             {
-                DummyPlayer.Info.Name = $"Player_{DummyPlayer.Info.ObjectId}";
+                DummyPlayer.Info.Name = $"DummyPlayer_{DummyPlayer.Info.ObjectId}";
                 DummyPlayer.Info.PosInfo = new PosInfo();
 
                 StatInfo stat = null;
@@ -62,7 +63,6 @@ namespace Server.Contents
                 DummyPlayer.Session = null;
             }
             EnterRoom(DummyPlayer);
-            Map.MoveObject(DummyPlayer, new Vector2Int(10, 0));
         }
 
         public void Update()
@@ -82,35 +82,39 @@ namespace Server.Contents
                 Player player = gameObject as Player;
                 _players.Add(player.Id, player);
                 player.Room = this;
+                player.Init();
+
                 //player.UpdatePassive(1);
                 //player.UpdatePassive(3);
 
-                Trigon t = ObjectManager.Instance.Add<Trigon>();
-                t.Owner = player;
-                t.Room = this;
-                t.Info.Name = player.Id.ToString();
-                S_Equip packet = new S_Equip();
-                packet.ObjectId = t.Id;
-                packet.PlayerId = player.Id;
+                //S_Equip packet = new S_Equip();
+                //packet.ObjectId = t.Id;
+                //packet.PlayerId = player.Id;
 
-                EnterRoom(t);
-                Broadcast(player.CellPos, packet);
+                //Broadcast(player.CellPos, packet);
 
-                player.Drones.Add(t.Id, t);
+                Random rand = new Random();
+                while (true)
+                {
+                    player.PosInfo.PosX = rand.Next(5);
+                    player.PosInfo.PosY = rand.Next(10);
+                    if (Map.CanGo(player.CellPos))
+                        break;
+                }
 
                 Map.MoveObject(player, new Vector2Int(player.CellPos.x, player.CellPos.y));
                 zone.Players.Add(player);
 
-                if(player.Session != null)
+                if (player.Session != null)
                 {
                     S_EnterGame enterPacket = new S_EnterGame();
                     enterPacket.Player = player.Info;
                     player.Session.Send(enterPacket);
-                    player.Session.Send(packet);
-
-                    player.Vision.Clear();
-                    player.Vision.Update();
+                    //player.Session.Send(packet);
                 }
+                player.Vision.Clear();
+                player.Vision.Update();
+                Console.WriteLine($"{player.Info.Name} Spawn in {player.CellPos.x}, {player.CellPos.y}");
             }
             else if (type == GameObjectType.Projectile)
             {
@@ -146,22 +150,32 @@ namespace Server.Contents
             else if (type == GameObjectType.Trigon)
             {
                 Trigon trigon = gameObject as Trigon;
+
+                if (trigon.Owner.PosInfo.State == State.Dead)
+                    return;
+
                 _trigons.Add(trigon.Id, trigon);
                 trigon.Room = this;
-
+                
                 zone.Trigons.Add(trigon);
 
-                trigon.Update();
+                trigon.Init();
             }
             else if (type == GameObjectType.Monster)
             {
 
             }
+            else if (type == GameObjectType.Item)
             {
-                foreach (Player p in zone.FindAll())
-                {
-                    p.Vision.UpdateImmediately();
-                }
+                Item item = gameObject as Item;
+                _items.Add(item.Id, item);
+                item.Room = this;
+
+                zone.Items.Add(item);
+            }
+            foreach (Player p in zone.FindAll())
+            {
+                p.Vision.UpdateImmediately();
             }
         }
 
@@ -171,7 +185,6 @@ namespace Server.Contents
             Vector2Int cellPos;
             if (type == GameObjectType.Player)
             {
-
                 Player player = null;
                 if (_players.Remove(objectId, out player) == false)
                     return;
@@ -226,17 +239,25 @@ namespace Server.Contents
                 cellPos = trigon.CellPos;
                 GetZone(trigon.CellPos).Remove(trigon);
                 trigon.Room = null;
+                trigon.Owner = null;
+            }
+            else if (type == GameObjectType.Item)
+            {
+                Item item = null;
+                if (_items.Remove(objectId, out item) == false)
+                    return;
+
+                cellPos = item.CellPos;
+                GetZone(item.CellPos).Remove(item);
+                item.Room = null;
             }
             else
             {
                 return;
             }
-
-            {                
-                foreach (Player p in GetZone(cellPos).FindAll())
-                {
-                    p.Vision.UpdateImmediately();
-                }
+            foreach (Player p in GetZone(cellPos).FindAll())
+            {
+                p.Vision.UpdateImmediately();
             }
         }
         public GameObject Find(int objectId)
@@ -258,13 +279,17 @@ namespace Server.Contents
             }
             return null;
         }
+
         public void HandleMove(Player player, C_Move movePacket)
         {
             if (player == null)
                 return;          
-
+            
             S_Move s_MovePacket = new S_Move();
             ObjectInfo info = player.Info;
+
+            if (info.PosInfo.State == State.Dead)
+                return;
 
             if (Map.CanGo(new Vector2Int(movePacket.PosInfo.PosX, movePacket.PosInfo.PosY)))
             {
@@ -273,8 +298,10 @@ namespace Server.Contents
                 info.PosInfo = movePacket.PosInfo;
                 s_MovePacket.ObjectId = player.Info.ObjectId;
                 s_MovePacket.PosInfo = movePacket.PosInfo;
-                //foreach (Circler circler in player.Drones)
-                    //circler.UpdateByPlayer();
+                foreach (Trigon t in player.Drones.Values)
+                {
+                    t.MoveByPlayer();
+                }
 
                 Console.WriteLine($"{player.Info.Name} : Move to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {s_MovePacket.PosInfo.Dir}");
             }
@@ -373,7 +400,7 @@ namespace Server.Contents
         {
             HashSet<Zone> zones = new HashSet<Zone>();
 
-            int[] delta = new int[2] { -cells, +cells };
+            int[] delta = new int[3] {0, -cells, +cells };
             foreach(int dy in delta)
             {
                 foreach (int dx in delta)
@@ -387,7 +414,7 @@ namespace Server.Contents
                     zones.Add(zone);
                 }
             }
-
+            
             return zones.ToList();
         }
     }

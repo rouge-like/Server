@@ -36,6 +36,15 @@ namespace Server.Contents
                         continue;
                     objects.Add(player);
                 }
+                foreach(Monster monster in zone.Monsters)
+                {
+                    int dx = monster.CellPos.x - pos.x;
+                    int dy = monster.CellPos.y - pos.y;
+
+                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
+                        continue;
+                    objects.Add(monster);
+                }
                 foreach (Projectile projectile in zone.Projectiles)
                 {
                     int dx = projectile.CellPos.x - pos.x;
@@ -71,6 +80,15 @@ namespace Server.Contents
                     if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
                         continue;
                     objects.Add(trigon);
+                }
+                foreach(Item item in zone.Items)
+                {
+                    int dx = item.CellPos.x - pos.x;
+                    int dy = item.CellPos.y - pos.y;
+
+                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
+                        continue;
+                    objects.Add(item);
                 }
             }
 

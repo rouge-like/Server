@@ -47,6 +47,14 @@ namespace Server.Contents
         {
             return new Vector2Int(a.x + b.x, a.y + b.y);
         }
+        public static bool operator == (Vector2Int a, Vector2Int b)
+        {
+            return (a.x == b.x) && (a.y == b.y);
+        }
+        public static bool operator != (Vector2Int a, Vector2Int b)
+        {
+            return (a.x != b.x) || (a.y != b.y);
+        }
     }
     public struct Vector2
     {

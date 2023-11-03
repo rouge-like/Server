@@ -17,7 +17,29 @@ namespace Server.Contents
             ObjectType = GameObjectType.Player;
             Vision = new VisionCube(this);
         }
+
         IJob _job;
+        public override void Init()
+        {
+            PosInfo.State = State.Idle;
+            StatInfo.Hp = StatInfo.MaxHp;
+            _onDead = false;
+            _isInvincibility = true;
+            Room.PushAfter(3000, AfterInvincibility);
+        }
+        void AfterInvincibility()
+        {
+            _isInvincibility = false;
+
+            Trigon t = ObjectManager.Instance.Add<Trigon>();
+            t.Owner = this;
+            t.Room = Room;
+            t.PosInfo = PosInfo;
+            t.Info.Name = Id.ToString();
+            Drones.Add(t.Id, t);
+
+            Room.Push(Room.EnterRoom, t);
+        }
         public void UpdatePassive(int skillId)
 		{
             if (Room == null)
@@ -40,7 +62,6 @@ namespace Server.Contents
 
                                 if (area == null)
                                     continue;
-
 
                                 area.Owner = this;
                                 area.Data = skillData;
@@ -79,19 +100,49 @@ namespace Server.Contents
                 }        
             }
         }
+        public override void Update()
+        {
+            base.Update();
+        }
+        public void EarnItem(Item item)
+        {
+            Trigon t = ObjectManager.Instance.Add<Trigon>();
+            t.Owner = this;
+            t.Room = Room;
+            t.PosInfo = PosInfo;
+            t.Info.Name = Id.ToString();
+            Drones.Add(t.Id, t);
 
-		public override void OnDamaged(GameObject attacker, int damage)
+            Room.Push(Room.LeaveRoom, item.Id);
+            Room.Push(Room.EnterRoom, t);
+        }
+
+        public override void OnDamaged(GameObject attacker, int damage)
         {
             base.OnDamaged(attacker, damage);
-            Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
         }
+
 		public override void OnDead(GameObject attacker)
 		{
             base.OnDead(attacker);
-            foreach(Trigon t in Drones.Values)
+
+            if (Room == null)
+                return;
+            if (_onDead)
+                return;
+
+            Info.PosInfo.State = State.Dead;
+
+            S_Die packet = new S_Die();
+            packet.ObjectId = Id;
+            packet.AttackerId = attacker.Id;
+            Room.Broadcast(CellPos, packet);
+            Console.WriteLine($"{Id} DEAD");
+            _onDead = true;
+
+            foreach (Trigon t in Drones.Values)
             {
                 t.Destroy();
-                Room.LeaveRoom(t.Id);
             }
 
             Drones.Clear();
@@ -101,6 +152,23 @@ namespace Server.Contents
                 _job.Cancel = true;
                 _job = null;
             }
-		}
-	}
+
+            Item item = ObjectManager.Instance.Add<Item>();
+            item.PosInfo.PosX = PosInfo.PosX;
+            item.PosInfo.PosY = PosInfo.PosY;
+
+            Room.Push(Room.EnterRoom, item);
+
+            Room.PushAfter(2000, Respone);
+        }
+        public override void Respone()
+        {
+            base.Respone();
+ 
+            if (Room == null)
+                return;
+            Room.Push(Room.LeaveRoom, Id);
+            Room.Push(Room.EnterRoom, this);
+        }
+    }
 }

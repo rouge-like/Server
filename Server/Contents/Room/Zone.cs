@@ -11,10 +11,13 @@ namespace Server.Contents
         public int IndexY { get; private set; }
 
         public HashSet<Player> Players { get; set; } = new HashSet<Player>();
+        public HashSet<Monster> Monsters { get; set; } = new HashSet<Monster>();
         public HashSet<Projectile> Projectiles { get; set; } = new HashSet<Projectile>();
         public HashSet<Area> Areas { get; set; } = new HashSet<Area>();
         public HashSet<Circler> Circlers { get; set; } = new HashSet<Circler>();
         public HashSet<Trigon> Trigons { get; set; } = new HashSet<Trigon>();
+        public HashSet<Item> Items { get; set; } = new HashSet<Item>();
+
 
         public Zone(int x, int y)
         {
@@ -32,6 +35,7 @@ namespace Server.Contents
                     Players.Remove((Player)go);
                     break;
                 case GameObjectType.Monster:
+                    Monsters.Remove((Monster)go);
                     break;
                 case GameObjectType.Projectile:
                     Projectiles.Remove((Projectile)go);
@@ -44,6 +48,9 @@ namespace Server.Contents
                     break;
                 case GameObjectType.Trigon:
                     Trigons.Remove((Trigon)go);
+                    break;
+                case GameObjectType.Item:
+                    Items.Remove((Item)go);
                     break;
             }
 
@@ -77,5 +84,6 @@ namespace Server.Contents
             }
             return players;
         }
+
     }
 }

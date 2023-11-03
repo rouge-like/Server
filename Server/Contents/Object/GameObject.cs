@@ -23,7 +23,7 @@ namespace Server.Contents
         public PosInfo PosInfo { get { return Info.PosInfo; } set { Info.PosInfo = value; } }
 		public StatInfo StatInfo { get { return Info.StatInfo; } set { Info.StatInfo = value; } }
 
-
+		public virtual void Init() { }
 		public virtual void Update() { }
 
 		public Vector2Int CellPos
@@ -84,56 +84,33 @@ namespace Server.Contents
         {
 			if (Room == null)
 				return;
-
+			if (_isInvincibility || _onDead)
+				return;
 			StatInfo.Hp -= damage;
 			StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
 
-			S_ChangeHp packet = new S_ChangeHp();
+            Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
+
+            S_ChangeHp packet = new S_ChangeHp();
 			packet.ObjectId = Id;
 			packet.Hp = StatInfo.Hp;
 			Room.Broadcast(CellPos, packet);
 
 			if(StatInfo.Hp <= 0)
             {
-				OnDead(attacker);
+				Room.Push(OnDead, attacker);
             }
 
         }
 		protected bool _onDead = false;
+		protected bool _isInvincibility = false;
 		public virtual void OnDead(GameObject attacker)
         {
-			if (Room == null)
-				return;
-			if (_onDead)
-				return;
-
-			S_Die packet = new S_Die();
-			packet.ObjectId = Id;
-			packet.AttackerId = attacker.Id;
-			Room.Broadcast(CellPos, packet);
-            Console.WriteLine($"{Id} DEAD");
-			_onDead = true;
-
-			Room.PushAfter(2000, Respone);
         }
 
-		public void Respone()
+		public virtual void Respone()
 		{
-			Random rand = new Random();
-			_onDead = false;
-			if (Room == null)
-				return;
 
-			Room room = Room;
-			room.LeaveRoom(Id);
-
-			StatInfo.Hp = StatInfo.MaxHp;
-			PosInfo = new PosInfo();
-			PosInfo.PosX = rand.Next(5);
-			PosInfo.PosY = rand.Next(10);
-
-			Console.WriteLine($"Respone {Id} HP {StatInfo.Hp}");
-			room.EnterRoom(this);
 		}
 	}
 }

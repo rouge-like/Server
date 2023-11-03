@@ -34,7 +34,7 @@ namespace Server.Contents
                 movePakcet.PosInfo = PosInfo;
                 Room.Broadcast(CellPos, movePakcet);
 
-                Console.WriteLine($"Projectile {Id}_Player{Owner.Id} : {PosInfo.PosX}, {PosInfo.PosY} , {PosInfo.Dir}");
+                //Console.WriteLine($"Projectile {Id}_Player{Owner.Id} : {PosInfo.PosX}, {PosInfo.PosY} , {PosInfo.Dir}");
             }
             else
             {

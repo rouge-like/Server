@@ -51,7 +51,7 @@ class PacketHandler
             return;
         }
 
-        room.Push(room.HandleSkill,myPlayer, c_SkillPacket);
+        room.Push(room.HandleSkill, myPlayer, c_SkillPacket);
     }
 
     public static void C_PongHandler(PacketSession session, IMessage packet) 
@@ -66,6 +66,8 @@ class PacketHandler
         C_Equip c_equip = (C_Equip)packet;
 
         Player myPlayer = clientSession.MyPlayer;
+
+        //제거 예정? ㄴ
         
     }
 }
