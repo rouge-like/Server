@@ -89,7 +89,7 @@ namespace Server.Contents
 			StatInfo.Hp -= damage;
 			StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
 
-            Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
+            //Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
 
             S_ChangeHp packet = new S_ChangeHp();
 			packet.ObjectId = Id;

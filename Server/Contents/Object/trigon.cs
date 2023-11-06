@@ -86,6 +86,26 @@ namespace Server.Contents
 				return;
 
 			var pi = Math.PI;
+            _deg += Speed;
+
+            X = (float)(Math.Cos(_deg * 2 * pi / 360) * R);
+            Y = (float)(Math.Sin(_deg * 2 * pi / 360) * R);
+
+            AfterX = (float)(Math.Cos((_deg + Speed) * 2 * pi / 360) * R);
+            AfterY = (float)(Math.Sin((_deg + Speed) * 2 * pi / 360) * R);
+
+            S_MoveFloat packet = new S_MoveFloat();
+            packet.Degree = _deg;
+            packet.ObjectId = Id;
+            packet.Dir = Speed > 0;
+
+            Room.Push(Room.Broadcast, Owner.CellPos, packet);
+
+            if (_deg > 360)
+                _deg -= 360;
+
+            if (_deg < 0)
+                _deg += 360;
             //Console.WriteLine($"{Id} : {CellPos.x}, {CellPos.y}");
 
             List<Zone> zones = Owner.Room.GetAdjacentZones(Owner.CellPos);
@@ -136,7 +156,7 @@ namespace Server.Contents
 							{
                                 Speed = Speed * -1;
                                 _coolTime = true;
-                                Room.PushAfter(2000, CoolTimeOver);
+                                Room.PushAfter(500, CoolTimeOver);
                                 t.Hit();
 
 								S_HitTrigon hit = new S_HitTrigon();
@@ -154,30 +174,6 @@ namespace Server.Contents
                     }
                 }
             }
-
-			if (Room == null) // Owner 사망시 Room 초기
-				return;
-
-            _deg += Speed;
-
-            X = (float)(Math.Cos(_deg * 2 * pi / 360) * R);
-			Y = (float)(Math.Sin(_deg * 2 * pi / 360) * R);
-
-            AfterX = (float)(Math.Cos((_deg + Speed) * 2 * pi / 360) * R);
-            AfterY = (float)(Math.Sin((_deg + Speed) * 2 * pi / 360) * R);
-
-            S_MoveFloat packet = new S_MoveFloat();
-			packet.Degree = _deg;
-			packet.ObjectId = Id;
-			packet.Dir = Speed > 0;
-
-			Room.Push(Room.Broadcast, Owner.CellPos, packet);
-
-            if (_deg > 360)
-                _deg -= 360;
-
-            if (_deg < 0)
-                _deg += 360;
 
             _job = Room.PushAfter(100, Update);
 		}
@@ -219,7 +215,7 @@ namespace Server.Contents
 
 				Speed = Speed * -1;
 				_coolTime = true;
-				Room.PushAfter(2000, CoolTimeOver);
+				Room.PushAfter(500, CoolTimeOver);
 			}
 		}
         public override void OnDead(GameObject attacker)
