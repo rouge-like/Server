@@ -47,32 +47,32 @@ namespace Google.Protobuf.Protocol {
             "BRISCgphdHRhY2tlcklkGAIgASgFIlUKC1NfSGl0VHJpZ29uEhEKCXRyaWdv",
             "bjFJZBgBIAEoBRIRCgl0cmlnb24ySWQYAiABKAUSDwoHYXR0YWNrMRgDIAEo",
             "BRIPCgdhdHRhY2syGAQgASgFIkEKDkNoYW5nZVN0YXRJbmZvEiAKBHR5cGUY",
-            "ASABKA4yEi5Qcm90b2NvbC5TdGF0VHlwZRINCgV2YWx1ZRgCIAEoBSJGCgpT",
-            "X0NoYW5nZVN0EhAKCHBsYXllcklkGAEgASgFEiYKBGluZm8YAiADKAsyGC5Q",
-            "cm90b2NvbC5DaGFuZ2VTdGF0SW5mbyIvCg1TX1NlbGVjdEVxdWlwEh4KBWVx",
-            "dWlwGAEgAygOMg8uUHJvdG9jb2wuRXF1aXAiLwoNQ19TZWxlY3RFcXVpcBIe",
-            "CgVlcXVpcBgBIAEoDjIPLlByb3RvY29sLkVxdWlwKowCCgVNc2dJZBIQCgxT",
-            "X0VOVEVSX0dBTUUQABIQCgxTX0xFQVZFX0dBTUUQARILCgdTX1NQQVdOEAIS",
-            "DQoJU19ERVNQQVdOEAMSCgoGU19QSU5HEAQSCgoGQ19QT05HEAUSCgoGU19N",
-            "T1ZFEAYSCgoGQ19NT1ZFEAcSCwoHU19TS0lMTBAIEgsKB0NfU0tJTEwQCRIP",
-            "CgtTX0NIQU5HRV9IUBAKEhAKDFNfTU9WRV9GTE9BVBALEgkKBVNfRElFEAwS",
-            "EAoMU19ISVRfVFJJR09OEA0SEQoNU19DSEFOR0VfU1RBVBAOEhIKDlNfU0VM",
-            "RUNUX0VRVUlQEA8SEgoOQ19TRUxFQ1RfRVFVSVAQECo+CgVTdGF0ZRIICgRJ",
-            "ZGxlEAASCgoGTW92aW5nEAESCgoGQXR0YWNrEAISCQoFU2tpbGwQAxIICgRE",
-            "ZWFkEAQqYgoDRGlyEgYKAlVQEAASCAoERE9XThABEgkKBVJJR0hUEAISCAoE",
-            "TEVGVBADEgsKB1VQUklHSFQQBBIKCgZVUExFRlQQBRINCglET1dOUklHSFQQ",
-            "BhIMCghET1dOTEVGVBAHKnsKDkdhbWVPYmplY3RUeXBlEggKBE5PTkUQABIK",
-            "CgZQTEFZRVIQARILCgdNT05TVEVSEAISDgoKUFJPSkVDVElMRRADEggKBEFS",
-            "RUEQBBIKCgZUUklHT04QBRILCgdDSVJDTEVSEAYSCAoESVRFTRAHEgkKBURV",
-            "TU1ZEAgqZgoJU2tpbGxUeXBlEg4KClNLSUxMX05PTkUQABIUChBTS0lMTF9Q",
-            "Uk9KRUNUSUxFEAESDgoKU0tJTExfQVJFQRACEhEKDVNLSUxMX0NJUkNMRVIQ",
-            "AxIQCgxTS0lMTF9UUklHT04QBCorCghJdGVtVHlwZRIICgRGT09EEAASCgoG",
-            "V0VBUE9OEAESCQoFQVJNT1IQAipXCghTdGF0VHlwZRIJCgVMRVZFTBAAEgYK",
-            "AkhQEAESCQoFTUFYSFAQAhIKCgZBVFRBQ0sQAxIKCgZTUEVFRUQQBBIHCgNF",
-            "WFAQBRIMCghUT1RBTEVYUBAGKlQKBUVxdWlwEgkKBVNXT1JEEAASCgoGREFH",
-            "R0VSEAESCAoERklSRRACEg0KCUxJR0hUTklORxADEgcKA0lDRRAEEgkKBUVB",
-            "UlRIEAUSBwoDQUlSEAZCG6oCGEdvb2dsZS5Qcm90b2J1Zi5Qcm90b2NvbGIG",
-            "cHJvdG8z"));
+            "ASABKA4yEi5Qcm90b2NvbC5TdGF0VHlwZRINCgV2YWx1ZRgCIAEoBSJICgxT",
+            "X0NoYW5nZVN0YXQSEAoIcGxheWVySWQYASABKAUSJgoEaW5mbxgCIAMoCzIY",
+            "LlByb3RvY29sLkNoYW5nZVN0YXRJbmZvIi8KDVNfU2VsZWN0RXF1aXASHgoF",
+            "ZXF1aXAYASADKA4yDy5Qcm90b2NvbC5FcXVpcCIvCg1DX1NlbGVjdEVxdWlw",
+            "Eh4KBWVxdWlwGAEgASgOMg8uUHJvdG9jb2wuRXF1aXAqjAIKBU1zZ0lkEhAK",
+            "DFNfRU5URVJfR0FNRRAAEhAKDFNfTEVBVkVfR0FNRRABEgsKB1NfU1BBV04Q",
+            "AhINCglTX0RFU1BBV04QAxIKCgZTX1BJTkcQBBIKCgZDX1BPTkcQBRIKCgZT",
+            "X01PVkUQBhIKCgZDX01PVkUQBxILCgdTX1NLSUxMEAgSCwoHQ19TS0lMTBAJ",
+            "Eg8KC1NfQ0hBTkdFX0hQEAoSEAoMU19NT1ZFX0ZMT0FUEAsSCQoFU19ESUUQ",
+            "DBIQCgxTX0hJVF9UUklHT04QDRIRCg1TX0NIQU5HRV9TVEFUEA4SEgoOU19T",
+            "RUxFQ1RfRVFVSVAQDxISCg5DX1NFTEVDVF9FUVVJUBAQKj4KBVN0YXRlEggK",
+            "BElkbGUQABIKCgZNb3ZpbmcQARIKCgZBdHRhY2sQAhIJCgVTa2lsbBADEggK",
+            "BERlYWQQBCpiCgNEaXISBgoCVVAQABIICgRET1dOEAESCQoFUklHSFQQAhII",
+            "CgRMRUZUEAMSCwoHVVBSSUdIVBAEEgoKBlVQTEVGVBAFEg0KCURPV05SSUdI",
+            "VBAGEgwKCERPV05MRUZUEAcqewoOR2FtZU9iamVjdFR5cGUSCAoETk9ORRAA",
+            "EgoKBlBMQVlFUhABEgsKB01PTlNURVIQAhIOCgpQUk9KRUNUSUxFEAMSCAoE",
+            "QVJFQRAEEgoKBlRSSUdPThAFEgsKB0NJUkNMRVIQBhIICgRJVEVNEAcSCQoF",
+            "RFVNTVkQCCpmCglTa2lsbFR5cGUSDgoKU0tJTExfTk9ORRAAEhQKEFNLSUxM",
+            "X1BST0pFQ1RJTEUQARIOCgpTS0lMTF9BUkVBEAISEQoNU0tJTExfQ0lSQ0xF",
+            "UhADEhAKDFNLSUxMX1RSSUdPThAEKisKCEl0ZW1UeXBlEggKBEZPT0QQABIK",
+            "CgZXRUFQT04QARIJCgVBUk1PUhACKlcKCFN0YXRUeXBlEgkKBUxFVkVMEAAS",
+            "BgoCSFAQARIJCgVNQVhIUBACEgoKBkFUVEFDSxADEgoKBlNQRUVFRBAEEgcK",
+            "A0VYUBAFEgwKCFRPVEFMRVhQEAYqVAoFRXF1aXASCQoFU1dPUkQQABIKCgZE",
+            "QUdHRVIQARIICgRGSVJFEAISDQoJTElHSFROSU5HEAMSBwoDSUNFEAQSCQoF",
+            "RUFSVEgQBRIHCgNBSVIQBkIbqgIYR29vZ2xlLlByb3RvYnVmLlByb3RvY29s",
+            "YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), typeof(global::Google.Protobuf.Protocol.ItemType), typeof(global::Google.Protobuf.Protocol.StatType), typeof(global::Google.Protobuf.Protocol.Equip), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -95,7 +95,7 @@ namespace Google.Protobuf.Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Die), global::Google.Protobuf.Protocol.S_Die.Parser, new[]{ "ObjectId", "AttackerId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_HitTrigon), global::Google.Protobuf.Protocol.S_HitTrigon.Parser, new[]{ "Trigon1Id", "Trigon2Id", "Attack1", "Attack2" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.ChangeStatInfo), global::Google.Protobuf.Protocol.ChangeStatInfo.Parser, new[]{ "Type", "Value" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_ChangeSt), global::Google.Protobuf.Protocol.S_ChangeSt.Parser, new[]{ "PlayerId", "Info" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_ChangeStat), global::Google.Protobuf.Protocol.S_ChangeStat.Parser, new[]{ "PlayerId", "Info" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_SelectEquip), global::Google.Protobuf.Protocol.S_SelectEquip.Parser, new[]{ "Equip" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_SelectEquip), global::Google.Protobuf.Protocol.C_SelectEquip.Parser, new[]{ "Equip" }, null, null, null, null)
           }));
@@ -3174,11 +3174,11 @@ namespace Google.Protobuf.Protocol {
 
   }
 
-  public sealed partial class S_ChangeSt : pb::IMessage<S_ChangeSt> {
-    private static readonly pb::MessageParser<S_ChangeSt> _parser = new pb::MessageParser<S_ChangeSt>(() => new S_ChangeSt());
+  public sealed partial class S_ChangeStat : pb::IMessage<S_ChangeStat> {
+    private static readonly pb::MessageParser<S_ChangeStat> _parser = new pb::MessageParser<S_ChangeStat>(() => new S_ChangeStat());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<S_ChangeSt> Parser { get { return _parser; } }
+    public static pb::MessageParser<S_ChangeStat> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -3191,22 +3191,22 @@ namespace Google.Protobuf.Protocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S_ChangeSt() {
+    public S_ChangeStat() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S_ChangeSt(S_ChangeSt other) : this() {
+    public S_ChangeStat(S_ChangeStat other) : this() {
       playerId_ = other.playerId_;
       info_ = other.info_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S_ChangeSt Clone() {
-      return new S_ChangeSt(this);
+    public S_ChangeStat Clone() {
+      return new S_ChangeStat(this);
     }
 
     /// <summary>Field number for the "playerId" field.</summary>
@@ -3232,11 +3232,11 @@ namespace Google.Protobuf.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as S_ChangeSt);
+      return Equals(other as S_ChangeStat);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(S_ChangeSt other) {
+    public bool Equals(S_ChangeStat other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -3290,7 +3290,7 @@ namespace Google.Protobuf.Protocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(S_ChangeSt other) {
+    public void MergeFrom(S_ChangeStat other) {
       if (other == null) {
         return;
       }
