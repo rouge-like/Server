@@ -18,6 +18,16 @@ namespace Server.Contents
 			get { return StatInfo.Speed; }
 			set { StatInfo.Speed = value; }
 		}
+		public State State
+		{
+			get { return PosInfo.State; }
+			set { PosInfo.State = value; }
+		}
+		public  Dir Dir
+		{
+			get { return PosInfo.Dir; }
+			set { PosInfo.Dir = value; }
+		}
 		public Room Room { get; set; }
 		public ObjectInfo Info { get; set; } = new ObjectInfo() { PosInfo = new PosInfo(), StatInfo = new StatInfo() };
         public PosInfo PosInfo { get { return Info.PosInfo; } set { Info.PosInfo = value; } }
@@ -79,12 +89,31 @@ namespace Server.Contents
 
 			return cellPos;
 		}
+		public Dir GetDirFromVec(Vector2Int dir)
+		{
+			if (dir.x > 0 && dir.y > 0)
+				return Dir.Upright;
+			else if (dir.x > 0 && dir.y < 0)
+                return Dir.Downright;
+            else if (dir.x < 0 && dir.y > 0)
+				return Dir.Upleft;
+			else if (dir.x < 0 && dir.y < 0)
+				return Dir.Downleft;
+            else if (dir.x > 0 && dir.y == 0)
+                return Dir.Right;
+            else if (dir.x < 0 && dir.y == 0)
+                return Dir.Left;
+            else if (dir.x == 0 && dir.y > 0)
+                return Dir.Up;
+            else 
+                return Dir.Down;
+        }
 
 		public virtual void OnDamaged(GameObject attacker ,int damage)
         {
 			if (Room == null)
 				return;
-			if (_isInvincibility || _onDead)
+			if (_isInvincibility || State == State.Dead)
 				return;
 			StatInfo.Hp -= damage;
 			StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
@@ -98,13 +127,12 @@ namespace Server.Contents
 
 			if(StatInfo.Hp <= 0)
             {
-				Room.Push(OnDead, attacker);
+				OnDead(attacker);
             }
 
         }
-		protected bool _onDead = false;
 		protected bool _isInvincibility = false;
-		public virtual void OnDead(GameObject attacker)
+		protected virtual void OnDead(GameObject attacker)
         {
         }
 

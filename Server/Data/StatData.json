@@ -5,14 +5,14 @@
       "maxHp": "200",
       "attack": "20",
       "speed" :  "10.0",
-      "totalExp": "0"
+      "totalExp": "10"
     },
     {
       "level": "2",
       "maxHp": "250",
       "attack": "25",
       "speed": "10.0",
-      "totalExp": "10"
+      "totalExp": "15"
     },
     {
       "level": "3",

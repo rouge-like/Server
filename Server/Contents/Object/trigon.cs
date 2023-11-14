@@ -61,8 +61,8 @@ namespace Server.Contents
 
 		bool Intersection(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
 		{
-			bool a1 = IsSame1(a, b, c, d);
-			bool a2 = IsSame1(c, d, a, b);
+			bool a1 = IsSame2(a, b, c, d);
+			bool a2 = IsSame2(c, d, a, b);
 
 			return (a1 == false) && (a2 == false);
 		}
@@ -84,7 +84,6 @@ namespace Server.Contents
 				return;
 			if (Owner == null || Owner.Room == null)
 				return;
-
 			var pi = Math.PI;
             _deg += Speed;
 
@@ -112,7 +111,9 @@ namespace Server.Contents
 			int ownerX = Owner.PosInfo.PosX;
 			int ownerY = Owner.PosInfo.PosY;
 
-			if(_coolTime == false)
+            _job = Room.PushAfter(100, Update);
+
+            if (_coolTime == false)
 			{
                 Vector2 a = new Vector2(ownerX, ownerY);
                 Vector2 b = new Vector2(X + ownerX, Y + ownerY);
@@ -125,8 +126,15 @@ namespace Server.Contents
                         Vector2 d = new Vector2(i.PosInfo.PosX, i.PosInfo.PosY);
                         if (InTriangle(a, b, c, d))
                         {
-                            Console.WriteLine($"{Owner.Id} Get Item");
-							Room.Push(Owner.EarnItem, i);
+							Owner.EarnItem(i);
+                        }
+                    }
+					foreach(Monster m in zone.Monsters)
+					{
+                        Vector2 d = new Vector2(m.PosInfo.PosX, m.PosInfo.PosY);
+                        if (InTriangle(a, b, c, d))
+                        {
+							m.OnDamaged(Owner, StatInfo.Attack);
                         }
                     }
                     foreach (Player p in zone.Players)
@@ -139,9 +147,7 @@ namespace Server.Contents
                         if (InTriangle(a, b, c, t_OwerPos))
                         {
                             //Console.WriteLine($"{Id} : HIT Player{p.Id}!");
-                            p.OnDamaged(Owner, StatInfo.Attack * 4);
-
-                            break;
+                            p.OnDamaged(Owner, StatInfo.Attack);
                         }
                         foreach (Trigon t in p.Drones.Values)
                         {
@@ -154,10 +160,12 @@ namespace Server.Contents
 
 							if(Intersection(a, b, pos, d)) //|| AfterColision(a, b, c, pos, d, e))
 							{
+                                if (t.Hit() == false)
+                                    continue;
+
                                 Speed = Speed * -1;
                                 _coolTime = true;
                                 Room.PushAfter(500, CoolTimeOver);
-                                t.Hit();
 
 								S_HitTrigon hit = new S_HitTrigon();
 								hit.Trigon1Id = Id;
@@ -167,15 +175,13 @@ namespace Server.Contents
 
                                 OnDamaged(p, t.StatInfo.Attack);
 								t.OnDamaged(Owner, StatInfo.Attack);
-
-								break;
+								
+								return;
                             }
                         }
                     }
                 }
             }
-
-            _job = Room.PushAfter(100, Update);
 		}
 		public void MoveByPlayer()
 		{
@@ -206,19 +212,22 @@ namespace Server.Contents
 			_coolTime = false;
 		}
 
-		public void Hit()
+		public bool Hit()
 		{
 			if (_coolTime == false)
 			{
 				if (Room == null)
-					return;
+					return false;
 
 				Speed = Speed * -1;
 				_coolTime = true;
 				Room.PushAfter(500, CoolTimeOver);
+				return true;
 			}
+			else
+				return false;
 		}
-        public override void OnDead(GameObject attacker)
+        protected override void OnDead(GameObject attacker)
         {
             base.OnDead(attacker);
 			Destroy();

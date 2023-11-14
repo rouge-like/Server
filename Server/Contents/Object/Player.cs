@@ -11,6 +11,8 @@ namespace Server.Contents
         public ClientSession Session { get; set; }
         public VisionCube Vision { get; private set; }
         public Dictionary<int, Trigon> Drones { get; set; } = new Dictionary<int, Trigon>();
+        public int Level { get { return StatInfo.Level; } set { StatInfo.Level = value; } }
+        public int EXP;
 
         public Player()
         {
@@ -23,7 +25,6 @@ namespace Server.Contents
         {
             PosInfo.State = State.Idle;
             StatInfo.Hp = StatInfo.MaxHp;
-            _onDead = false;
             _isInvincibility = true;
             Room.PushAfter(3000, AfterInvincibility);
         }
@@ -106,12 +107,19 @@ namespace Server.Contents
         }
         public void EarnItem(Item item)
         {
+            if (item.Destroyed)
+                return;
             Trigon t = ObjectManager.Instance.Add<Trigon>();
             t.Owner = this;
             t.Room = Room;
-            t.PosInfo = PosInfo;
+            t.PosInfo.PosX = PosInfo.PosX;
+            t.PosInfo.PosY = PosInfo.PosY;
             t.Info.Name = Id.ToString();
             Drones.Add(t.Id, t);
+
+            item.Destroyed = true;
+
+            Console.WriteLine($"Player {Id} Get Item_{item.Id} {t.Id} At {PosInfo.PosX} , {PosInfo.PosY}");
 
             Room.Push(Room.LeaveRoom, item.Id);
             Room.Push(Room.EnterRoom, t);
@@ -122,13 +130,13 @@ namespace Server.Contents
             base.OnDamaged(attacker, damage);
         }
 
-		public override void OnDead(GameObject attacker)
+        protected override void OnDead(GameObject attacker)
 		{
             base.OnDead(attacker);
 
             if (Room == null)
                 return;
-            if (_onDead)
+            if (State == State.Dead)
                 return;
 
             Info.PosInfo.State = State.Dead;
@@ -137,8 +145,6 @@ namespace Server.Contents
             packet.ObjectId = Id;
             packet.AttackerId = attacker.Id;
             Room.Broadcast(CellPos, packet);
-            Console.WriteLine($"{Id} DEAD");
-            _onDead = true;
 
             foreach (Trigon t in Drones.Values)
             {
@@ -156,7 +162,7 @@ namespace Server.Contents
             Item item = ObjectManager.Instance.Add<Item>();
             item.PosInfo.PosX = PosInfo.PosX;
             item.PosInfo.PosY = PosInfo.PosY;
-
+            Console.WriteLine($"{Id} DEAD Drop Item {item.Id}");
             Room.Push(Room.EnterRoom, item);
 
             Room.PushAfter(2000, Respone);

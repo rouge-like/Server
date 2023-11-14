@@ -23,6 +23,18 @@ namespace Server.Contents
             int tick = (int)(1000 / Data.projectile.speed);
             Room.PushAfter(tick, Update);
 
+            int obj = Room.Map.FindId(CellPos);
+            if (obj != 0 && obj != 1)
+            {
+                GameObject target = Room.Find(obj);
+                if (target != Owner)
+                {
+                    target.OnDamaged(Owner, Data.damage);
+                    Room.Push(Room.LeaveRoom, Id);
+                    return;
+                }
+            }
+
             Vector2Int desPos = GetFrontCellPos();
 
             if (Room.Map.CanGo(desPos))

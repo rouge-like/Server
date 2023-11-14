@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Server.Contents
 {
@@ -14,6 +15,7 @@ namespace Server.Contents
         public int RoomId  { get; set; }
 
         Dictionary<int, Player> _players = new Dictionary<int, Player>();
+        Dictionary<int, Monster> _monsters = new Dictionary<int, Monster>();
         Dictionary<int, Projectile> _projectiles = new Dictionary<int, Projectile>();
         Dictionary<int, Area> _areas = new Dictionary<int, Area>();
         Dictionary<int, Circler> _circlers = new Dictionary<int, Circler>();
@@ -62,7 +64,12 @@ namespace Server.Contents
 
                 DummyPlayer.Session = null;
             }
+            Monster Test = ObjectManager.Instance.Add<Monster>();
+            {
+                Test.Info.Name = $"Monster_{Test.Id}";
+            }
             EnterRoom(DummyPlayer);
+            EnterRoom(Test);
         }
 
         public void Update()
@@ -83,15 +90,7 @@ namespace Server.Contents
                 _players.Add(player.Id, player);
                 player.Room = this;
                 player.Init();
-
-                //player.UpdatePassive(1);
-                //player.UpdatePassive(3);
-
-                //S_Equip packet = new S_Equip();
-                //packet.ObjectId = t.Id;
-                //packet.PlayerId = player.Id;
-
-                //Broadcast(player.CellPos, packet);
+                zone.Players.Add(player);
 
                 Random rand = new Random();
                 while (true)
@@ -102,8 +101,7 @@ namespace Server.Contents
                         break;
                 }
 
-                Map.MoveObject(player, new Vector2Int(player.CellPos.x, player.CellPos.y));
-                zone.Players.Add(player);
+                Map.MoveObject(player, player.CellPos);
 
                 if (player.Session != null)
                 {
@@ -156,26 +154,38 @@ namespace Server.Contents
 
                 _trigons.Add(trigon.Id, trigon);
                 trigon.Room = this;
-                
+     
                 zone.Trigons.Add(trigon);
 
                 trigon.Init();
             }
             else if (type == GameObjectType.Monster)
             {
+                Monster monster = gameObject as Monster;
+                _monsters.Add(monster.Id, monster);
+                monster.Room = this;
+                monster.PosInfo = new PosInfo { PosX = 15, PosY = 15 };
 
+                zone = GetZone(monster.CellPos);
+                zone.Monsters.Add(monster);
+
+                monster.Init();
             }
             else if (type == GameObjectType.Item)
             {
                 Item item = gameObject as Item;
                 _items.Add(item.Id, item);
                 item.Room = this;
+                item.Init();
 
                 zone.Items.Add(item);
             }
-            foreach (Player p in zone.FindAll())
+            foreach (Zone z in GetAdjacentZones(gameObject.CellPos))
             {
-                p.Vision.UpdateImmediately();
+                foreach (Player p in z.FindAll())
+                {
+                    p.Vision.UpdateImmediately();
+                }
             }
         }
 
@@ -208,6 +218,17 @@ namespace Server.Contents
                 cellPos = projectile.CellPos;
                 Map.LeaveObject(projectile);
                 projectile.Room = null;
+            }
+            else if (type == GameObjectType.Monster)
+            {
+                Monster monster = null;
+                if (_monsters.Remove(objectId, out monster) == false)
+                    return;
+
+                cellPos = monster.CellPos;
+                Console.WriteLine($"{cellPos.x} , {cellPos.y}");
+                Map.LeaveObject(monster);
+                monster.Room = null;
             }
             else if (type == GameObjectType.Area)
             {
@@ -248,6 +269,7 @@ namespace Server.Contents
                     return;
 
                 cellPos = item.CellPos;
+                item.Destroy();
                 GetZone(item.CellPos).Remove(item);
                 item.Room = null;
             }
@@ -255,9 +277,12 @@ namespace Server.Contents
             {
                 return;
             }
-            foreach (Player p in GetZone(cellPos).FindAll())
+            foreach (Zone z in GetAdjacentZones(cellPos))
             {
-                p.Vision.UpdateImmediately();
+                foreach (Player p in z.FindAll())
+                {
+                    p.Vision.UpdateImmediately();
+                }
             }
         }
         public GameObject Find(int objectId)
@@ -270,12 +295,17 @@ namespace Server.Contents
                 if (_players.TryGetValue(objectId, out player))
                     return player;
             }
-
-            if (objectType == GameObjectType.Projectile)
+            else if (objectType == GameObjectType.Projectile)
             {
                 Projectile projectile = null;
                 if (_projectiles.TryGetValue(objectId, out projectile))
                     return projectile;
+            }
+            else if (objectType == GameObjectType.Monster)
+            {
+                Monster monster = null;
+                if (_monsters.TryGetValue(objectId, out monster))
+                    return monster;
             }
             return null;
         }
@@ -309,7 +339,7 @@ namespace Server.Contents
             {                   
                 s_MovePacket.ObjectId = player.Info.ObjectId;
                 s_MovePacket.PosInfo = player.Info.PosInfo;
-                s_MovePacket.PosInfo.State = State.Idle;
+                s_MovePacket.PosInfo.State = movePacket.PosInfo.State;
                 s_MovePacket.PosInfo.Dir = movePacket.PosInfo.Dir;
 
                 Console.WriteLine($"{player.Info.Name} : Stay to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {player.Info.PosInfo.Dir}");
@@ -413,8 +443,7 @@ namespace Server.Contents
 
                     zones.Add(zone);
                 }
-            }
-            
+            }            
             return zones.ToList();
         }
     }
