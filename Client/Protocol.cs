@@ -40,7 +40,7 @@ namespace Google.Protobuf.Protocol {
             "IQoEaW5mbxgCIAEoCzITLlByb3RvY29sLlNraWxsSW5mbyIsCgdDX1NraWxs",
             "EiEKBGluZm8YASABKAsyEy5Qcm90b2NvbC5Ta2lsbEluZm8iZQoIU3RhdElu",
             "Zm8SDQoFbGV2ZWwYASABKAUSCgoCaHAYAiABKAUSDQoFbWF4SHAYAyABKAUS",
-            "DgoGYXR0YWNrGAQgASgFEg0KBXNwZWVkGAUgASgFEhAKCHRvdGFsRXhwGAYg",
+            "DgoGYXR0YWNrGAQgASgFEg0KBXNwZWVkGAUgASgCEhAKCHRvdGFsRXhwGAYg",
             "ASgFIioKClNfQ2hhbmdlSHASEAoIb2JqZWN0SWQYASABKAUSCgoCaHAYAiAB",
             "KAUiPAoLU19Nb3ZlRmxvYXQSEAoIb2JqZWN0SWQYASABKAUSDgoGZGVncmVl",
             "GAIgASgCEgsKA0RpchgDIAEoCCItCgVTX0RpZRIQCghvYmplY3RJZBgBIAEo",
@@ -2120,9 +2120,9 @@ namespace Google.Protobuf.Protocol {
 
     /// <summary>Field number for the "speed" field.</summary>
     public const int SpeedFieldNumber = 5;
-    private int speed_;
+    private float speed_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int Speed {
+    public float Speed {
       get { return speed_; }
       set {
         speed_ = value;
@@ -2157,7 +2157,7 @@ namespace Google.Protobuf.Protocol {
       if (Hp != other.Hp) return false;
       if (MaxHp != other.MaxHp) return false;
       if (Attack != other.Attack) return false;
-      if (Speed != other.Speed) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Speed, other.Speed)) return false;
       if (TotalExp != other.TotalExp) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2169,7 +2169,7 @@ namespace Google.Protobuf.Protocol {
       if (Hp != 0) hash ^= Hp.GetHashCode();
       if (MaxHp != 0) hash ^= MaxHp.GetHashCode();
       if (Attack != 0) hash ^= Attack.GetHashCode();
-      if (Speed != 0) hash ^= Speed.GetHashCode();
+      if (Speed != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Speed);
       if (TotalExp != 0) hash ^= TotalExp.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -2200,9 +2200,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(32);
         output.WriteInt32(Attack);
       }
-      if (Speed != 0) {
-        output.WriteRawTag(40);
-        output.WriteInt32(Speed);
+      if (Speed != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(Speed);
       }
       if (TotalExp != 0) {
         output.WriteRawTag(48);
@@ -2228,8 +2228,8 @@ namespace Google.Protobuf.Protocol {
       if (Attack != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Attack);
       }
-      if (Speed != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Speed);
+      if (Speed != 0F) {
+        size += 1 + 4;
       }
       if (TotalExp != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalExp);
@@ -2257,7 +2257,7 @@ namespace Google.Protobuf.Protocol {
       if (other.Attack != 0) {
         Attack = other.Attack;
       }
-      if (other.Speed != 0) {
+      if (other.Speed != 0F) {
         Speed = other.Speed;
       }
       if (other.TotalExp != 0) {
@@ -2290,8 +2290,8 @@ namespace Google.Protobuf.Protocol {
             Attack = input.ReadInt32();
             break;
           }
-          case 40: {
-            Speed = input.ReadInt32();
+          case 45: {
+            Speed = input.ReadFloat();
             break;
           }
           case 48: {
