@@ -21,7 +21,7 @@ namespace Server
             while (true)
             {
 				RoomManager.Instance.Update();
-				Thread.Sleep(0);
+				Thread.Sleep(1);
             }
         }
 		static void NetworkTask()
@@ -31,7 +31,7 @@ namespace Server
 				List<ClientSession> sessions = SessionManager.Instance.GetSessions();
 				foreach (ClientSession session in sessions)
 					session.Flush();
-            }
+			}
         }
 
 		static void Main(string[] args)
@@ -44,8 +44,8 @@ namespace Server
 			// DNS (Domain Name System)
 			string host = Dns.GetHostName();
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
-			IPAddress ipAddr = IPAddress.Parse("192.168.51.61");//ipHost.AddressList[0];
-            IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+			IPAddress ipAddr = ipHost.AddressList[3];//IPAddress.Parse("192.168.51.61");//
+			IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
             Console.WriteLine("Host Name : " + host);
@@ -61,8 +61,8 @@ namespace Server
 
             while (true)
             {
-				Thread.Sleep(1);
-            }
+				Thread.Sleep(0);
+			}
 		}
 	}
 }
