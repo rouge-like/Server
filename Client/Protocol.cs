@@ -59,21 +59,21 @@ namespace Google.Protobuf.Protocol {
             "U19TS0lMTBAIEgsKB0NfU0tJTEwQCRIPCgtTX0NIQU5HRV9IUBAKEhAKDFNf",
             "TU9WRV9GTE9BVBALEgkKBVNfRElFEAwSEAoMU19ISVRfVFJJR09OEA0SEQoN",
             "U19DSEFOR0VfU1RBVBAOEhIKDlNfU0VMRUNUX0VRVUlQEA8SEgoOQ19TRUxF",
-            "Q1RfRVFVSVAQECpXCgVTdGF0ZRIICgRJZGxlEAASCgoGTW92aW5nEAESCgoG",
+            "Q1RfRVFVSVAQECpiCgVTdGF0ZRIICgRJZGxlEAASCgoGTW92aW5nEAESCgoG",
             "QXR0YWNrEAISCQoFU2tpbGwQAxIICgREZWFkEAQSDQoJS25vY2tiYWNrEAUS",
-            "CAoEU3R1bhAGKmIKA0RpchIGCgJVUBAAEggKBERPV04QARIJCgVSSUdIVBAC",
-            "EggKBExFRlQQAxILCgdVUFJJR0hUEAQSCgoGVVBMRUZUEAUSDQoJRE9XTlJJ",
-            "R0hUEAYSDAoIRE9XTkxFRlQQByqVAQoOR2FtZU9iamVjdFR5cGUSCAoETk9O",
-            "RRAAEgoKBlBMQVlFUhABEgsKB01PTlNURVIQAhIKCgZEQUdHRVIQAxIJCgVT",
-            "V09SRBAEEggKBEZJUkUQBRINCglMSUdIVE5JTkcQBhIHCgNJQ0UQBxIJCgVF",
-            "QVJUSBAIEgcKA0FJUhAJEggKBElURU0QChIJCgVEVU1NWRALKngKCVNraWxs",
-            "VHlwZRIOCgpTS0lMTF9OT05FEAASFAoQU0tJTExfUFJPSkVDVElMRRABEg4K",
-            "ClNLSUxMX0FSRUEQAhIRCg1TS0lMTF9DSVJDTEVSEAMSEAoMU0tJTExfVFJJ",
-            "R09OEAQSEAoMU0tJTExfRElSRUNUEAUqKwoISXRlbVR5cGUSCAoERk9PRBAA",
-            "EgoKBldFQVBPThABEgkKBUFSTU9SEAIqWAoIU3RhdFR5cGUSCQoFTEVWRUwQ",
-            "ABIGCgJIUBABEgoKBk1BWF9IUBACEgoKBkFUVEFDSxADEgkKBVNQRUVEEAQS",
-            "BwoDRVhQEAUSDQoJVE9UQUxfRVhQEAZCG6oCGEdvb2dsZS5Qcm90b2J1Zi5Q",
-            "cm90b2NvbGIGcHJvdG8z"));
+            "CAoEU3R1bhAGEgkKBVNsaWRlEAcqYgoDRGlyEgYKAlVQEAASCAoERE9XThAB",
+            "EgkKBVJJR0hUEAISCAoETEVGVBADEgsKB1VQUklHSFQQBBIKCgZVUExFRlQQ",
+            "BRINCglET1dOUklHSFQQBhIMCghET1dOTEVGVBAHKpUBCg5HYW1lT2JqZWN0",
+            "VHlwZRIICgROT05FEAASCgoGUExBWUVSEAESCwoHTU9OU1RFUhACEgoKBkRB",
+            "R0dFUhADEgkKBVNXT1JEEAQSCAoERklSRRAFEg0KCUxJR0hUTklORxAGEgcK",
+            "A0lDRRAHEgkKBUVBUlRIEAgSBwoDQUlSEAkSCAoESVRFTRAKEgkKBURVTU1Z",
+            "EAsqeAoJU2tpbGxUeXBlEg4KClNLSUxMX05PTkUQABIUChBTS0lMTF9QUk9K",
+            "RUNUSUxFEAESDgoKU0tJTExfQVJFQRACEhEKDVNLSUxMX0NJUkNMRVIQAxIQ",
+            "CgxTS0lMTF9UUklHT04QBBIQCgxTS0lMTF9ESVJFQ1QQBSorCghJdGVtVHlw",
+            "ZRIICgRGT09EEAASCgoGV0VBUE9OEAESCQoFQVJNT1IQAipYCghTdGF0VHlw",
+            "ZRIJCgVMRVZFTBAAEgYKAkhQEAESCgoGTUFYX0hQEAISCgoGQVRUQUNLEAMS",
+            "CQoFU1BFRUQQBBIHCgNFWFAQBRINCglUT1RBTF9FWFAQBkIbqgIYR29vZ2xl",
+            "LlByb3RvYnVmLlByb3RvY29sYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), typeof(global::Google.Protobuf.Protocol.ItemType), typeof(global::Google.Protobuf.Protocol.StatType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -133,6 +133,7 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("Dead")] Dead = 4,
     [pbr::OriginalName("Knockback")] Knockback = 5,
     [pbr::OriginalName("Stun")] Stun = 6,
+    [pbr::OriginalName("Slide")] Slide = 7,
   }
 
   public enum Dir {
