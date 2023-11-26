@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Google.Protobuf.Protocol;
+using Server.Contents.Object;
 
 namespace Server.Contents
 {
@@ -13,9 +14,8 @@ namespace Server.Contents
         public HashSet<Player> Players { get; set; } = new HashSet<Player>();
         public HashSet<Monster> Monsters { get; set; } = new HashSet<Monster>();
         public HashSet<Projectile> Projectiles { get; set; } = new HashSet<Projectile>();
-        public HashSet<Area> Areas { get; set; } = new HashSet<Area>();
-        public HashSet<Circler> Circlers { get; set; } = new HashSet<Circler>();
         public HashSet<Trigon> Trigons { get; set; } = new HashSet<Trigon>();
+        public HashSet<Fire> Fires { get; set; } = new HashSet<Fire>();
         public HashSet<Item> Items { get; set; } = new HashSet<Item>();
 
 
@@ -37,17 +37,17 @@ namespace Server.Contents
                 case GameObjectType.Monster:
                     Monsters.Remove((Monster)go);
                     break;
-                case GameObjectType.Projectile:
+                case GameObjectType.Dagger:
                     Projectiles.Remove((Projectile)go);
                     break;
-                case GameObjectType.Area:
-                    Areas.Remove((Area)go);
-                    break;
-                case GameObjectType.Circler:
-                    Circlers.Remove((Circler)go);
-                    break;
-                case GameObjectType.Trigon:
+                case GameObjectType.Sword:
                     Trigons.Remove((Trigon)go);
+                    break;
+                case GameObjectType.Lightning:
+                    Trigons.Remove((Trigon)go);
+                    break;
+                case GameObjectType.Fire:
+                    Fires.Remove((Fire)go);
                     break;
                 case GameObjectType.Item:
                     Items.Remove((Item)go);

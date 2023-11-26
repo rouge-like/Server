@@ -60,14 +60,13 @@ class PacketHandler
         clientSession.HandlePong();
     }
 
-    public static void C_EquipHandler(PacketSession session, IMessage packet)
+    public static void C_SelectEquipHandler(PacketSession session, IMessage packet)
     {
         ClientSession clientSession = (ClientSession)session;
-        C_Equip c_equip = (C_Equip)packet;
+        C_SelectEquip c_equip = (C_SelectEquip)packet;
 
         Player myPlayer = clientSession.MyPlayer;
 
-        //제거 예정? ㄴ
-        
+        myPlayer.SelectEquip(c_equip.Equip);
     }
 }

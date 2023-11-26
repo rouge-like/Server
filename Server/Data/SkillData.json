@@ -2,16 +2,22 @@
   "skills": [
     {
       "id": "1",
-      "name": "Skill1",
+      "name": "Slide",
       "cooldown": "1",
       "damage": "10",
-      "skillType": "SkillArea",
+      "delay" : "150",
+      "skillType": "SkillNone",
       "area": {
         "posList": [
-            [ 1, 0 ],
-            [ 0, 1 ],
-            [ -1, 0 ],
-            [ 0, -1 ]
+          [ 0, 0 ],
+          [ 1, 0 ],
+          [ -1, 0 ],
+          [ 0, 1 ],
+          [ 0, -1 ],
+          [ 1, -1 ],
+          [ 1, 1 ],
+          [ -1, 1 ],
+          [ -1, -1]
         ]
       }
     },
@@ -19,13 +25,13 @@
         "id": "2",
         "name": "Skill2",
         "cooldown": "0.2",
-        "damage": "10",
+        "damage": "50",
         "skillType": "SkillProjectile",
         "projectile": {
             "name": "Basic",
-            "speed": "10.0",
-            "range": "10",
-            "prefab": "Cylinder"
+            "speed": "20.0",
+            "range": "50",
+            "penetrate" : false
         }
     },
     {

@@ -106,6 +106,8 @@ namespace Server.Contents
         {
             return (a.x * b.y) - (a.y * b.x);
         }
+        public float magnitude { get { return (float)Math.Sqrt(sqrMangnitude); } }
+        public float sqrMangnitude { get { return (x * x + y * y); } }
     }
     public class Map
     {
@@ -165,6 +167,22 @@ namespace Server.Contents
             
             return true;
         }
+        public bool LeaveCollision(GameObject go)
+        {
+            if (go.Room == null)
+                return false;
+            if (go.Room.Map != this)
+                return false;
+
+            PosInfo posInfo = go.PosInfo;
+            if (posInfo.PosX >= SizeX || posInfo.PosY >= SizeY || posInfo.PosX < 0 || posInfo.PosY < 0)
+                return false;
+
+            if (_map[posInfo.PosX, posInfo.PosY] == go.Id)
+                _map[posInfo.PosX, posInfo.PosY] = 0;
+
+            return true;
+        }
         public void MoveObject(GameObject go,Vector2Int pos)
         {
             int x = pos.x;
@@ -186,12 +204,22 @@ namespace Server.Contents
                 {
                     now.Players.Remove(p);
                     after.Players.Add(p);
+                    foreach(Trigon t in p.Trigons.Values)
+                    {
+                        now.Trigons.Remove(t);
+                        after.Trigons.Add(t);
+                    }
+                }
+                else
+                {
+                    if(!now.Players.Contains(p))
+                        Console.WriteLine("Error!");
                 }
 
                 _map[go.CellPos.x, go.CellPos.y] = 0;
                 _map[x, y] = go.Id;
             }
-            else if (type == GameObjectType.Projectile)
+            else if (type == GameObjectType.Dagger)
             {
                 Projectile p = (Projectile)go;
 
@@ -214,6 +242,7 @@ namespace Server.Contents
                     now.Monsters.Remove(m);
                     after.Monsters.Add(m);
                 }
+
                 _map[go.CellPos.x, go.CellPos.y] = 0;
                 _map[x, y] = go.Id;
             }
@@ -221,7 +250,96 @@ namespace Server.Contents
             posInfo.PosX = pos.x;
             posInfo.PosY = pos.y;
         }
+        public void SlideObject(GameObject go, Vector2Int pos, Vector2Int dir)
+        {
+            int x = pos.x;
+            int y = pos.y;
 
+            if (x >= SizeX)
+                x = SizeX - 1;
+            else if (x < 0)
+                x = 0;
+            if (y >= SizeY)
+                y = SizeY - 1;
+            else if (y < 0)
+                y = 0;
+
+            pos = new Vector2Int(x, y);
+            GameObjectType type = ObjectManager.GetObjectTypeById(go.Id);
+
+            Vector2Int tmp = go.CellPos;
+            while (pos != tmp)
+            {
+                tmp += dir;
+                if (tmp.x >= SizeX || tmp.y >= SizeY || tmp.x < 0 || tmp.y < 0)
+                {
+                    tmp -= dir;
+                    x = tmp.x;
+                    y = tmp.y;
+                    pos = new Vector2Int(x, y);
+                    break;
+                }
+                if (_map[tmp.x,tmp.y] == 1)
+                {
+                    tmp -= dir;
+                    x = tmp.x;
+                    y = tmp.y;
+                    pos = new Vector2Int(x, y);
+                    break;
+                }
+            }
+            if (type == GameObjectType.Player)
+            {
+                Player p = (Player)go;
+
+                Zone now = Room.GetZone(go.CellPos);
+                Zone after = Room.GetZone(pos);
+                if (now != after)
+                {
+                    now.Players.Remove(p);
+                    after.Players.Add(p);
+                    foreach (Trigon t in p.Trigons.Values)
+                    {
+                        now.Trigons.Remove(t);
+                        after.Trigons.Add(t);
+                    }
+                }
+
+                _map[go.CellPos.x, go.CellPos.y] = 0;
+                _map[x, y] = go.Id;
+            }
+            else if (type == GameObjectType.Dagger)
+            {
+                Projectile p = (Projectile)go;
+
+                Zone now = Room.GetZone(go.CellPos);
+                Zone after = Room.GetZone(pos);
+                if (now != after)
+                {
+                    now.Projectiles.Remove(p);
+                    after.Projectiles.Add(p);
+                }
+            }
+            else if (type == GameObjectType.Monster)
+            {
+                Monster m = (Monster)go;
+
+                Zone now = Room.GetZone(go.CellPos);
+                Zone after = Room.GetZone(pos);
+                if (now != after)
+                {
+                    now.Monsters.Remove(m);
+                    after.Monsters.Add(m);
+                }
+
+                _map[go.CellPos.x, go.CellPos.y] = 0;
+                _map[x, y] = go.Id;
+            }
+        
+            PosInfo posInfo = go.PosInfo;
+            posInfo.PosX = pos.x;
+            posInfo.PosY = pos.y;
+        }
         public int FindId(Vector2Int pos)
         {
             int x = pos.x;
@@ -287,6 +405,9 @@ namespace Server.Contents
                 {
                     Pos next = new Pos(node.X + _deltaX[i], node.Y + _deltaY[i]);
 
+                    if (Math.Abs(pos.X - next.X) + Math.Abs(pos.Y - next.Y) > 10)
+                        continue;
+
                     if(next.Y != dest.Y || next.X != dest.X)
                     {
                         if (CanGo(Pos2Cell(next)) == false)
@@ -298,7 +419,7 @@ namespace Server.Contents
 
                     int g = _cost[i];
                     int h = 10 * ((dest.Y - next.Y) * (dest.Y - next.Y) + (dest.X - next.X) * (dest.X - next.X));
-                    int value;
+                    int value = 0;
                     if (openList.TryGetValue(next, out value) == false)
                         value = Int32.MaxValue;
                     if (value < g + h)
@@ -319,6 +440,25 @@ namespace Server.Contents
         List<Vector2Int> CalcCellPathFromParent(Dictionary<Pos, Pos> parent, Pos dest)
         {
             List<Vector2Int> cells = new List<Vector2Int>();
+
+            if(parent.ContainsKey(dest) == false)
+            {
+                Pos best = new Pos();
+                int bestDist = Int32.MaxValue;
+
+                foreach(Pos p in parent.Keys)
+                {
+                    int dist = Math.Abs(dest.X - p.X) + Math.Abs(dest.Y - p.Y);
+
+                    if(dist < bestDist)
+                    {
+                        best = p;
+                        bestDist = dist;
+                    }
+                }
+
+                dest = best;
+            }
 
             Pos pos = dest;
             while (parent[pos] != pos)

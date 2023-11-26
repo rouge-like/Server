@@ -1,9 +1,11 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Server.Contents.Object;
 using Server.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 
@@ -17,9 +19,8 @@ namespace Server.Contents
         Dictionary<int, Player> _players = new Dictionary<int, Player>();
         Dictionary<int, Monster> _monsters = new Dictionary<int, Monster>();
         Dictionary<int, Projectile> _projectiles = new Dictionary<int, Projectile>();
-        Dictionary<int, Area> _areas = new Dictionary<int, Area>();
-        Dictionary<int, Circler> _circlers = new Dictionary<int, Circler>();
         Dictionary<int, Trigon> _trigons = new Dictionary<int, Trigon>();
+        Dictionary<int, Fire> _fires = new Dictionary<int, Fire>();
         Dictionary<int, Item> _items = new Dictionary<int, Item>();
 
         public Zone[,] Zones { get; private set; }
@@ -58,18 +59,12 @@ namespace Server.Contents
                 DummyPlayer.Info.Name = $"DummyPlayer_{DummyPlayer.Info.ObjectId}";
                 DummyPlayer.Info.PosInfo = new PosInfo();
 
-                StatInfo stat = null;
-                DataManager.StatDict.TryGetValue(1, out stat);
-                DummyPlayer.StatInfo.MergeFrom(stat);
-
                 DummyPlayer.Session = null;
             }
-            Monster Test = ObjectManager.Instance.Add<Monster>();
-            {
-                Test.Info.Name = $"Monster_{Test.Id}";
-            }
+
             EnterRoom(DummyPlayer);
-            EnterRoom(Test);
+            PushAfter(100, SpawnMonster);
+ 
         }
 
         public void Update()
@@ -89,18 +84,26 @@ namespace Server.Contents
                 Player player = gameObject as Player;
                 _players.Add(player.Id, player);
                 player.Room = this;
+
+                StatInfo stat = null;
+                DataManager.StatDict.TryGetValue(1, out stat);
+                player.StatInfo.MergeFrom(stat);
+
                 player.Init();
-                zone.Players.Add(player);
+              
 
                 Random rand = new Random();
                 while (true)
                 {
-                    player.PosInfo.PosX = rand.Next(5);
-                    player.PosInfo.PosY = rand.Next(10);
-                    if (Map.CanGo(player.CellPos))
+                    Vector2Int random = new Vector2Int(rand.Next(10), rand.Next(5));
+                    if (Map.CanGo(random))
+                    {
+                        player.CellPos = random;
                         break;
+                    }
                 }
-
+                zone = GetZone(player.CellPos);
+                zone.Players.Add(player);
                 Map.MoveObject(player, player.CellPos);
 
                 if (player.Session != null)
@@ -114,7 +117,7 @@ namespace Server.Contents
                 player.Vision.Update();
                 Console.WriteLine($"{player.Info.Name} Spawn in {player.CellPos.x}, {player.CellPos.y}");
             }
-            else if (type == GameObjectType.Projectile)
+            else if (type == GameObjectType.Dagger)
             {
                 Projectile projectile = gameObject as Projectile;
                 _projectiles.Add(projectile.Id, projectile);
@@ -123,7 +126,7 @@ namespace Server.Contents
                 zone.Projectiles.Add(projectile);
 
                 projectile.Update();
-            }
+            }/**
             else if (type == GameObjectType.Area)
             {
                 Area area = gameObject as Area;
@@ -144,30 +147,56 @@ namespace Server.Contents
                 zone.Circlers.Add(circler);
 
                 circler.Update();
-            }
-            else if (type == GameObjectType.Trigon)
+            }**/
+            else if (type == GameObjectType.Sword)
             {
-                Trigon trigon = gameObject as Trigon;
+                Sword sword = gameObject as Sword;
 
-                if (trigon.Owner.PosInfo.State == State.Dead)
+                if (sword.Owner.PosInfo.State == State.Dead)
                     return;
 
-                _trigons.Add(trigon.Id, trigon);
-                trigon.Room = this;
+                _trigons.Add(sword.Id, sword);
+                sword.Room = this;
      
-                zone.Trigons.Add(trigon);
+                zone.Trigons.Add(sword);
 
-                trigon.Init();
+                sword.Init();
+            }
+            else if (type == GameObjectType.Lightning)
+            {
+                Lightning lightning = gameObject as Lightning;
+
+                if (lightning.Owner.PosInfo.State == State.Dead)
+                    return;
+
+                _trigons.Add(lightning.Id, lightning);
+                lightning.Room = this;
+
+                zone.Trigons.Add(lightning);
+            }
+            else if (type == GameObjectType.Fire)
+            {
+                Fire fire = gameObject as Fire;
+
+                if (fire.Owner.PosInfo.State == State.Dead)
+                    return;
+
+                _fires.Add(fire.Id, fire);
+                fire.Room = this;
+
+                zone.Fires.Add(fire);
             }
             else if (type == GameObjectType.Monster)
             {
                 Monster monster = gameObject as Monster;
                 _monsters.Add(monster.Id, monster);
                 monster.Room = this;
-                monster.PosInfo = new PosInfo { PosX = 15, PosY = 15 };
 
                 zone = GetZone(monster.CellPos);
                 zone.Monsters.Add(monster);
+                Map.MoveObject(monster, monster.CellPos);
+
+               //Console.WriteLine($"Monster_{monster.Id} Spawn : {monster.CellPos.x} , {monster.CellPos.y}");
 
                 monster.Init();
             }
@@ -209,7 +238,7 @@ namespace Server.Contents
                         player.Session.Send(leavePacket);
                 }
             }
-            else if (type == GameObjectType.Projectile)
+            else if (type == GameObjectType.Dagger)
             {
                 Projectile projectile = null;
                 if (_projectiles.Remove(objectId, out projectile) == false)
@@ -226,10 +255,9 @@ namespace Server.Contents
                     return;
 
                 cellPos = monster.CellPos;
-                Console.WriteLine($"{cellPos.x} , {cellPos.y}");
                 Map.LeaveObject(monster);
                 monster.Room = null;
-            }
+            }/**
             else if (type == GameObjectType.Area)
             {
                 Area area = null;
@@ -250,8 +278,8 @@ namespace Server.Contents
                 cellPos = circler.CellPos;
                 GetZone(circler.CellPos).Remove(circler);
                 circler.Room = null;
-            }
-            else if (type == GameObjectType.Trigon)
+            }**/
+            else if (type == GameObjectType.Sword)
             {
                 Trigon trigon = null;
                 if (_trigons.Remove(objectId, out trigon) == false)
@@ -261,6 +289,24 @@ namespace Server.Contents
                 GetZone(trigon.CellPos).Remove(trigon);
                 trigon.Room = null;
                 trigon.Owner = null;
+            }
+            else if (type == GameObjectType.Lightning)
+            {
+                Trigon trigon = null;
+                if (_trigons.Remove(objectId, out trigon) == false)
+                    return;
+
+                cellPos = trigon.CellPos;
+                GetZone(trigon.CellPos).Remove(trigon);
+            }
+            else if (type == GameObjectType.Fire)
+            {
+                Fire fire = null;
+                if (_fires.Remove(objectId, out fire) == false)
+                    return;
+
+                cellPos = fire.CellPos;
+                GetZone(fire.CellPos).Remove(fire);
             }
             else if (type == GameObjectType.Item)
             {
@@ -295,7 +341,7 @@ namespace Server.Contents
                 if (_players.TryGetValue(objectId, out player))
                     return player;
             }
-            else if (objectType == GameObjectType.Projectile)
+            else if (objectType == GameObjectType.Dagger)
             {
                 Projectile projectile = null;
                 if (_projectiles.TryGetValue(objectId, out projectile))
@@ -328,11 +374,12 @@ namespace Server.Contents
                 info.PosInfo = movePacket.PosInfo;
                 s_MovePacket.ObjectId = player.Info.ObjectId;
                 s_MovePacket.PosInfo = movePacket.PosInfo;
-                foreach (Trigon t in player.Drones.Values)
+                foreach (Trigon t in player.Trigons.Values)
                 {
-                    t.MoveByPlayer();
+                    t.CheckAttack();
                 }
-
+                if(!GetZone(player.CellPos).Players.Contains(player))
+                    Console.WriteLine($"{player.CellPos.x}, {player.CellPos.y} : ERROR");
                 Console.WriteLine($"{player.Info.Name} : Move to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {s_MovePacket.PosInfo.Dir}");
             }
             else
@@ -353,7 +400,7 @@ namespace Server.Contents
                 return;
 
             ObjectInfo info = player.Info;
-            if (info.PosInfo.State != State.Idle)
+            if (info.PosInfo.State != State.Idle && info.PosInfo.State != State.Moving)
                 return;
 
             info.PosInfo.State = State.Skill;;
@@ -369,33 +416,59 @@ namespace Server.Contents
                 {
                     case SkillType.SkillNone:
                         {
-                            Vector2Int skillPos = player.GetFrontCellPos();
-                            int targetId = Map.FindId(skillPos);
-                            if (targetId != 0)
-                                Console.WriteLine("TESTING SKILL 1");
+                            if (player.OnSlide())
+                                return;
+                            S_Move s_MovePacket = new S_Move();
+                            Vector2Int dirVector = player.DirToVector();
+                            Vector2Int endPoint;
+
+                            if (dirVector.x == 0 || dirVector.y == 0)
+                                endPoint = new Vector2Int((dirVector.x * 5) + player.CellPos.x, (dirVector.y * 5) + player.CellPos.y);
+                            else
+                                endPoint = new Vector2Int((dirVector.x * 3) + player.CellPos.x, (dirVector.y * 3) + player.CellPos.y);
+
+                            Map.SlideObject(player, endPoint, dirVector);
+                            player.State = State.Slide;
+
+                            s_MovePacket.ObjectId = player.Info.ObjectId;
+                            s_MovePacket.PosInfo = player.PosInfo;
+                            foreach (Trigon t in player.Trigons.Values)
+                            {
+                                t.CheckAttack();
+                            }
+                            Console.WriteLine($"{skill.ObjectId} Player Use Slide {player.CellPos.x} , {player.CellPos.y}");
+                            Broadcast(player.CellPos, s_MovePacket);
                         }
                         break;
                     case SkillType.SkillProjectile:
                         {
                             Console.WriteLine($"{skill.ObjectId} Player Use Skill {skill.Info.SkillId}");
-                            Projectile projectile = ObjectManager.Instance.Add<Projectile>();
-                            if (projectile == null)
-                                return;
 
-                            projectile.Owner = player;
-                            projectile.Data = skillData;
-                            projectile.Info.Name = $"Projectile_{projectile.Id}";
-                            projectile.PosInfo.State = State.Moving;
-                            projectile.SetDir(player.PosInfo.Dir);
-                            projectile.PosInfo.PosX = player.PosInfo.PosX;
-                            projectile.PosInfo.PosY = player.PosInfo.PosY;
-                            projectile.Speed = skillData.projectile.speed;
+                            for(int i = 0; i < player.DaggerCount; i++)
+                            {
+                                Projectile projectile = ObjectManager.Instance.Add<Projectile>();
+                                projectile.Owner = player;
+                                projectile.Data = skillData;
+                                projectile.Info.Name = $"Projectile_{projectile.Id}";
+                                projectile.PosInfo.State = State.Moving;
+                                projectile.SetDir(player.PosInfo.Dir);
+                                projectile.PosInfo.PosX = player.PosInfo.PosX;
+                                projectile.PosInfo.PosY = player.PosInfo.PosY;
+                                projectile.Speed = skillData.projectile.speed;
 
-                            Vector2Int desPos = projectile.GetFrontCellPos();
-                            if (Map.CanGo(desPos))
-                                EnterRoom(projectile);
-                            else
-								Console.WriteLine("Cannot Enter Projectile : Wrong Position");
+                                Vector2Int desPos = projectile.GetFrontCellPos();
+                                int id = Map.FindId(desPos);
+                                if (Map.CanGo(desPos))
+                                    EnterRoom(projectile);
+                                else if (id != 1 && id != 0) 
+                                {
+                                    GameObject target = Find(id);
+                                    target.OnDamaged(projectile.Owner, projectile.Data.damage);
+                                }
+                                else
+                                    Console.WriteLine("Cannot Enter Projectile : Wrong Position");
+                            }
+
                         }
                         break;
                     case SkillType.SkillArea:
@@ -445,6 +518,34 @@ namespace Server.Contents
                 }
             }            
             return zones.ToList();
+        }
+        void SpawnMonster()
+        {
+            if(_monsters.Count < 2000)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Monster Test = ObjectManager.Instance.Add<Monster>();
+                    {
+                        Test.Info.Name = $"Monster_{Test.Id}";
+                    }
+                    Random rand = new Random();
+                    while (true)
+                    {
+                        Test.PosInfo.PosX = rand.Next(Map.SizeX);
+                        Test.PosInfo.PosY = rand.Next(Map.SizeY);
+                        if (Map.CanGo(Test.CellPos))
+                            break;
+                    }
+
+                    EnterRoom(Test);
+                }
+            }
+            else
+                Console.WriteLine("Monster Full");
+
+
+            PushAfter(1000, SpawnMonster);
         }
     }
 }

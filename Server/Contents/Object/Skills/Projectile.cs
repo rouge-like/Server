@@ -11,15 +11,23 @@ namespace Server.Contents
         public Data.Skill Data { get; set; }
         public Projectile()
         {
-            ObjectType = GameObjectType.Projectile;
+            ObjectType = GameObjectType.Dagger;
+            _moved = 0;
         }
 
         public GameObject Owner;
+        int _moved;
         public override void Update()
         {
             if (Data == null || Owner == null || Room == null)
                 return;
-
+            if(_moved > Data.projectile.range)
+            {
+                Console.WriteLine($"Projectile {_moved}");
+                Room.Push(Room.LeaveRoom, Id);
+                return;
+            }
+            
             int tick = (int)(1000 / Data.projectile.speed);
             Room.PushAfter(tick, Update);
 
@@ -36,6 +44,7 @@ namespace Server.Contents
             }
 
             Vector2Int desPos = GetFrontCellPos();
+            Vector2Int dirVector = DirToVector(Dir);
 
             if (Room.Map.CanGo(desPos))
             {
@@ -45,8 +54,11 @@ namespace Server.Contents
                 movePakcet.ObjectId = Id;
                 movePakcet.PosInfo = PosInfo;
                 Room.Broadcast(CellPos, movePakcet);
-
-                //Console.WriteLine($"Projectile {Id}_Player{Owner.Id} : {PosInfo.PosX}, {PosInfo.PosY} , {PosInfo.Dir}");
+                if (dirVector.x == 0 || dirVector.y == 0)
+                    _moved += 10;
+                else
+                    _moved += 14;
+                Console.WriteLine($"Projectile {Id}_Player{Owner.Id} : {PosInfo.PosX}, {PosInfo.PosY} , {PosInfo.Dir}");
             }
             else
             {
@@ -54,30 +66,18 @@ namespace Server.Contents
                 if(targetId != 0 && targetId != 1)
                 {
                     GameObject target = Room.Find(targetId);
-                    target.OnDamaged(Owner, Data.damage);
+
+                    if(target != Owner)
+                        target.OnDamaged(Owner, Data.damage);
                 }
 
-                Room.Push(Room.LeaveRoom, Id);
+                if(Data.projectile.penetrate == false)
+                    Room.Push(Room.LeaveRoom, Id);
             }
         }
         public void SetDir(Dir dir)
         {
             PosInfo.Dir = dir;
-            switch (dir)
-            {
-                case Dir.Upright:
-                    PosInfo.Dir = Dir.Up;
-                    break;
-                case Dir.Upleft:
-                    PosInfo.Dir = Dir.Up;
-                    break;
-                case Dir.Downright:
-                    PosInfo.Dir = Dir.Down;
-                    break;
-                case Dir.Downleft:
-                    PosInfo.Dir = Dir.Down;
-                    break;
-            }
         }
     }
 }

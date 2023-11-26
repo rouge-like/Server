@@ -11,7 +11,7 @@ namespace Server.Contents
 		int _count;
 		public Circler()
 		{
-			ObjectType = GameObjectType.Circler;
+			//ObjectType = GameObjectType.Circler;
 			_count = 0;
 		}
 		public Player Owner;
@@ -43,8 +43,8 @@ namespace Server.Contents
 			Zone after = Room.GetZone(desPos);
 			if (now != after)
 			{
-				now.Circlers.Remove(this);
-				after.Circlers.Add(this);
+				//now.Circlers.Remove(this);
+				//after.Circlers.Add(this);
 			}
 
 			PosInfo.PosX = desPos.x;
@@ -69,8 +69,8 @@ namespace Server.Contents
 			Zone after = Room.GetZone(desPos);
 			if (now != after)
 			{
-				now.Circlers.Remove(this);
-				after.Circlers.Add(this);
+				//now.Circlers.Remove(this);
+				//after.Circlers.Add(this);
 			}
 
 			PosInfo.PosX = desPos.x;

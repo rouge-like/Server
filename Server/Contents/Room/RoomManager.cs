@@ -8,7 +8,6 @@ namespace Server.Contents
     {
         public static RoomManager Instance { get; } = new RoomManager();
 
-        object _lock = new object();
         Dictionary<int, Room> _rooms = new Dictionary<int, Room>();
         int _roomId = 1;
 

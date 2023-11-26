@@ -82,10 +82,6 @@ namespace Server
 				MyPlayer.Info.Name = $"Player_{MyPlayer.Info.ObjectId}";
 				MyPlayer.Info.PosInfo = new PosInfo();
 
-				StatInfo stat = null;
-				DataManager.StatDict.TryGetValue(1, out stat);
-				MyPlayer.StatInfo.MergeFrom(stat);
-
 				MyPlayer.Session = this;
 			}
 

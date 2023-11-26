@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Protocol;
+using Server.Contents.Object;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,24 +55,6 @@ namespace Server.Contents
                         continue;
                     objects.Add(projectile);
                 }
-                foreach (Area area in zone.Areas)
-                {
-                    int dx = area.CellPos.x - pos.x;
-                    int dy = area.CellPos.y - pos.y;
-
-                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
-                        continue;
-                    objects.Add(area);
-                }
-                foreach (Circler circler in zone.Circlers)
-                {
-                    int dx = circler.CellPos.x - pos.x;
-                    int dy = circler.CellPos.y - pos.y;
-
-                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
-                        continue;
-                    objects.Add(circler);
-                }
                 foreach(Trigon trigon in zone.Trigons)
                 {
                     int dx = trigon.CellPos.x - pos.x;
@@ -81,7 +64,16 @@ namespace Server.Contents
                         continue;
                     objects.Add(trigon);
                 }
-                foreach(Item item in zone.Items)
+                foreach (Fire fire in zone.Fires)
+                {
+                    int dx = fire.CellPos.x - pos.x;
+                    int dy = fire.CellPos.y - pos.y;
+
+                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
+                        continue;
+                    objects.Add(fire);
+                }
+                foreach (Item item in zone.Items)
                 {
                     int dx = item.CellPos.x - pos.x;
                     int dy = item.CellPos.y - pos.y;

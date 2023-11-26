@@ -15,7 +15,6 @@ namespace Server.Data
 			Dictionary<int, StatInfo> dict = new Dictionary<int, StatInfo>();
 			foreach (StatInfo stat in stats)
             {
-				stat.Hp = stat.MaxHp;
 				dict.Add(stat.Level, stat);
 			}
 				
@@ -29,12 +28,13 @@ namespace Server.Data
 		public int id;
 		public string name;
 		public float cooldown;
+		public int delay;
 		public int damage;
 		public SkillType skillType;
 		public ProjectileInfo projectile;
 		public AreaInfo area;
 		public CircleInfo circle;
-
+		public DirectInfo direct;
     }
 
 	public class ProjectileInfo
@@ -42,7 +42,7 @@ namespace Server.Data
 		public string name;
 		public float speed;
 		public int range;
-		public string prefab;
+		public bool penetrate;
     }
 
 	public class AreaInfo
@@ -54,6 +54,11 @@ namespace Server.Data
 	{
 		public int len;
 		public List<List<int>> posList;
+	}
+
+	public class DirectInfo
+	{
+		public int range;
 	}
 	[Serializable]
 	public class SkillData : ILoader<int, Skill>

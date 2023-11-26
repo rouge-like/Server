@@ -6,7 +6,6 @@ namespace Server.Contents
 {
 	public class Monster : GameObject
 	{
-		Vector2Int InitPos;
 		public Monster()
 		{
 			ObjectType = GameObjectType.Monster;
@@ -14,7 +13,6 @@ namespace Server.Contents
         public override void Init()
         {
             base.Init();
-			InitPos = CellPos;
 
 			StatInfo.Hp = 200;
 			StatInfo.MaxHp = 200;
@@ -45,10 +43,18 @@ namespace Server.Contents
                 _job.Cancel = true;
                 _job = null;
             }
-			
+
+            Random rand = new Random();
+			int v = rand.Next(10);
+
             Item item = ObjectManager.Instance.Add<Item>();
             item.PosInfo.PosX = PosInfo.PosX;
             item.PosInfo.PosY = PosInfo.PosY;
+			if (v > 7)
+				item.ItemType = ItemType.Food;
+			else
+				item.ItemType = ItemType.Armor;
+			item.value = 10;
             Console.WriteLine($"Monster {Id} DEAD Drop Item {item.Id}");
             Room.Push(Room.EnterRoom, item);
 
@@ -59,7 +65,7 @@ namespace Server.Contents
 		{
 			base.Respone();
             Room.Push(Room.LeaveRoom, Id);
-            Room.PushAfter(500, Room.EnterRoom, this);
+            //Room.PushAfter(500, Room.EnterRoom, this);
         }
 		IJob _job;
         public override void Update()
@@ -89,12 +95,20 @@ namespace Server.Contents
         }
 
 		Player _target;
+		int _searchTick = 0;
 
 		protected virtual void UpdateIdle()
 		{
+			if (_moveTick > Environment.TickCount)
+				return;
+			int moveTick = (int)(1000 / Speed);
+			_moveTick = Environment.TickCount + moveTick;
             List<Zone> zones = Room.GetAdjacentZones(CellPos, 10);
             // 플레이어 감지
             int d = int.MaxValue;
+			if (_searchTick > Environment.TickCount)
+				return;
+			_searchTick = Environment.TickCount + 1000;
             foreach (Zone zone in zones)
             {
                 foreach (Player p in zone.Players)
@@ -103,7 +117,7 @@ namespace Server.Contents
                     int dy = p.CellPos.y - CellPos.y;
 					int distance = dx + dy;
 
-                    if (Math.Abs(dx) > 10 || Math.Abs(dy) > 10 || distance > d || p.State == State.Dead)
+                    if (Math.Abs(dx) > 5 || Math.Abs(dy) > 5 || distance > d || p.State == State.Dead)
                         continue;
 
 					_target = p;
@@ -113,9 +127,10 @@ namespace Server.Contents
 
 			if (_target == null)
 				return;
-			Console.WriteLine("Set Target");
 			State = State.Moving;
+			_searchTick = 0;
         }
+		long _moveTick = 0;
 		protected virtual void UpdateMoving()
 		{
 			if (_target == null || _target.Room != Room)
@@ -123,7 +138,6 @@ namespace Server.Contents
                 _target = null;
                 State = State.Idle;
                 BroadcaseMove();
-				Console.WriteLine("Target Null");
 
                 return;
             }
@@ -134,7 +148,6 @@ namespace Server.Contents
 				_target = null;
 				State = State.Idle;
 				BroadcaseMove();
-				Console.WriteLine("Target Too Far");
                 return;
 			}
 
@@ -145,7 +158,6 @@ namespace Server.Contents
 				_target = null;
 				State = State.Idle;
 				BroadcaseMove();
-                Console.WriteLine("Paths Too Far");
 
                 return;
 			}
@@ -159,6 +171,7 @@ namespace Server.Contents
 			BroadcaseMove();
 
         }
+
 		void BroadcaseMove()
 		{
             S_Move movePacket = new S_Move();
@@ -186,13 +199,12 @@ namespace Server.Contents
                 BroadcaseMove();
                 return;
 			}
-			Console.WriteLine($"Attacking {_target.Info.Name}");
 			_target.OnDamaged(this, StatInfo.Attack);
 			BroadcaseMove();
         }
 		protected virtual void UpdateDead()
 		{
-			Console.WriteLine("OnDead");
+			//Console.WriteLine("OnDead");
 		}
         public override void OnDamaged(GameObject attacker, int damage)
         {
@@ -205,8 +217,8 @@ namespace Server.Contents
 			}
             _job = Room.PushAfter(200, Update);
             base.OnDamaged(attacker, damage);
-            _isInvincibility = true;
-            Console.WriteLine($"OnDamaged Monster by {attacker.Id}");
+            //_isInvincibility = true;
+            //Console.WriteLine($"OnDamaged Monster by {attacker.Id}");
         }
     }
 }

@@ -10,26 +10,29 @@ namespace Server.Contents
 		public Data.Skill Data { get; set; }
 		public Area()
 		{
-			ObjectType = GameObjectType.Area;
+			//ObjectType = GameObjectType.Area;
 		}
 		public GameObject Owner;
 
-		public void Init()
+		public override void Init()
 		{
 			if (Room == null)
 				return;
 
 			Room.PushAfter(300, Destroy);
-			OnAttack();
-			
+			foreach(List<int> list in Data.area.posList)
+			{
+				Vector2Int pos = new Vector2Int(list[0], list[1]);
+				OnAttack(pos);
+			}
 		}
 
-		public void OnAttack()
+		public void OnAttack(Vector2Int pos)
 		{
 			if (Room == null)
 				return;
 
-			int targetId = Room.Map.FindId(CellPos);
+			int targetId = Room.Map.FindId(pos);
 			if (targetId != 0 && targetId != 1)
 			{
 				GameObject target = Room.Find(targetId);

@@ -19,4 +19,10 @@
     <ProjectReference Include="..\ServerCore\ServerCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Contents\Object\Skills\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Contents\Object\Skills\" />
+  </ItemGroup>
 </Project>
