@@ -117,7 +117,7 @@ namespace Server.Contents
                 player.Vision.Update();
                 Console.WriteLine($"{player.Info.Name} Spawn in {player.CellPos.x}, {player.CellPos.y}");
             }
-            else if (type == GameObjectType.Dagger)
+            else if (type == GameObjectType.Projectile)
             {
                 Projectile projectile = gameObject as Projectile;
                 _projectiles.Add(projectile.Id, projectile);
@@ -148,33 +148,37 @@ namespace Server.Contents
 
                 circler.Update();
             }**/
-            else if (type == GameObjectType.Sword)
+            else if (type == GameObjectType.Trigon)
             {
-                Sword sword = gameObject as Sword;
+                if(gameObject.Info.Prefab == 0)
+                {
+                    Sword sword = gameObject as Sword;
 
-                if (sword.Owner.PosInfo.State == State.Dead)
-                    return;
+                    if (sword.Owner.PosInfo.State == State.Dead)
+                        return;
 
-                _trigons.Add(sword.Id, sword);
-                sword.Room = this;
-     
-                zone.Trigons.Add(sword);
+                    _trigons.Add(sword.Id, sword);
+                    sword.Room = this;
 
-                sword.Init();
+                    zone.Trigons.Add(sword);
+
+                    sword.Init();
+                }
+                else if(gameObject.Info.Prefab == 1)
+                {
+                    Lightning lightning = gameObject as Lightning;
+
+                    if (lightning.Owner.PosInfo.State == State.Dead)
+                        return;
+
+                    _trigons.Add(lightning.Id, lightning);
+                    lightning.Room = this;
+
+                    zone.Trigons.Add(lightning);
+                }
+
             }
-            else if (type == GameObjectType.Lightning)
-            {
-                Lightning lightning = gameObject as Lightning;
-
-                if (lightning.Owner.PosInfo.State == State.Dead)
-                    return;
-
-                _trigons.Add(lightning.Id, lightning);
-                lightning.Room = this;
-
-                zone.Trigons.Add(lightning);
-            }
-            else if (type == GameObjectType.Fire)
+            else if (type == GameObjectType.Area)
             {
                 Fire fire = gameObject as Fire;
 
@@ -238,7 +242,7 @@ namespace Server.Contents
                         player.Session.Send(leavePacket);
                 }
             }
-            else if (type == GameObjectType.Dagger)
+            else if (type == GameObjectType.Projectile)
             {
                 Projectile projectile = null;
                 if (_projectiles.Remove(objectId, out projectile) == false)
@@ -247,6 +251,7 @@ namespace Server.Contents
                 cellPos = projectile.CellPos;
                 Map.LeaveObject(projectile);
                 projectile.Room = null;
+                Console.WriteLine($"Leave Room Projectile_{projectile.Id}");
             }
             else if (type == GameObjectType.Monster)
             {
@@ -279,27 +284,27 @@ namespace Server.Contents
                 GetZone(circler.CellPos).Remove(circler);
                 circler.Room = null;
             }**/
-            else if (type == GameObjectType.Sword)
+            else if (type == GameObjectType.Trigon)
             {
                 Trigon trigon = null;
                 if (_trigons.Remove(objectId, out trigon) == false)
                     return;
 
                 cellPos = trigon.CellPos;
-                GetZone(trigon.CellPos).Remove(trigon);
-                trigon.Room = null;
-                trigon.Owner = null;
-            }
-            else if (type == GameObjectType.Lightning)
-            {
-                Trigon trigon = null;
-                if (_trigons.Remove(objectId, out trigon) == false)
-                    return;
 
-                cellPos = trigon.CellPos;
-                GetZone(trigon.CellPos).Remove(trigon);
+                if (trigon.Info.Prefab == 0)
+                { 
+                    GetZone(trigon.CellPos).Remove(trigon);
+                    trigon.Room = null;
+                    trigon.Owner = null;
+                }
+                else if(trigon.Info.Prefab == 1)
+                {
+                    cellPos = trigon.CellPos;
+                    GetZone(trigon.CellPos).Remove(trigon);
+                }
             }
-            else if (type == GameObjectType.Fire)
+            else if (type == GameObjectType.Area)
             {
                 Fire fire = null;
                 if (_fires.Remove(objectId, out fire) == false)
@@ -341,7 +346,7 @@ namespace Server.Contents
                 if (_players.TryGetValue(objectId, out player))
                     return player;
             }
-            else if (objectType == GameObjectType.Dagger)
+            else if (objectType == GameObjectType.Projectile)
             {
                 Projectile projectile = null;
                 if (_projectiles.TryGetValue(objectId, out projectile))
@@ -418,26 +423,11 @@ namespace Server.Contents
                         {
                             if (player.OnSlide())
                                 return;
-                            S_Move s_MovePacket = new S_Move();
-                            Vector2Int dirVector = player.DirToVector();
-                            Vector2Int endPoint;
 
-                            if (dirVector.x == 0 || dirVector.y == 0)
-                                endPoint = new Vector2Int((dirVector.x * 5) + player.CellPos.x, (dirVector.y * 5) + player.CellPos.y);
-                            else
-                                endPoint = new Vector2Int((dirVector.x * 3) + player.CellPos.x, (dirVector.y * 3) + player.CellPos.y);
-
-                            Map.SlideObject(player, endPoint, dirVector);
                             player.State = State.Slide;
+                            Vector2Int dirVector = player.DirToVector();
 
-                            s_MovePacket.ObjectId = player.Info.ObjectId;
-                            s_MovePacket.PosInfo = player.PosInfo;
-                            foreach (Trigon t in player.Trigons.Values)
-                            {
-                                t.CheckAttack();
-                            }
-                            Console.WriteLine($"{skill.ObjectId} Player Use Slide {player.CellPos.x} , {player.CellPos.y}");
-                            Broadcast(player.CellPos, s_MovePacket);
+                            HandleSlide(player, dirVector, 5);
                         }
                         break;
                     case SkillType.SkillProjectile:
@@ -480,6 +470,23 @@ namespace Server.Contents
             }
             
         }
+        public void HandleSlide(GameObject go, Vector2Int dir, int range = 3)
+        {
+            S_Move s_MovePacket = new S_Move();
+
+            Vector2Int endPoint;
+
+            if (dir.x == 0 || dir.y == 0)
+                endPoint = new Vector2Int((dir.x * range) + go.CellPos.x, (dir.y * range) + go.CellPos.y);
+            else
+                endPoint = new Vector2Int((dir.x * (int)(range / 1.4f)) + go.CellPos.x, (dir.y * (int)(range / 1.4f)) + go.CellPos.y);
+            Map.SlideObject(go, endPoint, dir);
+
+            s_MovePacket.ObjectId = go.Info.ObjectId;
+            s_MovePacket.PosInfo = go.PosInfo;
+
+            Broadcast(go.CellPos, s_MovePacket);
+        }
 
         public void Broadcast(Vector2Int pos, IMessage packet)
         {
@@ -521,24 +528,64 @@ namespace Server.Contents
         }
         void SpawnMonster()
         {
-            if(_monsters.Count < 2000)
+            if(_monsters.Count < 10000)
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    Monster Test = ObjectManager.Instance.Add<Monster>();
+                    Monster monster1 = ObjectManager.Instance.Add<Monster>();
                     {
-                        Test.Info.Name = $"Monster_{Test.Id}";
+                        monster1.Info.Name = $"Slime0_{monster1.Id}";
                     }
                     Random rand = new Random();
                     while (true)
                     {
-                        Test.PosInfo.PosX = rand.Next(Map.SizeX);
-                        Test.PosInfo.PosY = rand.Next(Map.SizeY);
-                        if (Map.CanGo(Test.CellPos))
+                        monster1.PosInfo.PosX = rand.Next(100);
+                        monster1.PosInfo.PosY = rand.Next(200);
+                        if (Map.CanGo(monster1.CellPos))
                             break;
                     }
-
-                    EnterRoom(Test);
+                    StatInfo stat = null;
+                    DataManager.MonsterDict.TryGetValue(1, out stat);
+                    monster1.StatInfo.MergeFrom(stat);
+                    EnterRoom(monster1);
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Monster monster2 = ObjectManager.Instance.Add<Monster>();
+                    {
+                        monster2.Info.Name = $"Slime1_{monster2.Id}";
+                    }
+                    Random rand = new Random();
+                    while (true)
+                    {
+                        monster2.PosInfo.PosX = rand.Next(100,Map.SizeX);
+                        monster2.PosInfo.PosY = rand.Next(200,Map.SizeY);
+                        if (Map.CanGo(monster2.CellPos))
+                            break;
+                    }
+                    StatInfo stat = null;
+                    DataManager.MonsterDict.TryGetValue(2, out stat);
+                    monster2.StatInfo.MergeFrom(stat);
+                    EnterRoom(monster2);
+                }
+                for (int i = 0; i < 20; i++)
+                {
+                    Monster monster3 = ObjectManager.Instance.Add<Monster>();
+                    {
+                        monster3.Info.Name = $"Slime3_{monster3.Id}";
+                    }
+                    Random rand = new Random();
+                    while (true)
+                    {
+                        monster3.PosInfo.PosX = rand.Next(100);
+                        monster3.PosInfo.PosY = rand.Next(200, Map.SizeY);
+                        if (Map.CanGo(monster3.CellPos))
+                            break;
+                    }
+                    StatInfo stat = null;
+                    DataManager.MonsterDict.TryGetValue(3, out stat);
+                    monster3.StatInfo.MergeFrom(stat);
+                    EnterRoom(monster3);
                 }
             }
             else

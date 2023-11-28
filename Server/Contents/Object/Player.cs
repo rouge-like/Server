@@ -18,6 +18,7 @@ namespace Server.Contents
         public int Level { get { return StatInfo.Level; } set { StatInfo.Level = value; } }
         public int EXP { get { return StatInfo.Exp; } set { StatInfo.Exp = value; } }
 
+
         int _selectCount;
         int _itemRange;
         public Player()
@@ -53,6 +54,15 @@ namespace Server.Contents
             t.Info.Name = Id.ToString();
             Trigons.Add(t.Id, t);
             Room.Push(Room.EnterRoom, t);
+
+            Air d = ObjectManager.Instance.Add<Air>();
+            d.Owner = this;
+            d.Room = Room;
+            d.PosInfo = PosInfo;
+            d.Info.Name = Id.ToString();
+            Passives.Add(d.Id, d);
+            d.Init();
+            Console.WriteLine("Add Dagger");
         }
         public void UpdatePassive(int skillId)
 		{
@@ -159,14 +169,16 @@ namespace Server.Contents
             if (item.Destroyed)
                 return;
 
-            switch (item.ItemType)
+            S_GetItem packet = new S_GetItem();
+            packet.PlayerId = Id;
+            packet.ItemId = item.Id;
+
+            switch (item.Info.Prefab)
             {
-                case ItemType.Food:
+                case 0:
                     OnDamaged(this, -item.value);
                     break;
-                case ItemType.Weapon:
-                    break;
-                case ItemType.Armor:
+                case 1:
                     {
                         EarnEXP(item.value);
                     }
@@ -175,9 +187,8 @@ namespace Server.Contents
 
             item.Destroyed = true;
 
-            //Console.WriteLine($"Player {Id} Get Item_{item.Id} {t.Id} At {PosInfo.PosX} , {PosInfo.PosY}");
-
-            Room.Push(Room.LeaveRoom, item.Id);
+            Room.Push(Room.Broadcast, CellPos, packet);
+            Room.PushAfter(500, Room.LeaveRoom, item.Id);
         }
 
         public void EarnEXP(int exp)
@@ -198,10 +209,10 @@ namespace Server.Contents
                 Console.WriteLine($"Level Up {StatInfo.Hp}");
 
                 S_SelectEquip equip = new S_SelectEquip();
-                equip.Equips.Add(GameObjectType.Sword);
-                equip.Equips.Add(GameObjectType.Fire);
-                equip.Equips.Add(GameObjectType.Dagger);
-                equip.Equips.Add(GameObjectType.Lightning);
+                equip.Equips.Add(EquipType.Sword);
+                equip.Equips.Add(EquipType.Fire);
+                equip.Equips.Add(EquipType.Dagger);
+                equip.Equips.Add(EquipType.Lightning);
 
                 if(Session != null)
                     Room.Push(Session.Send, equip);
@@ -221,14 +232,14 @@ namespace Server.Contents
             Room.Push(Room.Broadcast, CellPos, packet);
         }
 
-        public void SelectEquip(GameObjectType type)
+        public void SelectEquip(EquipType type)
         {
             if (_selectCount <= 0)
                 return;
             _selectCount--;
             switch (type)
             {
-                case GameObjectType.Sword:
+                case EquipType.Sword:
                     {
                         Sword t = ObjectManager.Instance.Add<Sword>();
                         t.Owner = this;
@@ -240,7 +251,7 @@ namespace Server.Contents
                         Room.Push(Room.EnterRoom, t);
                     }
                     break;
-                case GameObjectType.Dagger:
+                case EquipType.Dagger:
                     if(DaggerCount == 0)
                     {
                         Dagger d = ObjectManager.Instance.Add<Dagger>();
@@ -256,9 +267,9 @@ namespace Server.Contents
                     else
                         DaggerCount++;
                     break;
-                case GameObjectType.Air:
+                case EquipType.Air:
                     break;
-                case GameObjectType.Fire:
+                case EquipType.Fire:
                     {
                         Fire f = ObjectManager.Instance.Add<Fire>();
                         f.Owner = this;
@@ -270,9 +281,9 @@ namespace Server.Contents
 
                     }
                     break;
-                case GameObjectType.Earth:
+                case EquipType.Earth:
                     break;
-                case GameObjectType.Lightning:
+                case EquipType.Lightning:
                     {
                         Lightning l = ObjectManager.Instance.Add<Lightning>();
                         l.Owner = this;
@@ -295,7 +306,7 @@ namespace Server.Contents
                 case GameObjectType.Player:
 
                     break;
-                case GameObjectType.Fire:
+                case GameObjectType.Area:
 
                     break;
             }
@@ -340,7 +351,7 @@ namespace Server.Contents
             Item item = ObjectManager.Instance.Add<Item>();
             item.PosInfo.PosX = PosInfo.PosX;
             item.PosInfo.PosY = PosInfo.PosY;
-            item.ItemType = ItemType.Food;
+            item.Info.Prefab = 0;
             item.value = 20;
             Console.WriteLine($"{Id} DEAD And Drop Item {item.Id}");
             Room.Push(Room.EnterRoom, item);

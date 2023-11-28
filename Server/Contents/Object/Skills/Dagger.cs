@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using Google.Protobuf.Protocol;
 using Server.Data;
 
-namespace Server.Contents.Object
+namespace Server.Contents
 {
 	public class Dagger : Passive
 	{
 		public Dagger()
 		{
-            ObjectType = GameObjectType.Dagger;
 		}
         public override void Init()
         {
@@ -35,6 +34,7 @@ namespace Server.Contents.Object
                 projectile.Owner = Owner;
                 projectile.Data = skillData;
                 projectile.Info.Name = $"Projectile_{projectile.Id}";
+                projectile.Info.Prefab = 0;
                 projectile.PosInfo.State = State.Moving;
                 projectile.SetDir(PosInfo.Dir);
                 projectile.PosInfo.PosX = PosInfo.PosX;

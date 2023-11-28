@@ -37,16 +37,13 @@ namespace Server.Contents
                 case GameObjectType.Monster:
                     Monsters.Remove((Monster)go);
                     break;
-                case GameObjectType.Dagger:
+                case GameObjectType.Projectile:
                     Projectiles.Remove((Projectile)go);
                     break;
-                case GameObjectType.Sword:
+                case GameObjectType.Trigon:
                     Trigons.Remove((Trigon)go);
                     break;
-                case GameObjectType.Lightning:
-                    Trigons.Remove((Trigon)go);
-                    break;
-                case GameObjectType.Fire:
+                case GameObjectType.Area:
                     Fires.Remove((Fire)go);
                     break;
                 case GameObjectType.Item:

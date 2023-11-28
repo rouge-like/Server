@@ -10,16 +10,18 @@ namespace Server.Contents
 		{
 			ObjectType = GameObjectType.Monster;
 		}
+		public bool IsMetal;
         public override void Init()
         {
             base.Init();
 
-			StatInfo.Hp = 200;
-			StatInfo.MaxHp = 200;
-			StatInfo.Speed = 5.0f;
-			StatInfo.Attack = 1;
-
 			State = State.Idle;
+			Info.Prefab = StatInfo.Level - 1;
+			StatInfo.Hp = StatInfo.MaxHp;
+			if (Info.Prefab == 2)
+				IsMetal = true;
+			else
+				IsMetal = false;
 			Update();
         }
         protected override void OnDead(GameObject attacker)
@@ -43,20 +45,22 @@ namespace Server.Contents
                 _job.Cancel = true;
                 _job = null;
             }
+			for(int i = 0; i < StatInfo.Level; i++)
+			{
+                Random rand = new Random();
+                int v = rand.Next(10);
 
-            Random rand = new Random();
-			int v = rand.Next(10);
-
-            Item item = ObjectManager.Instance.Add<Item>();
-            item.PosInfo.PosX = PosInfo.PosX;
-            item.PosInfo.PosY = PosInfo.PosY;
-			if (v > 7)
-				item.ItemType = ItemType.Food;
-			else
-				item.ItemType = ItemType.Armor;
-			item.value = 10;
-            Console.WriteLine($"Monster {Id} DEAD Drop Item {item.Id}");
-            Room.Push(Room.EnterRoom, item);
+                Item item = ObjectManager.Instance.Add<Item>();
+                item.PosInfo.PosX = PosInfo.PosX;
+                item.PosInfo.PosY = PosInfo.PosY;
+                if (v > 7)
+                    item.Info.Prefab = 0;
+                else
+                    item.Info.Prefab = 1;
+                item.value = 10;
+                Console.WriteLine($"Monster {Id} DEAD Drop Item {item.Id}");
+                Room.Push(Room.EnterRoom, item);
+            }
 
             Room.PushAfter(1000, Respone);
         }

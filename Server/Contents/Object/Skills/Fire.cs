@@ -8,8 +8,8 @@ namespace Server.Contents.Object
 	{
 		public Fire()
 		{
-            ObjectType = GameObjectType.Fire;
-            StatInfo.Attack = 50;
+            ObjectType = GameObjectType.Area;
+            StatInfo.Attack = 10;
         }
 
         int[,] _area = new int[,] { { 0, 0 }, { 0, 1 }, { 0, -1 }, { 1, 0 }, { 1, 1 }, { 1, -1 }, { -1, 0 }, { -1, 1 }, { -1, -1 } };
@@ -51,7 +51,7 @@ namespace Server.Contents.Object
                 {
                     GameObject target = Room.Find(targetId);
                     if (target != Owner)
-                        target.OnDamaged(this, StatInfo.Attack);
+                        target.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
                 }
             }
 

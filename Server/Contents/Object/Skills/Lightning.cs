@@ -8,10 +8,12 @@ namespace Server.Contents.Object
 	{
 		public Lightning()
 		{
-            ObjectType = GameObjectType.Lightning;
             StatInfo.Speed = 10.0f;
+            StatInfo.Attack = 3;
             R = 6.0f;
-		}
+            Info.Prefab = 1;
+            IsSword = false;
+        }
         public override void Init()
         {
             base.Init();
@@ -76,7 +78,7 @@ namespace Server.Contents.Object
                         Vector2 d = new Vector2(m.PosInfo.PosX, m.PosInfo.PosY);
                         if (InTriangle(a, b, c, d))
                         {
-                            m.OnDamaged(this, StatInfo.Attack);
+                            m.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
                         }
                     }
                     foreach (Player p in zone.Players)
@@ -88,7 +90,7 @@ namespace Server.Contents.Object
 
                         if (InTriangle(a, b, c, t_OwerPos))
                         {
-                            p.OnDamaged(this, StatInfo.Attack);
+                            p.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
                         }
                     }
                 }

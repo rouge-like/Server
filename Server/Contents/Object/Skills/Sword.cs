@@ -8,7 +8,8 @@ namespace Server.Contents.Object
 	{
 		public Sword()
 		{
-            ObjectType = GameObjectType.Sword;
+            IsSword = true;
+            Info.Prefab = 0;
 		}
 
         bool IsSame1(Vector2 a, Vector2 b, Vector2 p, Vector2 q)
@@ -82,9 +83,18 @@ namespace Server.Contents.Object
                         Vector2 d = new Vector2(m.PosInfo.PosX, m.PosInfo.PosY);
                         if (InTriangle(a, b, c, d))
                         {
-                            m.OnDamaged(this, StatInfo.Attack);
-                            _coolTime = true;
-                            Room.PushAfter(100, CoolTimeOver);
+                            m.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
+                            if (m.IsMetal && m.State != State.Dead)
+                            {
+                                Speed = Speed * -1;
+                                _coolTime = true;
+                                Room.PushAfter(500, CoolTimeOver);
+
+                                S_HitTrigon hit = new S_HitTrigon();
+                                hit.Trigon1Id = Id;
+
+                                Room.Push(Room.Broadcast, Owner.CellPos, hit);
+                            }
                         }
                     }
                     foreach (Player p in zone.Players)
@@ -97,15 +107,13 @@ namespace Server.Contents.Object
                         if (InTriangle(a, b, c, t_OwerPos))
                         {
                             //Console.WriteLine($"{Id} : HIT Player{p.Id}!");
-                            p.OnDamaged(this, StatInfo.Attack);
-                            _coolTime = true;
-                            Room.PushAfter(100, CoolTimeOver);
+                            p.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
                         }
                         foreach (Trigon t in p.Trigons.Values)
                         {
                             if (t.Owner == null)
                                 continue;
-                            if (t.ObjectType != GameObjectType.Sword)
+                            if (t.IsSword == false)
                                 continue;
 
                             Sword s = t as Sword;

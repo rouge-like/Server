@@ -161,35 +161,29 @@ namespace Server.Contents
 				case GameObjectType.Monster:
 					packet.EffectId = 4;
 					break;
-                case GameObjectType.Sword:
-                    packet.EffectId = 0;
-                    if (_preSword == attacker.Id)
-                        return;
-                    _preSword = attacker.Id;
-                    Room.PushAfter(500, SwordCooltimeOver);
+                case GameObjectType.Trigon:
+					if(attacker.Info.Prefab == 0)
+					{
+                        packet.EffectId = 0;
+                        if (_preSword == attacker.Id)
+                            return;
+                        _preSword = attacker.Id;
+                        Room.PushAfter(500, SwordCooltimeOver);
+                    }
+					else if(attacker.Info.Prefab == 1)
+					{
+                        packet.EffectId = 2;
+                    }
+ 
                     break;
-                case GameObjectType.Fire:
+                case GameObjectType.Area:
 					packet.EffectId = 1;
-					
-                    S_Move s_MovePacket = new S_Move();
 
-					Dir d = GetDirFromVec(CellPos - attacker.CellPos);
+                    Dir d = GetDirFromVec(CellPos - attacker.CellPos);
                     Vector2Int dirVector = DirToVector(d);
-                    Vector2Int endPoint;
-                    if (dirVector.x == 0 || dirVector.y == 0)
-                        endPoint = new Vector2Int((dirVector.x * 3) + CellPos.x, (dirVector.y * 3) + CellPos.y);
-                    else
-                        endPoint = new Vector2Int((dirVector.x * 2) + CellPos.x, (dirVector.y * 2) + CellPos.y);
-                    Room.Map.SlideObject(this, endPoint, dirVector);
 
-                    s_MovePacket.ObjectId = Info.ObjectId;
-                    s_MovePacket.PosInfo = PosInfo;
-
-                    Room.Broadcast(CellPos, s_MovePacket);
+					Room.Push(Room.HandleSlide, this, dirVector, 3);
                     break;
-				case GameObjectType.Lightning:
-                    packet.EffectId = 2;
-					break;
             }
 
             StatInfo.Hp -= damage;
@@ -198,7 +192,7 @@ namespace Server.Contents
 			//Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
 			packet.ObjectId = Id;
 			packet.Hp = StatInfo.Hp;
-			Room.Broadcast(CellPos, packet);
+			Room.Push(Room.Broadcast,CellPos, packet);
 
 			if(StatInfo.Hp <= 0)
             {

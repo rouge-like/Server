@@ -11,7 +11,7 @@ namespace Server.Contents
         public Data.Skill Data { get; set; }
         public Projectile()
         {
-            ObjectType = GameObjectType.Dagger;
+            ObjectType = GameObjectType.Projectile;
             _moved = 0;
         }
 
@@ -23,7 +23,7 @@ namespace Server.Contents
                 return;
             if(_moved > Data.projectile.range)
             {
-                Console.WriteLine($"Projectile {_moved}");
+                //Console.WriteLine($"Projectile {_moved}");
                 Room.Push(Room.LeaveRoom, Id);
                 return;
             }
@@ -38,8 +38,12 @@ namespace Server.Contents
                 if (target != Owner)
                 {
                     target.OnDamaged(Owner, Data.damage);
-                    Room.Push(Room.LeaveRoom, Id);
-                    return;
+                    if(Data.projectile.penetrate == false)
+                    {
+                        Room.Push(Room.LeaveRoom, Id);
+                        return;
+                    }
+
                 }
             }
 
@@ -53,12 +57,12 @@ namespace Server.Contents
                 S_Move movePakcet = new S_Move();
                 movePakcet.ObjectId = Id;
                 movePakcet.PosInfo = PosInfo;
-                Room.Broadcast(CellPos, movePakcet);
+                Room.Push(Room.Broadcast,CellPos, movePakcet);
                 if (dirVector.x == 0 || dirVector.y == 0)
                     _moved += 10;
                 else
                     _moved += 14;
-                Console.WriteLine($"Projectile {Id}_Player{Owner.Id} : {PosInfo.PosX}, {PosInfo.PosY} , {PosInfo.Dir}");
+                //Console.WriteLine($"Projectile {Id}_Player{Owner.Id} : {PosInfo.PosX}, {PosInfo.PosY} , {PosInfo.Dir}");
             }
             else
             {
@@ -68,11 +72,24 @@ namespace Server.Contents
                     GameObject target = Room.Find(targetId);
 
                     if(target != Owner)
-                        target.OnDamaged(Owner, Data.damage);
+                        target.OnDamaged(Owner, Data.damage * Owner.StatInfo.Attack);
                 }
-
-                if(Data.projectile.penetrate == false)
+                if(Data.projectile.penetrate == false || targetId == 0)
                     Room.Push(Room.LeaveRoom, Id);
+                else
+                {
+                    Console.WriteLine($"Projectile Pen");
+                    Room.Map.MoveObject(this, desPos);
+
+                    S_Move movePakcet = new S_Move();
+                    movePakcet.ObjectId = Id;
+                    movePakcet.PosInfo = PosInfo;
+                    Room.Push(Room.Broadcast, CellPos, movePakcet);
+                    if (dirVector.x == 0 || dirVector.y == 0)
+                        _moved += 10;
+                    else
+                        _moved += 14;
+                }
             }
         }
         public void SetDir(Dir dir)

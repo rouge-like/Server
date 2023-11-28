@@ -2,14 +2,15 @@
 using Google.Protobuf.Protocol;
 using Server.Data;
 
-namespace Server.Contents.Object.Skills
+namespace Server.Contents
 {
 	public class Air : Passive
 	{
 		public Air()
 		{
-			ObjectType = GameObjectType.Air;
 		}
+        int[] _x = new int[] { 0, 1, 0, -1, 1, 1, -1, -1 };
+        int[] _y = new int[] { 1, 0, -1, 0, 1, -1, 1, -1 };
         public override void Init()
         {
             base.Init();
@@ -27,34 +28,67 @@ namespace Server.Contents.Object.Skills
 
             PosInfo = Owner.PosInfo;
             Skill skillData = null;
-            DataManager.SkillDict.TryGetValue(2, out skillData);
-            for (int i = 0; i < Owner.DaggerCount; i++)
+            DataManager.SkillDict.TryGetValue(4, out skillData);
+
+            Vector2Int dirVector = DirToVector(Dir);
+            if (dirVector.x == 0 || dirVector.y == 0)
             {
-                Projectile projectile = ObjectManager.Instance.Add<Projectile>();
-                projectile.Owner = Owner;
-                projectile.Data = skillData;
-                projectile.Info.Name = $"Projectile_{projectile.Id}";
-                projectile.PosInfo.State = State.Moving;
-                projectile.SetDir(PosInfo.Dir);
-                projectile.PosInfo.PosX = PosInfo.PosX;
-                projectile.PosInfo.PosY = PosInfo.PosY;
-                projectile.Speed = skillData.projectile.speed;
-
-                Vector2Int desPos = projectile.GetFrontCellPos();
-                int id = Room.Map.FindId(desPos);
-                if (Room.Map.CanGo(desPos))
+                for(int i = 0; i < 4; i++)
                 {
-                    Room.Push(Room.EnterRoom, projectile);
-                    Console.WriteLine($"Daager_{projectile.Id} Enter By Player_{Owner.Id}");
-                }
+                    Dir dir = GetDirFromVec(new Vector2Int(_x[i], _y[i]));
+                    Projectile projectile = ObjectManager.Instance.Add<Projectile>();
+                    projectile.Owner = Owner;
+                    projectile.Data = skillData;
+                    projectile.Info.Name = $"Projectile_{projectile.Id}";
+                    projectile.Info.Prefab = 1;
+                    projectile.PosInfo.State = State.Moving;
+                    projectile.SetDir(dir);
+                    projectile.PosInfo.PosX = PosInfo.PosX;
+                    projectile.PosInfo.PosY = PosInfo.PosY;
+                    projectile.Speed = skillData.projectile.speed;
 
-                else if (id != 1 && id != 0 && id != Owner.Id)
-                {
-                    GameObject target = Room.Find(id);
-                    target.OnDamaged(projectile.Owner, projectile.Data.damage);
+                    Vector2Int desPos = projectile.GetFrontCellPos();
+                    int id = Room.Map.FindId(desPos);
+                    if (Room.Map.CanGo(desPos))
+                    {
+                        Room.Push(Room.EnterRoom, projectile);
+                    }
+
+                    else if (id != 0)
+                    {
+                        Room.Push(Room.EnterRoom, projectile);
+                    }
                 }
-                else
-                    Console.WriteLine("Cannot Enter Projectile : Wrong Position");
+            }
+            else
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Dir dir = GetDirFromVec(new Vector2Int(_x[i + 4], _y[i + 4]));
+                    Projectile projectile = ObjectManager.Instance.Add<Projectile>();
+                    projectile.Owner = Owner;
+                    projectile.Data = skillData;
+                    projectile.Info.Name = $"Projectile_{projectile.Id}";
+                    projectile.Info.Prefab = 1;
+                    projectile.PosInfo.State = State.Moving;
+                    projectile.SetDir(dir);
+                    projectile.PosInfo.PosX = PosInfo.PosX;
+                    projectile.PosInfo.PosY = PosInfo.PosY;
+                    projectile.Speed = skillData.projectile.speed;
+
+                    Vector2Int desPos = projectile.GetFrontCellPos();
+                    int id = Room.Map.FindId(desPos);
+                    if (Room.Map.CanGo(desPos))
+                    {
+                        Room.Push(Room.EnterRoom, projectile);
+                        Console.WriteLine($"Daager_{projectile.Id} Enter By Player_{Owner.Id}");
+                    }
+
+                    else if (id != 0)
+                    {
+                        Room.Push(Room.EnterRoom, projectile);
+                    }
+                }
             }
             _job = Room.PushAfter(_coolTime, Update);
         }

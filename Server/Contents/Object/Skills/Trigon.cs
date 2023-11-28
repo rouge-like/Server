@@ -11,10 +11,11 @@ namespace Server.Contents
 
         public Trigon()
 		{
+			ObjectType = GameObjectType.Trigon;
 			R = 3.0f;
 			Degree = 0;
 			Speed = 30.0f;
-			StatInfo.Attack = 50;
+			StatInfo.Attack = 5;
 			StatInfo.MaxHp = 150;
 			StatInfo.Hp = 15000;
 			X = 0;
@@ -24,6 +25,7 @@ namespace Server.Contents
 		}
 
 		public Player Owner;
+		public bool IsSword;
 		public float R;
         public float X;
         public float Y;

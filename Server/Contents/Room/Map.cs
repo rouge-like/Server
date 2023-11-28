@@ -219,7 +219,7 @@ namespace Server.Contents
                 _map[go.CellPos.x, go.CellPos.y] = 0;
                 _map[x, y] = go.Id;
             }
-            else if (type == GameObjectType.Dagger)
+            else if (type == GameObjectType.Projectile)
             {
                 Projectile p = (Projectile)go;
 
@@ -308,7 +308,7 @@ namespace Server.Contents
                 _map[go.CellPos.x, go.CellPos.y] = 0;
                 _map[x, y] = go.Id;
             }
-            else if (type == GameObjectType.Dagger)
+            else if (type == GameObjectType.Projectile)
             {
                 Projectile p = (Projectile)go;
 

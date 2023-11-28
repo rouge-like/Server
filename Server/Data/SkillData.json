@@ -5,7 +5,7 @@
       "name": "Slide",
       "cooldown": "1",
       "damage": "10",
-      "delay" : "150",
+      "delay": "150",
       "skillType": "SkillNone",
       "area": {
         "posList": [
@@ -17,42 +17,55 @@
           [ 1, -1 ],
           [ 1, 1 ],
           [ -1, 1 ],
-          [ -1, -1]
+          [ -1, -1 ]
         ]
       }
     },
     {
-        "id": "2",
-        "name": "Skill2",
-        "cooldown": "0.2",
-        "damage": "50",
-        "skillType": "SkillProjectile",
-        "projectile": {
-            "name": "Basic",
-            "speed": "20.0",
-            "range": "50",
-            "penetrate" : false
-        }
+      "id": "2",
+      "name": "Skill2",
+      "cooldown": "0.2",
+      "damage": "5",
+      "skillType": "SkillProjectile",
+      "projectile": {
+        "name": "Basic",
+        "speed": "20.0",
+        "range": "500",
+        "penetrate": false
+      }
     },
     {
-        "id": "3",
-        "name": "circle",
-        "cooldown": "5",
-        "damage": "10",
-        "skillType": "SkillCircler",
-        "circle": {
-            "len": "8",
-            "posList": [
-                [ 0, 1 ],
-                [ 1, 1 ],
-                [ 1, 0 ],
-                [ 1, -1 ],
-                [ 0, -1 ],
-                [ -1, -1 ],
-                [ -1, 0 ],
-                [ -1, 1 ]
-            ]
-        }
+      "id": "3",
+      "name": "circle",
+      "cooldown": "5",
+      "damage": "10",
+      "skillType": "SkillCircler",
+      "circle": {
+        "len": "8",
+        "posList": [
+          [ 0, 1 ],
+          [ 1, 1 ],
+          [ 1, 0 ],
+          [ 1, -1 ],
+          [ 0, -1 ],
+          [ -1, -1 ],
+          [ -1, 0 ],
+          [ -1, 1 ]
+        ]
+      }
+    },
+    {
+      "id": "4",
+      "name": "Air",
+      "cooldown": "0.2",
+      "damage": "2",
+      "skillType": "SkillProjectile",
+      "projectile": {
+        "name": "Basic",
+        "speed": "30.0",
+        "range": "50",
+        "penetrate": true
+      }
     }
   ]
 } 

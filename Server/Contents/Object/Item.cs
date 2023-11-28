@@ -14,7 +14,6 @@ namespace Server.Contents
         int _destoryCount;
         IJob _job;
         public bool Destroyed;
-        public ItemType ItemType;
         public int value;
 
         // 가까이 범위에오면 먹어짐 이건 플레이어에게 다는 편이 좋을듯

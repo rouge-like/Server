@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Server.Contents.Object
+namespace Server.Contents
 {
 	public class Passive : GameObject
 	{
