@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Server.Contents
 {
     public class Projectile : GameObject
     {
-        public Data.Skill Data { get; set; }
         public Projectile()
         {
             ObjectType = GameObjectType.Projectile;
@@ -16,19 +16,21 @@ namespace Server.Contents
         }
 
         public GameObject Owner;
+        public int ProjectileRange;
+        public bool Penetrate;
         int _moved;
         public override void Update()
         {
-            if (Data == null || Owner == null || Room == null)
+            if (Owner == null || Room == null)
                 return;
-            if(_moved > Data.projectile.range)
+            if(_moved >= ProjectileRange)
             {
-                //Console.WriteLine($"Projectile {_moved}");
+                //Console.WriteLine($"Projectile {_moved} {CellPos.x},{CellPos.y}");
                 Room.Push(Room.LeaveRoom, Id);
                 return;
             }
             
-            int tick = (int)(1000 / Data.projectile.speed);
+            int tick = (int)(1000 / StatInfo.Speed);
             Room.PushAfter(tick, Update);
 
             int obj = Room.Map.FindId(CellPos);
@@ -37,8 +39,8 @@ namespace Server.Contents
                 GameObject target = Room.Find(obj);
                 if (target != Owner)
                 {
-                    target.OnDamaged(Owner, Data.damage);
-                    if(Data.projectile.penetrate == false)
+                    target.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
+                    if(Penetrate == false)
                     {
                         Room.Push(Room.LeaveRoom, Id);
                         return;
@@ -72,13 +74,12 @@ namespace Server.Contents
                     GameObject target = Room.Find(targetId);
 
                     if(target != Owner)
-                        target.OnDamaged(Owner, Data.damage * Owner.StatInfo.Attack);
+                        target.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
                 }
-                if(Data.projectile.penetrate == false || targetId == 0)
+                if(Penetrate == false || targetId == 0)
                     Room.Push(Room.LeaveRoom, Id);
                 else
                 {
-                    Console.WriteLine($"Projectile Pen");
                     Room.Map.MoveObject(this, desPos);
 
                     S_Move movePakcet = new S_Move();

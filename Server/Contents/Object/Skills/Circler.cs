@@ -7,8 +7,7 @@ namespace Server.Contents
 {
 	public class Circler : GameObject
 	{
-		public Data.Skill Data { get; set; }
-		int _count;
+		/*int _count;
 		public Circler()
 		{
 			//ObjectType = GameObjectType.Circler;
@@ -90,6 +89,6 @@ namespace Server.Contents
 		}
 		// 몇 프레임 후 다음 구역으로 이동하는가?
 		// 한바퀴 도는데 몇 프레임(초)가 걸리는가?
-		// 한바퀴 2초 총 8칸  1칸당 0.25초
+		// 한바퀴 2초 총 8칸  1칸당 0.25초*/
 	}
 }

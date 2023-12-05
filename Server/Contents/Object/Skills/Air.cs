@@ -15,7 +15,6 @@ namespace Server.Contents
         {
             base.Init();
             _job = Room.PushAfter(100, Update);
-            _coolTime = 1000;
         }
         public override void Update()
         {
@@ -27,8 +26,14 @@ namespace Server.Contents
             base.Update();
 
             PosInfo = Owner.PosInfo;
-            Skill skillData = null;
-            DataManager.SkillDict.TryGetValue(4, out skillData);
+            int level;
+            if (Owner.EquipsA.TryGetValue(EquipType.Air, out level))
+                StatInfo.Level = level;
+
+            AirInfo data = null;
+            DataManager.AirDict.TryGetValue(StatInfo.Level, out data);
+
+            _coolTime = data.cooltime;
 
             Vector2Int dirVector = DirToVector(Dir);
             if (dirVector.x == 0 || dirVector.y == 0)
@@ -38,14 +43,16 @@ namespace Server.Contents
                     Dir dir = GetDirFromVec(new Vector2Int(_x[i], _y[i]));
                     Projectile projectile = ObjectManager.Instance.Add<Projectile>();
                     projectile.Owner = Owner;
-                    projectile.Data = skillData;
                     projectile.Info.Name = $"Projectile_{projectile.Id}";
                     projectile.Info.Prefab = 1;
                     projectile.PosInfo.State = State.Moving;
                     projectile.SetDir(dir);
                     projectile.PosInfo.PosX = PosInfo.PosX;
                     projectile.PosInfo.PosY = PosInfo.PosY;
-                    projectile.Speed = skillData.projectile.speed;
+                    projectile.Speed = data.speed;
+                    projectile.StatInfo.Attack = data.attack;
+                    projectile.Penetrate = true;
+                    projectile.ProjectileRange = data.range;
 
                     Vector2Int desPos = projectile.GetFrontCellPos();
                     int id = Room.Map.FindId(desPos);
@@ -67,14 +74,16 @@ namespace Server.Contents
                     Dir dir = GetDirFromVec(new Vector2Int(_x[i + 4], _y[i + 4]));
                     Projectile projectile = ObjectManager.Instance.Add<Projectile>();
                     projectile.Owner = Owner;
-                    projectile.Data = skillData;
                     projectile.Info.Name = $"Projectile_{projectile.Id}";
                     projectile.Info.Prefab = 1;
                     projectile.PosInfo.State = State.Moving;
                     projectile.SetDir(dir);
                     projectile.PosInfo.PosX = PosInfo.PosX;
                     projectile.PosInfo.PosY = PosInfo.PosY;
-                    projectile.Speed = skillData.projectile.speed;
+                    projectile.Speed = data.speed;
+                    projectile.StatInfo.Attack = data.attack;
+                    projectile.Penetrate = true;
+                    projectile.ProjectileRange = data.range;
 
                     Vector2Int desPos = projectile.GetFrontCellPos();
                     int id = Room.Map.FindId(desPos);

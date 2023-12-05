@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using Google.Protobuf.Protocol;
 using Server.Data;
 
-namespace Server.Contents.Object
+namespace Server.Contents
 {
-    public class Fire : Passive
-    {
-        public Fire()
-        {
+	public class Poison : Passive
+	{
+		public Poison()
+		{
             ObjectType = GameObjectType.Area;
+            StatInfo.Attack = 5;
         }
+
+        List<List<int>> _area = new List<List<int>>();
 
         public override void Init()
         {
             base.Init();
             _job = Room.PushAfter(100, Update);
+            _coolTime = 100;
+            List<int> tmp = new List<int>() { 0, 0 };
+            _area.Add(tmp);
         }
 
         public override void Update()
@@ -28,24 +34,23 @@ namespace Server.Contents.Object
             CellPos = Owner.CellPos;
 
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Fire, out level))
+            if (Owner.EquipsA.TryGetValue(EquipType.Poison, out level))
                 StatInfo.Level = level;
 
-            FireInfo data;
-            DataManager.FireDict.TryGetValue(StatInfo.Level, out data);
+            PoisonInfo data;
+            DataManager.PoisonDict.TryGetValue(StatInfo.Level, out data);
 
             StatInfo.Attack = data.attack;
-            _coolTime = data.cooltime;
 
             Area area = ObjectManager.Instance.Add<Area>();
             {
                 area.Owner = Owner;
                 area.Info.Name = Info.Name;
-                area.Info.Prefab = 0;
+                area.Info.Prefab = 3;
                 area.CellPos = CellPos;
                 area.StatInfo.Attack = StatInfo.Attack;
-                area.AttackCount = 1;
-                area.AttackArea = data.area;
+                area.AttackCount = data.attackcount;
+                area.AttackArea = _area;
             }
 
             Room.Push(Room.EnterRoom, area);

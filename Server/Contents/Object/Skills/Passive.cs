@@ -10,7 +10,12 @@ namespace Server.Contents
 		protected int _coolTime;
         protected IJob _job;
         public Player Owner;
-		public virtual void Destroy()
+        public override void Init()
+        {
+            base.Init();
+            StatInfo.Level = 1;
+        }
+        public virtual void Destroy()
         {
             if (Room == null)
                 return;

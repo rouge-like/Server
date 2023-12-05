@@ -4,6 +4,7 @@ using Server.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Server.Contents
 {
@@ -11,22 +12,20 @@ namespace Server.Contents
     {
         public ClientSession Session { get; set; }
         public VisionCube Vision { get; private set; }
-        public int DaggerCount;
-        public Dictionary<GameObjectType, int> Equips { get; set; } = new Dictionary<GameObjectType,int>();
+        public Dictionary<EquipType, int> EquipsA { get; set; } = new Dictionary<EquipType, int>();
+        public Dictionary<EquipType, int> EquipsS { get; set; } = new Dictionary<EquipType, int>();
         public Dictionary<int, Trigon> Trigons { get; set; } = new Dictionary<int, Trigon>();
         public Dictionary<int, Passive> Passives { get; set; } = new Dictionary<int, Passive>();
         public int Level { get { return StatInfo.Level; } set { StatInfo.Level = value; } }
         public int EXP { get { return StatInfo.Exp; } set { StatInfo.Exp = value; } }
-
+        public PlayerStatInfo PlayerStat = new PlayerStatInfo();
+ 
 
         int _selectCount;
-        int _itemRange;
         public Player()
         {
             ObjectType = GameObjectType.Player;
             Vision = new VisionCube(this);
-            DaggerCount = 0;
-            _itemRange = 2;
         }
 
         IJob _job;
@@ -35,6 +34,9 @@ namespace Server.Contents
             PosInfo.State = State.Idle;
             StatInfo.Hp = StatInfo.MaxHp;
             StatInfo.Exp = 0;
+            PlayerStat.ItemRange = 2;
+            PlayerStat.SlideCooltime = 50;
+            PlayerStat.Number = 0;
             _selectCount = 0;
             _isInvincibility = true;
             Room.PushAfter(3000, AfterInvincibility);
@@ -46,83 +48,8 @@ namespace Server.Contents
             if(Room == null)
                 return;
             _isInvincibility = false;
-
-            Sword t = ObjectManager.Instance.Add<Sword>();
-            t.Owner = this;
-            t.Room = Room;
-            t.PosInfo = PosInfo;
-            t.Info.Name = Id.ToString();
-            Trigons.Add(t.Id, t);
-            Room.Push(Room.EnterRoom, t);
-
-            Air d = ObjectManager.Instance.Add<Air>();
-            d.Owner = this;
-            d.Room = Room;
-            d.PosInfo = PosInfo;
-            d.Info.Name = Id.ToString();
-            Passives.Add(d.Id, d);
-            d.Init();
-            Console.WriteLine("Add Dagger");
-        }
-        public void UpdatePassive(int skillId)
-		{
-            if (Room == null)
-                return;
-
-            Skill skillData;
-            
-            if (DataManager.SkillDict.TryGetValue(skillId, out skillData))
-            {
-                int cooldown = (int)skillData.cooldown * 1000;
-                _job = Room.PushAfter(cooldown, UpdatePassive, skillId);
-
-                switch (skillData.skillType)
-                {
-                    case SkillType.SkillArea:
-                        {
-                            foreach (List<int> list in skillData.area.posList)
-                            {
-                                Area area = ObjectManager.Instance.Add<Area>();
-
-                                if (area == null)
-                                    continue;
-
-                                area.Owner = this;
-                                area.Data = skillData;
-                                area.Info.Name = $"Area_{area.Id}";
-                                area.PosInfo.PosX = CellPos.x + list[0];
-                                area.PosInfo.PosY = CellPos.y + list[1];
-
-                                if (area.PosInfo.PosX < 0 || area.PosInfo.PosX >= Room.Map.SizeX || area.PosInfo.PosY < 0 || area.PosInfo.PosY >= Room.Map.SizeY)
-                                    continue;
-
-                                Room.Push(Room.EnterRoom, area);
-                            }
-                        }
-                        break;
-                    case SkillType.SkillCircler:
-                        {
-                            Circler circler = ObjectManager.Instance.Add<Circler>();
-
-                            if (circler == null)
-                                return;
-                           
-                            circler.Owner = this;
-                            circler.Data = skillData;
-                            circler.Info.Name = $"Circler_{circler.Id}";
-                            circler.PosInfo.PosX = CellPos.x;
-                            circler.PosInfo.PosY = CellPos.y;
-
-
-                            if (circler.PosInfo.PosX < 0 || circler.PosInfo.PosX >= Room.Map.SizeX || circler.PosInfo.PosY < 0 || circler.PosInfo.PosY >= Room.Map.SizeY)
-                                return;
-
-                            //Drones.Add(circler);
-                            Room.Push(Room.EnterRoom, circler);
-                        }
-                        break;
-                }        
-            }
+            _selectCount += 1;
+            SelectEquip(EquipType.Sword);
         }
         bool _slideCooltime = false;
         int _slidetick;
@@ -138,7 +65,7 @@ namespace Server.Contents
                 foreach (Item i in zone.Items)
                 {
                     Vector2Int a = new Vector2Int(i.PosInfo.PosX, i.PosInfo.PosY);
-                    if ((a-CellPos).sqrMangnitude < _itemRange * _itemRange)
+                    if ((a-CellPos).sqrMangnitude < PlayerStat.ItemRange * PlayerStat.ItemRange)
                     {
                         EarnItem(i);
                     }
@@ -149,7 +76,7 @@ namespace Server.Contents
             {
                 if (_slidetick <= Environment.TickCount)
                 {
-                    _slidetick = Environment.TickCount + 5000;
+                    _slidetick = Environment.TickCount + (PlayerStat.SlideCooltime * 100);
                     _slideCooltime = false;
                 }
             }
@@ -160,7 +87,7 @@ namespace Server.Contents
             Console.WriteLine("OnSlide");
             if (_slideCooltime)
                 return true;
-            _slidetick = Environment.TickCount + 5000;
+            _slidetick = Environment.TickCount + (PlayerStat.SlideCooltime * 100);
             _slideCooltime = true;
             return false;
         }
@@ -190,10 +117,31 @@ namespace Server.Contents
             Room.Push(Room.Broadcast, CellPos, packet);
             Room.PushAfter(500, Room.LeaveRoom, item.Id);
         }
+        void SetEquips(int num)
+        {
+            S_SelectEquip equip = new S_SelectEquip();
+            List<EquipType> list = new List<EquipType>();
+            for(int i = 0; i < 20; i++)
+            {
+                list.Add((EquipType)i);
+            }
+
+            for(int i = 0; i < num; i++)
+            {
+                Random rand = new Random();
+                int value = rand.Next(20 - i);
+                EquipType type = list[value];
+                equip.Equips.Add(type);
+                list.Remove(type);
+            }
+
+            if (Session != null)
+                Room.Push(Session.Send, equip);
+        }
 
         public void EarnEXP(int exp)
         {
-            EXP += exp;
+            EXP += (int)(exp + (exp * (PlayerStat.AdditionalExp / 100f)));
             S_ChangeStat packet = new S_ChangeStat();
             packet.PlayerId = Id;
 
@@ -201,21 +149,24 @@ namespace Server.Contents
             {
                 _selectCount++;
                 Level++;
+                StatInfo.Hp = StatInfo.MaxHp;
                 StatInfo stat = null;
                 EXP -= StatInfo.TotalExp;
                 DataManager.StatDict.TryGetValue(Level, out stat);
                 StatInfo.MergeFrom(stat);
 
-                Console.WriteLine($"Level Up {StatInfo.Hp}");
-
-                S_SelectEquip equip = new S_SelectEquip();
-                equip.Equips.Add(EquipType.Sword);
-                equip.Equips.Add(EquipType.Fire);
-                equip.Equips.Add(EquipType.Dagger);
-                equip.Equips.Add(EquipType.Lightning);
-
-                if(Session != null)
-                    Room.Push(Session.Send, equip);
+                Random rand = new Random();
+                int value = rand.Next(100);
+                int num;
+                if (value < 30 - (PlayerStat.Luck * 10))
+                    num = 2;
+                else if (value < 80)
+                    num = 3;
+                else if (value < 95 -(PlayerStat.Luck * 5))
+                    num = 4;
+                else
+                    num = 5;
+                SetEquips(num);
 
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.Attack, Value = StatInfo.Attack });
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.Level, Value = StatInfo.Level });
@@ -232,14 +183,217 @@ namespace Server.Contents
             Room.Push(Room.Broadcast, CellPos, packet);
         }
 
+        void ChangeStat(StatType type, int value)
+        {
+            S_ChangeStat packet = new S_ChangeStat();
+            packet.PlayerId = Id;
+            packet.Info.Add(new ChangeStatInfo() { Type = type, Value = value });
+            Room.Push(Room.Broadcast, CellPos, packet);
+        }
+
         public void SelectEquip(EquipType type)
         {
             if (_selectCount <= 0)
                 return;
+
             _selectCount--;
-            switch (type)
+
+            if (EquipsA.ContainsKey(type))
+                EquipsA[type] += 1;
+            else
             {
-                case EquipType.Sword:
+                switch (type)
+                {
+                    case EquipType.Dagger:
+                        {
+                            Dagger d = ObjectManager.Instance.Add<Dagger>();
+                            d.Owner = this;
+                            d.Room = Room;
+                            d.PosInfo = PosInfo;
+                            d.Info.Name = Id.ToString();
+                            Passives.Add(d.Id, d);
+                            d.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Sword:
+                        {
+                            Sword t = ObjectManager.Instance.Add<Sword>();
+                            t.Owner = this;
+                            t.Room = Room;
+                            t.PosInfo = PosInfo;
+                            t.Info.Name = Id.ToString();
+                            Trigons.Add(t.Id, t);
+                            EquipsA.Add(type, 1);
+
+                            Room.Push(Room.EnterRoom, t);
+                        }
+                        break;
+                    case EquipType.Fire:
+                        {
+                            Fire f = ObjectManager.Instance.Add<Fire>();
+                            f.Owner = this;
+                            f.Room = Room;
+                            f.PosInfo = PosInfo;
+                            f.Info.Name = Id.ToString();
+                            Passives.Add(f.Id, f);
+                            f.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Lightning:
+                        {
+                            Lightning l = ObjectManager.Instance.Add<Lightning>();
+                            l.Owner = this;
+                            l.Room = Room;
+                            l.PosInfo = PosInfo;
+                            l.Info.Name = Id.ToString();
+                            Trigons.Add(l.Id, l);
+                            l.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Ice:
+                        {
+                            Ice i = ObjectManager.Instance.Add<Ice>();
+                            i.Owner = this;
+                            i.Room = Room;
+                            i.PosInfo = PosInfo;
+                            i.Info.Name = Id.ToString();
+                            Passives.Add(i.Id, i);
+                            i.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Earth:
+                        {
+                            Earth e = ObjectManager.Instance.Add<Earth>();
+                            e.Owner = this;
+                            e.Room = Room;
+                            e.PosInfo = PosInfo;
+                            e.Info.Name = Id.ToString();
+                            Passives.Add(e.Id, e);
+                            e.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Air:
+                        {
+                            Air a = ObjectManager.Instance.Add<Air>();
+                            a.Owner = this;
+                            a.Room = Room;
+                            a.PosInfo = PosInfo;
+                            a.Info.Name = Id.ToString();
+                            Passives.Add(a.Id, a);
+                            a.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Light:
+                        {
+                            Light i = ObjectManager.Instance.Add<Light>();
+                            i.Owner = this;
+                            i.Room = Room;
+                            i.PosInfo = PosInfo;
+                            i.Info.Name = Id.ToString();
+                            Passives.Add(i.Id, i);
+                            i.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Dark:
+                        {
+                            Dark d = ObjectManager.Instance.Add<Dark>();
+                            d.Owner = this;
+                            d.Room = Room;
+                            d.PosInfo = PosInfo;
+                            d.Info.Name = Id.ToString();
+                            Trigons.Add(d.Id, d);
+                            d.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Poison:
+                        {
+                            Poison p = ObjectManager.Instance.Add<Poison>();
+                            p.Owner = this;
+                            p.Room = Room;
+                            p.PosInfo = PosInfo;
+                            p.Info.Name = Id.ToString();
+                            Passives.Add(p.Id, p);
+                            p.Init();
+                            EquipsA.Add(type, 1);
+                        }
+                        break;
+                    case EquipType.Mushroom:
+                        StatInfo.Attack += 10;
+                        break;
+                    case EquipType.Shield:
+                        PlayerStat.Defense += 10;
+                        break;
+                    case EquipType.Heart:
+                        StatInfo.MaxHp += 10;
+                        ChangeStat(StatType.MaxHp, StatInfo.MaxHp);
+                        break;
+                    case EquipType.Necklace:
+                        PlayerStat.AdditionalExp += 10;
+                        break;
+                    case EquipType.Shoes:
+                        PlayerStat.SlideCooltime -= 5;
+                        break;
+                    case EquipType.Magnet:
+                        PlayerStat.ItemRange += 1;
+                        break;
+                    case EquipType.Clover:
+                        PlayerStat.Luck += 1;
+                        break;
+                    case EquipType.Book:
+                        PlayerStat.Cooltime += 10;
+                        break;
+                    case EquipType.Glove:
+                        PlayerStat.AttackSpeed += 10;
+                        break;
+                    case EquipType.Ring:
+                        PlayerStat.Number += 1;
+                        break;
+                }
+            }
+            
+            Console.WriteLine($"Player_{Id} : Select {type.ToString()}");
+            CheckTrigonNumber();
+        }
+        void CheckTrigonNumber(int tick = 0, int degree = 0)
+        {
+            List<Sword> swords = new List<Sword>();
+            List<Lightning> lightnings = new List<Lightning>();
+            List<Dark> darks = new List<Dark>();
+
+            foreach(Trigon t in Trigons.Values)
+            {
+                switch (t.Info.Prefab)
+                {
+                    case 0:
+                        swords.Add((Sword)t);
+                        break;
+                    case 1:
+                        lightnings.Add((Lightning)t);
+                        break;
+                    case 2:
+                        darks.Add((Dark)t);
+                        break;
+                }
+            }
+
+            if(swords.Count != 0)
+            {
+                SwordInfo data = null;
+                DataManager.SwordDict.TryGetValue(EquipsA[EquipType.Sword], out data);
+                int d = data.number + PlayerStat.Number - swords.Count;
+
+                Console.WriteLine($"SwordCount {data.number + PlayerStat.Number} , {swords.Count}");
+                if (d > 0)
+                {
+                    for(int i = 0; i < d; i++)
                     {
                         Sword t = ObjectManager.Instance.Add<Sword>();
                         t.Owner = this;
@@ -250,40 +404,20 @@ namespace Server.Contents
 
                         Room.Push(Room.EnterRoom, t);
                     }
-                    break;
-                case EquipType.Dagger:
-                    if(DaggerCount == 0)
-                    {
-                        Dagger d = ObjectManager.Instance.Add<Dagger>();
-                        d.Owner = this;
-                        d.Room = Room;
-                        d.PosInfo = PosInfo;
-                        d.Info.Name = Id.ToString();
-                        Passives.Add(d.Id, d);
-                        d.Init();
-                        DaggerCount = 1;
-                        Console.WriteLine("Add Dagger");
-                    }
-                    else
-                        DaggerCount++;
-                    break;
-                case EquipType.Air:
-                    break;
-                case EquipType.Fire:
-                    {
-                        Fire f = ObjectManager.Instance.Add<Fire>();
-                        f.Owner = this;
-                        f.Room = Room;
-                        f.PosInfo = PosInfo;
-                        f.Info.Name = Id.ToString();
-                        Passives.Add(f.Id, f);
-                        f.Init();
+                }
+            }
+            if (lightnings.Count != 0)
+            {
+                LightningInfo data = null;
+                DataManager.LightningDict.TryGetValue(EquipsA[EquipType.Lightning], out data);
+                int n = data.number + PlayerStat.Number;
 
-                    }
-                    break;
-                case EquipType.Earth:
-                    break;
-                case EquipType.Lightning:
+                Console.WriteLine($"LightningCount {data.number + PlayerStat.Number} , {lightnings.Count}");
+                if (n != lightnings.Count)
+                {
+                    foreach (Lightning l in lightnings)
+                        l.Destroy();
+                    for (int i = 0; i < n; i++)
                     {
                         Lightning l = ObjectManager.Instance.Add<Lightning>();
                         l.Owner = this;
@@ -292,23 +426,60 @@ namespace Server.Contents
                         l.Info.Name = Id.ToString();
                         Trigons.Add(l.Id, l);
                         l.Init();
+                        l.Degree = (360 / n) * (i); 
+                        l.Tick = 0;
                     }
-                    break;
+                }
             }
-            Console.WriteLine($"Player_{Id} : Select {type.ToString()}");
-        }
+            if (darks.Count != 0)
+            {
+                DarkInfo data = null;
+                DataManager.DarkDict.TryGetValue(EquipsA[EquipType.Dark], out data);
+                int d = data.number + PlayerStat.Number - darks.Count;
 
+                Console.WriteLine($"DarkCount {data.number + PlayerStat.Number} , {darks.Count}");
+                if (d > 0)
+                {
+                    foreach (Dark dark in darks)
+                        dark.Tick = 0;
+                    for (int i = 0; i < d; i++)
+                    {
+                        Dark dark = ObjectManager.Instance.Add<Dark>();
+                        dark.Owner = this;
+                        dark.Room = Room;
+                        dark.PosInfo = PosInfo;
+                        dark.Info.Name = Id.ToString();
+                        Trigons.Add(dark.Id, dark);
+                        dark.Init();
+                        dark.Degree = darks[darks.Count - 1].Degree + (30*(i+1));
+                        dark.Tick = 0;
+                    }
+                }
+            }
+        }
         public override void OnDamaged(GameObject attacker, int damage)
         {
-            base.OnDamaged(attacker, damage);
-            switch (attacker.ObjectType)
+            if (Room == null)
+                return;
+            if (_isInvincibility || State == State.Dead)
+                return;
+            S_ChangeHp packet = new S_ChangeHp();
+            int EffectId = GetEffectNum(attacker);
+            if (EffectId == -1)
+                return;
+
+            StatInfo.Hp -= (int)(damage - (damage * (PlayerStat.Defense / 100f)));
+            StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
+
+            //Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
+            packet.EffectId = EffectId;
+            packet.ObjectId = Id;
+            packet.Hp = StatInfo.Hp;
+            Room.Push(Room.Broadcast, CellPos, packet);
+
+            if (StatInfo.Hp <= 0)
             {
-                case GameObjectType.Player:
-
-                    break;
-                case GameObjectType.Area:
-
-                    break;
+                OnDead(attacker);
             }
         }
 
@@ -341,6 +512,7 @@ namespace Server.Contents
             }
 
             Passives.Clear();
+            EquipsA.Clear();
 
             if (_job != null)
             {
@@ -348,13 +520,21 @@ namespace Server.Contents
                 _job = null;
             }
 
-            Item item = ObjectManager.Instance.Add<Item>();
-            item.PosInfo.PosX = PosInfo.PosX;
-            item.PosInfo.PosY = PosInfo.PosY;
-            item.Info.Prefab = 0;
-            item.value = 20;
-            Console.WriteLine($"{Id} DEAD And Drop Item {item.Id}");
-            Room.Push(Room.EnterRoom, item);
+            for (int i = 0; i < StatInfo.Level; i++)
+            {
+                Random rand = new Random();
+                int v = rand.Next(10);
+
+                Item item = ObjectManager.Instance.Add<Item>();
+                item.PosInfo.PosX = PosInfo.PosX;
+                item.PosInfo.PosY = PosInfo.PosY;
+                if (v > 7)
+                    item.Info.Prefab = 0;
+                else
+                    item.Info.Prefab = 1;
+                item.value = 10;
+                Room.Push(Room.EnterRoom, item);
+            }
 
             Room.PushAfter(2000, Respone);
         }

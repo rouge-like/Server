@@ -4,20 +4,26 @@
     {
       "level": "1",
       "maxHp": "200",
-      "attack": "1",
+      "attack": "0",
       "speed": "5.0"
     },
     {
       "level": "2",
       "maxHp": "250",
-      "attack": "2",
-      "speed": "7.0"
+      "attack": "0",
+      "speed": "5.0"
     },
     {
       "level": "3",
       "maxHp": "350",
-      "attack": "2",
-      "speed": "7.0"
+      "attack": "0",
+      "speed": "5.0"
+    },
+    {
+      "level": "4",
+      "maxHp": "500",
+      "attack": "0",
+      "speed" : "5.0"
     }
   ]
 } 

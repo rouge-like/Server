@@ -1,0 +1,60 @@
+{
+  "arrows": [
+    {
+      "level": "1",
+      "range": "500",
+      "attack": "5",
+      "speed": "20",
+      "number": "1"
+    },
+    {
+      "level": "2",
+      "range": "500",
+      "attack": "5",
+      "speed": "20",
+      "number": "2"
+    },
+    {
+      "level": "3",
+      "range": "500",
+      "attack": "6",
+      "speed": "20",
+      "number": "2"
+    },
+    {
+      "level": "4",
+      "range": "500",
+      "attack": "7",
+      "speed": "20",
+      "number": "2"
+    },
+    {
+      "level": "5",
+      "range": "500",
+      "attack": "7",
+      "speed": "20",
+      "number": "3"
+    },
+    {
+      "level": "6",
+      "range": "500",
+      "attack": "8",
+      "speed": "20",
+      "number": "3"
+    },
+    {
+      "level": "7",
+      "range": "500",
+      "attack": "9",
+      "speed": "20",
+      "number": "3"
+    },
+    {
+      "level": "8",
+      "range": "500",
+      "attack": "10",
+      "speed": "20",
+      "number": "3"
+    }
+  ]
+}

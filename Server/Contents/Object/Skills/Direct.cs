@@ -6,7 +6,6 @@ namespace Server.Contents.Object
 {
 	public class Direct : Passive
 	{
-        public Data.Skill Data { get; set; }
         public Direct()
         {
             //ObjectType = GameObjectType.Area;

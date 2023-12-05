@@ -11,14 +11,14 @@ namespace Server.Contents
 			ObjectType = GameObjectType.Monster;
 		}
 		public bool IsMetal;
-        public override void Init()
-        {
-            base.Init();
+		public override void Init()
+		{
+			base.Init();
 
 			State = State.Idle;
 			Info.Prefab = StatInfo.Level - 1;
 			StatInfo.Hp = StatInfo.MaxHp;
-			if (Info.Prefab == 2)
+			if (Info.Prefab == 2 || Info.Prefab == 3)
 				IsMetal = true;
 			else
 				IsMetal = false;
@@ -58,7 +58,6 @@ namespace Server.Contents
                 else
                     item.Info.Prefab = 1;
                 item.value = 10;
-                Console.WriteLine($"Monster {Id} DEAD Drop Item {item.Id}");
                 Room.Push(Room.EnterRoom, item);
             }
 
@@ -100,8 +99,31 @@ namespace Server.Contents
 
 		Player _target;
 		int _searchTick = 0;
+        Dir GetRightDir(Dir dir)
+        {
+            switch (dir)
+            {
+                case Dir.Up:
+                    return Dir.Upright;
+                case Dir.Down:
+                    return Dir.Downleft;
+                case Dir.Right:
+                    return Dir.Downright;
+                case Dir.Left:
+                    return Dir.Upleft;
+                case Dir.Upright:
+                    return Dir.Right;
+                case Dir.Upleft:
+                    return Dir.Up;
+                case Dir.Downright:
+                    return Dir.Down;
+                case Dir.Downleft:
+                    return Dir.Left;
 
-		protected virtual void UpdateIdle()
+            }
+            return dir;
+        }
+        protected virtual void UpdateIdle()
 		{
 			if (_moveTick > Environment.TickCount)
 				return;
@@ -121,7 +143,7 @@ namespace Server.Contents
                     int dy = p.CellPos.y - CellPos.y;
 					int distance = dx + dy;
 
-                    if (Math.Abs(dx) > 5 || Math.Abs(dy) > 5 || distance > d || p.State == State.Dead)
+                    if (Math.Abs(dx) > 7 || Math.Abs(dy) > 7 || distance > d || p.State == State.Dead)
                         continue;
 
 					_target = p;
@@ -147,7 +169,7 @@ namespace Server.Contents
             }
 			Vector2Int dir = _target.CellPos - CellPos;
             float dist = dir.magnitude;
-			if (dist > 15.0f || _target.State == State.Dead)
+			if (dist > 10.0f || _target.State == State.Dead)
 			{
 				_target = null;
 				State = State.Idle;
@@ -155,7 +177,37 @@ namespace Server.Contents
                 return;
 			}
 
-			List<Vector2Int> path = Room.Map.FindPath(CellPos, _target.CellPos);
+            if (dist <= 1.5)
+            {
+                State = State.Skill;
+                return;
+            }
+
+            Dir destDir = GetDirFromVec(dir);
+            Vector2Int destPos = GetFrontCellPos(destDir);
+
+            if (Room.Map.CanGo(destPos))
+            {
+                Dir = destDir;
+                Room.Map.MoveObject(this, destPos);
+            }
+            /*for (int i = 0; i < 8; i++)
+			{
+                if (Room.Map.CanGo(destPos))
+                {
+                    Dir = destDir;
+                    Room.Map.MoveObject(this, destPos);
+					break;
+                }
+				else
+				{
+                    destDir = GetRightDir(destDir);
+                    destPos = GetFrontCellPos(destDir);
+				}
+
+            }*/
+
+            /*List<Vector2Int> path = Room.Map.FindPath(CellPos, _target.CellPos);
 
 			if (path.Count < 2 || path.Count > 20)
 			{
@@ -171,9 +223,9 @@ namespace Server.Contents
 				return;
 			}
 			Dir = GetDirFromVec(path[1] - CellPos);
-			Room.Map.MoveObject(this, path[1]);
-			BroadcaseMove();
+			Room.Map.MoveObject(this, path[1]);*/
 
+            BroadcaseMove();
         }
 
 		void BroadcaseMove()

@@ -1,3 +1,4 @@
+using Client;
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using ServerCore;

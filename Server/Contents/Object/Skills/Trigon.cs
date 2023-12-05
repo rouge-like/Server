@@ -7,8 +7,6 @@ namespace Server.Contents
 {
 	public class Trigon : GameObject
 	{
-        public Data.Skill Data { get; set; }
-
         public Trigon()
 		{
 			ObjectType = GameObjectType.Trigon;
@@ -16,8 +14,6 @@ namespace Server.Contents
 			Degree = 0;
 			Speed = 30.0f;
 			StatInfo.Attack = 5;
-			StatInfo.MaxHp = 150;
-			StatInfo.Hp = 15000;
 			X = 0;
 			Y = 0; 
 			AfterX = 0;
@@ -33,15 +29,20 @@ namespace Server.Contents
 		public float AfterY;
         public float Degree { get { return Info.Degree; } set { Info.Degree = value; } }
 		IJob _job;
+        bool _test = false;
 
 		public override void Init()
 		{
             Room.Push(Update);
+			StatInfo.Hp = (int)R;
+            StatInfo.Level = 1;
         }
 
 		public override void Update()
 		{
-			if (Room == null)
+            if (_test)
+                Console.WriteLine($"{Id} is bug");
+            if (Room == null)
 				return;
 			if (Owner == null || Owner.Room == null)
 				return;
@@ -71,12 +72,13 @@ namespace Server.Contents
             if (Degree < 0)
                 Degree += 360;
 
+
             _job = Room.PushAfter(100, Update);
 		}
 
         public virtual void CheckAttack() { }
 
-		public void Destroy()
+		public virtual void Destroy()
 		{
             if (Room == null)
                 return;
@@ -89,9 +91,13 @@ namespace Server.Contents
 				_job.Cancel = true;
 				_job = null;
 			}
-			Owner.Trigons.Remove(Id);
+            _test = true;
+            Console.WriteLine($"{Id} is Destroy");
+            Owner.Trigons.Remove(Id);
 			Room.Push(Room.LeaveRoom, Id);
-		}
+            Room = null;
+            Owner = null;
+        }
         protected override void OnDead(GameObject attacker)
         {
             base.OnDead(attacker);

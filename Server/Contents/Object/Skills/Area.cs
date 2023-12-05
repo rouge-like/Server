@@ -7,43 +7,56 @@ namespace Server.Contents
 {
 	public class Area : GameObject
 	{
-		public Data.Skill Data { get; set; }
 		public Area()
 		{
-			//ObjectType = GameObjectType.Area;
+			ObjectType = GameObjectType.Area;
 		}
 		public GameObject Owner;
+        public List<List<int>> AttackArea;
+        public int AttackCount;
+        IJob _job;
 
-		public override void Init()
+        public override void Init()
 		{
 			if (Room == null)
 				return;
 
-			Room.PushAfter(300, Destroy);
-			foreach(List<int> list in Data.area.posList)
-			{
-				Vector2Int pos = new Vector2Int(list[0], list[1]);
-				OnAttack(pos);
-			}
-		}
+            _job = Room.PushAfter(100, Update);
+        }
 
-		public void OnAttack(Vector2Int pos)
+        int _attack = 0;
+
+        public override void Update()
+        {
+            if (_attack < AttackCount)
+            {
+
+                _attack++;
+                OnAttack();
+                _job = Room.PushAfter(200, Update);
+            }
+            else
+            {
+                Room.Push(Room.LeaveRoom, Id);
+            }
+        }
+
+        public void OnAttack()
 		{
 			if (Room == null)
 				return;
+            foreach(List<int> list in AttackArea)
+            {
+                Vector2Int pos = new Vector2Int(CellPos.x + list[0], CellPos.y + list[1]);
 
-			int targetId = Room.Map.FindId(pos);
-			if (targetId != 0 && targetId != 1)
-			{
-				GameObject target = Room.Find(targetId);
-				if(target != Owner)
-					target.OnDamaged(Owner, Data.damage);
-			}
-		}
-
-		public void Destroy()
-		{
-			Room.Push(Room.LeaveRoom, Id);
-		}
-	}
+                int targetId = Room.Map.FindId(pos);
+                if (targetId != 0 && targetId != 1)
+                {
+                    GameObject target = Room.Find(targetId);
+                    if (target != Owner)
+                        target.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
+                }
+            }
+        }
+    }
 }

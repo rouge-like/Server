@@ -5,16 +5,17 @@ using Server.Data;
 
 namespace Server.Contents.Object
 {
-	public class Lightning : Trigon
+	public class Dark : Trigon
 	{
-		public Lightning()
+		public Dark()
 		{
-            StatInfo.Speed = 10.0f;
+            StatInfo.Speed = 100.0f;
             StatInfo.Attack = 3;
-            R = 6.0f;
-            Info.Prefab = 1;
+            R = 2.0f;
+            Info.Prefab = 2;
             IsSword = false;
         }
+        public float SmallR;
         public override void Init()
         {
             base.Init();
@@ -36,12 +37,18 @@ namespace Server.Contents.Object
 
             return a1 && a2 && a3;
         }
+        bool Intersection(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+        {
+            bool a1 = IsSame2(a, b, c, d);
+            bool a2 = IsSame2(c, d, a, b);
 
+            return (a1 == false) && (a2 == false);
+        }
 
         bool _coolTime;
         public int Tick;
-        int _onValue = 3;
-        int _offValue = 5;
+        int _onValue = 10;
+        int _offValue = 10;
 
         public override void Update()
         {
@@ -55,6 +62,7 @@ namespace Server.Contents.Object
             Tick++;
             CheckAttack();
         }
+
         public override void CheckAttack()
         {
             base.CheckAttack();
@@ -64,20 +72,19 @@ namespace Server.Contents.Object
             if (Owner == null || Owner.Room == null)
                 return;
 
-            List<Zone> zones = Owner.Room.GetAdjacentZones(Owner.CellPos);
-            int ownerX = Owner.PosInfo.PosX;
-            int ownerY = Owner.PosInfo.PosY;
-
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Lightning , out level))
+            if (Owner.EquipsA.TryGetValue(EquipType.Dark, out level))
                 StatInfo.Level = level;
 
-            LightningInfo data = null;
-            DataManager.LightningDict.TryGetValue(StatInfo.Level, out data);
+            DarkInfo data = null;
+            DataManager.DarkDict.TryGetValue(StatInfo.Level, out data);
 
             StatInfo.Speed = data.speed;
             StatInfo.Attack = data.attack;
 
+            List<Zone> zones = Owner.Room.GetAdjacentZones(Owner.CellPos);
+            int ownerX = Owner.PosInfo.PosX;
+            int ownerY = Owner.PosInfo.PosY;
             if (_coolTime == false)
             {
                 if (Tick > _offValue)
@@ -119,6 +126,7 @@ namespace Server.Contents.Object
                     OnAttack();
             }
         }
+        
         public void OnAttack()
         {
             _coolTime = false;

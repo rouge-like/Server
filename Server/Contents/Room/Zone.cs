@@ -15,7 +15,7 @@ namespace Server.Contents
         public HashSet<Monster> Monsters { get; set; } = new HashSet<Monster>();
         public HashSet<Projectile> Projectiles { get; set; } = new HashSet<Projectile>();
         public HashSet<Trigon> Trigons { get; set; } = new HashSet<Trigon>();
-        public HashSet<Fire> Fires { get; set; } = new HashSet<Fire>();
+        public HashSet<Area> Areas { get; set; } = new HashSet<Area>();
         public HashSet<Item> Items { get; set; } = new HashSet<Item>();
 
 
@@ -44,7 +44,7 @@ namespace Server.Contents
                     Trigons.Remove((Trigon)go);
                     break;
                 case GameObjectType.Area:
-                    Fires.Remove((Fire)go);
+                    Areas.Remove((Area)go);
                     break;
                 case GameObjectType.Item:
                     Items.Remove((Item)go);

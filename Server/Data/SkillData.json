@@ -23,7 +23,7 @@
     },
     {
       "id": "2",
-      "name": "Skill2",
+      "name": "Arrow",
       "cooldown": "0.2",
       "damage": "5",
       "skillType": "SkillProjectile",

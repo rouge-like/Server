@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Google.Protobuf.Protocol;
+using Server.Data;
 
 namespace Server.Contents.Object
 {
@@ -66,6 +67,20 @@ namespace Server.Contents.Object
         public override void CheckAttack()
         {
             base.CheckAttack();
+
+            int level;
+            if (Owner.EquipsA.TryGetValue(EquipType.Sword, out level))
+                StatInfo.Level = level;
+            
+            SwordInfo data = null;
+            DataManager.SwordDict.TryGetValue(StatInfo.Level, out data);
+
+            if(StatInfo.Speed > 0)
+                StatInfo.Speed = data.speed;
+            else
+                StatInfo.Speed = -data.speed;
+            StatInfo.Attack = data.attack;
+
             List<Zone> zones = Owner.Room.GetAdjacentZones(Owner.CellPos);
             int ownerX = Owner.PosInfo.PosX;
             int ownerY = Owner.PosInfo.PosY;
@@ -136,8 +151,8 @@ namespace Server.Contents.Object
 
                                 Room.Push(Room.Broadcast, Owner.CellPos, hit);
 
-                                OnDamaged(t, s.StatInfo.Attack);
-                                s.OnDamaged(this, StatInfo.Attack);
+                                //OnDamaged(t, s.StatInfo.Attack);
+                                //s.OnDamaged(this, StatInfo.Attack);
 
                                 return;
                             }

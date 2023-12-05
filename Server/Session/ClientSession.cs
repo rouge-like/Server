@@ -19,6 +19,10 @@ namespace Server
 		public int SessionId { get; set; }
 		object _lock = new object();
 		List<ArraySegment<byte>> _reserveQueue = new List<ArraySegment<byte>>();
+
+		int _reservedSendBytes = 0;
+		long _lastSendTick = 0;
+
 		long _pingpongTick = 0;
 		public void Ping()
 		{
@@ -56,6 +60,7 @@ namespace Server
             lock (_lock)
             {
 				_reserveQueue.Add(sendBuffer);
+				_reservedSendBytes += sendBuffer.Length;
             }
 
 		}
@@ -111,8 +116,6 @@ namespace Server
 			});
 
 			SessionManager.Instance.Remove(this);
-
-			Console.WriteLine($"OnDisconnected : {endPoint}");
 		}
 
 		public override void OnSend(int numOfBytes)

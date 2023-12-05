@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
 using System.Text;
 
 namespace Server.Contents
@@ -145,6 +146,71 @@ namespace Server.Contents
             else 
                 return Dir.Down;
         }
+		protected int GetEffectNum(GameObject attacker)
+		{
+            int EffectId = 0;
+            switch (attacker.ObjectType)
+            {
+                case GameObjectType.Player:
+
+                    break;
+                case GameObjectType.Monster:
+                    EffectId = 4;
+                    break;
+                case GameObjectType.Projectile:
+                    if (attacker.Info.Prefab == 0)
+                    {
+                        EffectId = 0;
+                    }
+                    else if (attacker.Info.Prefab == 1)
+                    {
+                        EffectId = 5;
+                    }
+                    else if (attacker.Info.Prefab == 2)
+                        EffectId = 4;
+                    break;
+                case GameObjectType.Trigon:
+                    if (attacker.Info.Prefab == 0)
+                    {
+                        EffectId = 0;
+                        if (_preSword == attacker.Id)
+                            return -1;
+                        _preSword = attacker.Id;
+                        Room.PushAfter(500, SwordCooltimeOver);
+                    }
+                    else if (attacker.Info.Prefab == 1)
+                    {
+                        EffectId = 2;
+                    }
+                    else if (attacker.Info.Prefab == 2)
+                    {
+                        EffectId = 8;
+                    }
+
+                    break;
+                case GameObjectType.Area:
+
+                    if (attacker.Info.Prefab == 0)
+                    {
+                        EffectId = 1;
+                        Dir d = GetDirFromVec(CellPos - attacker.CellPos);
+                        Vector2Int dirVector = DirToVector(d);
+
+                        Room.Push(Room.HandleSlide, this, dirVector, 3);
+                    }
+                    else if (attacker.Info.Prefab == 1)
+                    {
+                        EffectId = 6;
+                    }
+                    else if (attacker.Info.Prefab == 2)
+                        EffectId = 9;
+                    else if (attacker.Info.Prefab == 3)
+                        EffectId = 10;
+                    break;
+            }
+
+            return EffectId;
+        }
 
 		public virtual void OnDamaged(GameObject attacker ,int damage)
         {
@@ -153,43 +219,14 @@ namespace Server.Contents
 			if (_isInvincibility || State == State.Dead)
 				return;
             S_ChangeHp packet = new S_ChangeHp();
-            switch (attacker.ObjectType)
-            {
-                case GameObjectType.Player:
-
-                    break;
-				case GameObjectType.Monster:
-					packet.EffectId = 4;
-					break;
-                case GameObjectType.Trigon:
-					if(attacker.Info.Prefab == 0)
-					{
-                        packet.EffectId = 0;
-                        if (_preSword == attacker.Id)
-                            return;
-                        _preSword = attacker.Id;
-                        Room.PushAfter(500, SwordCooltimeOver);
-                    }
-					else if(attacker.Info.Prefab == 1)
-					{
-                        packet.EffectId = 2;
-                    }
- 
-                    break;
-                case GameObjectType.Area:
-					packet.EffectId = 1;
-
-                    Dir d = GetDirFromVec(CellPos - attacker.CellPos);
-                    Vector2Int dirVector = DirToVector(d);
-
-					Room.Push(Room.HandleSlide, this, dirVector, 3);
-                    break;
-            }
-
+            int EffectId = GetEffectNum(attacker);
+            if (EffectId == -1)
+                return;
             StatInfo.Hp -= damage;
 			StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
 
-			//Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
+            //Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
+            packet.EffectId = EffectId;
 			packet.ObjectId = Id;
 			packet.Hp = StatInfo.Hp;
 			Room.Push(Room.Broadcast,CellPos, packet);

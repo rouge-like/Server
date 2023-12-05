@@ -64,14 +64,14 @@ namespace Server.Contents
                         continue;
                     objects.Add(trigon);
                 }
-                foreach (Fire fire in zone.Fires)
+                foreach (Area area in zone.Areas)
                 {
-                    int dx = fire.CellPos.x - pos.x;
-                    int dy = fire.CellPos.y - pos.y;
+                    int dx = area.CellPos.x - pos.x;
+                    int dy = area.CellPos.y - pos.y;
 
                     if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
                         continue;
-                    objects.Add(fire);
+                    objects.Add(area);
                 }
                 foreach (Item item in zone.Items)
                 {

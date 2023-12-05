@@ -9,98 +9,98 @@
     },
     {
       "level": "2",
-      "maxHp": "250",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "15"
     },
     {
       "level": "3",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "20"
     },
     {
       "level": "4",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "30"
     },
     {
       "level": "5",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "40"
     },
     {
       "level": "6",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "55"
     },
     {
       "level": "7",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "70"
     },
     {
       "level": "8",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "90"
     },
     {
       "level": "9",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "120"
     },
     {
       "level": "10",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "150"
     },
     {
       "level": "11",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "200"
     },
     {
       "level": "12",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "270"
     },
     {
       "level": "13",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "370"
     },
     {
       "level": "14",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "500"
     },
     {
       "level": "15",
-      "maxHp": "300",
+      "maxHp": "200",
       "attack": "10",
       "speed": "10.0",
       "totalExp": "650"

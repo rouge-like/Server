@@ -5,9 +5,9 @@ using Server.Data;
 
 namespace Server.Contents
 {
-	public class Dagger : Passive
+	public class Earth : Passive
 	{
-		public Dagger()
+		public Earth()
 		{
 		}
         public override void Init()
@@ -27,26 +27,28 @@ namespace Server.Contents
 
             PosInfo = Owner.PosInfo;
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Dagger, out level))
+            if (Owner.EquipsA.TryGetValue(EquipType.Earth, out level))
                 StatInfo.Level = level;
 
-            ArrowInfo data = null;
-            DataManager.ArrowDict.TryGetValue(StatInfo.Level, out data);
-            for (int i = 0; i < data.number + Owner.PlayerStat.Number; i++)
+            EarthInfo data = null;
+            Random random = new Random();
+            Dir randomDir = (Dir)random.Next(8);
+            DataManager.EarthDict.TryGetValue(StatInfo.Level, out data);
+
+            for (int i = 0; i < Owner.PlayerStat.Number + data.number; i++)
             {
                 Projectile projectile = ObjectManager.Instance.Add<Projectile>();
                 projectile.Owner = Owner;
                 projectile.Info.Name = $"Projectile_{projectile.Id}";
-                projectile.Info.Prefab = 0;
+                projectile.Info.Prefab = 2;
                 projectile.PosInfo.State = State.Moving;
-                projectile.SetDir(PosInfo.Dir);
+                projectile.SetDir(randomDir);
                 projectile.PosInfo.PosX = PosInfo.PosX;
                 projectile.PosInfo.PosY = PosInfo.PosY;
-                projectile.Speed = data.speed;
+                projectile.Speed = 15;
                 projectile.StatInfo.Attack = data.attack;
                 projectile.Penetrate = false;
                 projectile.ProjectileRange = data.range;
-
 
                 Vector2Int desPos = projectile.GetFrontCellPos();
                 int id = Room.Map.FindId(desPos);
