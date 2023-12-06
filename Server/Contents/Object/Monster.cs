@@ -186,12 +186,13 @@ namespace Server.Contents
             Dir destDir = GetDirFromVec(dir);
             Vector2Int destPos = GetFrontCellPos(destDir);
 
-            if (Room.Map.CanGo(destPos))
+            /*if (Room.Map.CanGo(destPos))
             {
                 Dir = destDir;
                 Room.Map.MoveObject(this, destPos);
-            }
-            /*for (int i = 0; i < 8; i++)
+            }*/
+            
+            for (int i = 0; i < 8; i++)
 			{
                 if (Room.Map.CanGo(destPos))
                 {
@@ -205,7 +206,7 @@ namespace Server.Contents
                     destPos = GetFrontCellPos(destDir);
 				}
 
-            }*/
+            }
 
             /*List<Vector2Int> path = Room.Map.FindPath(CellPos, _target.CellPos);
 
