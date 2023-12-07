@@ -1,3 +1,4 @@
+using Client;
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
 using ServerCore;
@@ -46,11 +47,7 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.SSelectEquip, MakePacket<S_SelectEquip>);
 		_handler.Add((ushort)MsgId.SSelectEquip, PacketHandler.S_SelectEquipHandler);		
 		_onRecv.Add((ushort)MsgId.SGetItem, MakePacket<S_GetItem>);
-		_handler.Add((ushort)MsgId.SGetItem, PacketHandler.S_GetItemHandler);		
-		_onRecv.Add((ushort)MsgId.SEquipInfo, MakePacket<S_EquipInfo>);
-		_handler.Add((ushort)MsgId.SEquipInfo, PacketHandler.S_EquipInfoHandler);		
-		_onRecv.Add((ushort)MsgId.SRanking, MakePacket<S_Ranking>);
-		_handler.Add((ushort)MsgId.SRanking, PacketHandler.S_RankingHandler);
+		_handler.Add((ushort)MsgId.SGetItem, PacketHandler.S_GetItemHandler);
 	}
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{

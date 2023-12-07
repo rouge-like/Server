@@ -19,7 +19,6 @@ namespace Server.Contents
         public int Level { get { return StatInfo.Level; } set { StatInfo.Level = value; } }
         public int EXP { get { return StatInfo.Exp; } set { StatInfo.Exp = value; } }
         public PlayerStatInfo PlayerStat = new PlayerStatInfo();
- 
 
         int _selectCount;
         public Player()
@@ -121,15 +120,38 @@ namespace Server.Contents
         {
             S_SelectEquip equip = new S_SelectEquip();
             List<EquipType> list = new List<EquipType>();
-            for(int i = 0; i < 20; i++)
+            if(EquipsA.Count == 5)
             {
-                list.Add((EquipType)i);
+                foreach (EquipType e in EquipsA.Keys)
+                {
+                    if (EquipsA[e] < 8)
+                        list.Add(e);
+                }
             }
-
-            for(int i = 0; i < num; i++)
+            else
+            {
+                for (int i = 0; i < 10; i++)
+                    list.Add((EquipType)i);
+            }
+            if(EquipsS.Count == 5)
+            {
+                foreach (EquipType e in EquipsS.Keys)
+                {
+                    if (EquipsS[e] < 8)
+                        list.Add(e);
+                }
+            }
+            else
+            {
+                for (int i = 10; i < 20; i++)
+                    list.Add((EquipType)i);
+            }
+            if (list.Count < num)
+                num = list.Count;
+            for (int i = 0; i < num; i++)
             {
                 Random rand = new Random();
-                int value = rand.Next(20 - i);
+                int value = rand.Next(list.Count - i);
                 EquipType type = list[value];
                 equip.Equips.Add(type);
                 list.Remove(type);
@@ -175,7 +197,7 @@ namespace Server.Contents
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.Exp, Value = StatInfo.Exp });
 
                 Room.Push(Room.Broadcast, CellPos, packet);
-
+                Room.Push(Room.RankingSet);
                 return;
             }
 
@@ -326,39 +348,114 @@ namespace Server.Contents
                         }
                         break;
                     case EquipType.Mushroom:
-                        StatInfo.Attack += 10;
+                        {
+                            StatInfo.Attack += 10;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                        }
+
                         break;
                     case EquipType.Shield:
-                        PlayerStat.Defense += 10;
+                        {
+                            PlayerStat.Defense += 10;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                        }
+
                         break;
                     case EquipType.Heart:
-                        StatInfo.MaxHp += 10;
-                        ChangeStat(StatType.MaxHp, StatInfo.MaxHp);
+                        {
+                            StatInfo.MaxHp += 10;
+                            StatInfo.Hp = StatInfo.MaxHp;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                            ChangeStat(StatType.MaxHp, StatInfo.MaxHp);
+                        }
+
+
                         break;
                     case EquipType.Necklace:
-                        PlayerStat.AdditionalExp += 10;
+                        {
+                            PlayerStat.AdditionalExp += 10;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                        }
                         break;
                     case EquipType.Shoes:
-                        PlayerStat.SlideCooltime -= 5;
+                        {
+                            PlayerStat.SlideCooltime -= 5;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                            ChangeStat(StatType.Cooltime, PlayerStat.SlideCooltime);
+                        }
                         break;
                     case EquipType.Magnet:
-                        PlayerStat.ItemRange += 1;
+                        {
+                            PlayerStat.ItemRange += 1;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                        }
                         break;
                     case EquipType.Clover:
-                        PlayerStat.Luck += 1;
+                        {
+                            PlayerStat.Luck += 1;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                        }
                         break;
                     case EquipType.Book:
-                        PlayerStat.Cooltime += 10;
+                        {
+                            PlayerStat.Cooltime += 10;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                        }
                         break;
                     case EquipType.Glove:
-                        PlayerStat.AttackSpeed += 10;
+                        {
+                            PlayerStat.AttackSpeed += 10;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                        }
                         break;
                     case EquipType.Ring:
-                        PlayerStat.Number += 1;
+                        {
+                            PlayerStat.Number += 1;
+                            if (EquipsS.ContainsKey(type))
+                                EquipsS[type] += 1;
+                            else
+                                EquipsS.Add(type, 1);
+                        }
                         break;
                 }
             }
-            
+
+            S_EquipInfo packet = new S_EquipInfo();
+            packet.Equip = type;
+            if (EquipsA.ContainsKey(type))
+                packet.Level = EquipsA[type];
+            else
+                packet.Level = EquipsS[type];
+            if(Session != null)
+                Room.Push(Session.Send, packet);
+
             Console.WriteLine($"Player_{Id} : Select {type.ToString()}");
             CheckTrigonNumber();
         }

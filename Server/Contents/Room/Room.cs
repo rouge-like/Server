@@ -54,15 +54,6 @@ namespace Server.Contents
                 }
             }
 
-            Player DummyPlayer = ObjectManager.Instance.Add<Player>();
-            {
-                DummyPlayer.Info.Name = $"DummyPlayer_{DummyPlayer.Info.ObjectId}";
-                DummyPlayer.Info.PosInfo = new PosInfo();
-
-                DummyPlayer.Session = null;
-            }
-
-            EnterRoom(DummyPlayer);
             PushAfter(100, SpawnMonster);
  
         }
@@ -515,6 +506,36 @@ namespace Server.Contents
                 DataManager.MonsterDict.TryGetValue(level, out stat);
                 monster.StatInfo.MergeFrom(stat);
                 EnterRoom(monster);
+            }
+        }
+        public void RankingSet()
+        {
+            List<Player> players = new List<Player>();
+            players = _players.Values.ToList();
+            players.Sort((a,b) => a.Level.CompareTo(b.Level));
+            players.Reverse();
+
+            S_Ranking packet = new S_Ranking();
+
+            int count = 3;
+            if (count > players.Count)
+                count = players.Count;
+
+            for(int i = 0; i < count; i++)
+            {
+                RankIngInfo info = new RankIngInfo();
+                info.Name = players[i].Info.Name;
+                info.Level = players[i].Level;
+                packet.Players.Add(info);
+            }
+
+            for(int i =0; i < players.Count; i++)
+            {
+                if (players[i].Session == null)
+                    continue;
+                packet.You = players[i].Info.Name;
+                packet.Ranking = i;
+                players[i].Session.Send(packet);
             }
         }
     }

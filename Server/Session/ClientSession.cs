@@ -84,7 +84,7 @@ namespace Server
 			// PROTO Test
 			MyPlayer = ObjectManager.Instance.Add<Player>();
             {
-				MyPlayer.Info.Name = $"Player_{MyPlayer.Info.ObjectId}";
+				MyPlayer.Info.Name = $"P{MyPlayer.Info.ObjectId}";
 				MyPlayer.Info.PosInfo = new PosInfo();
 
 				MyPlayer.Session = this;

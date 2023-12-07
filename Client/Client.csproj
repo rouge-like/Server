@@ -6,11 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Packet\" />
     <None Remove="Session\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Packet\" />
     <Folder Include="Session\" />
   </ItemGroup>
   <ItemGroup>
