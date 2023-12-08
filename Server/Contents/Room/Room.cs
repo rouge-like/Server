@@ -104,7 +104,7 @@ namespace Server.Contents
                     //player.Session.Send(packet);
                 }
                 //player.Vision.Clear();
-                player.Vision.Update();
+                player.Vision.Start();
                 Console.WriteLine($"{player.Info.Name} Spawn in {player.CellPos.x}, {player.CellPos.y}");
             }
             else if (type == GameObjectType.Projectile)
@@ -215,13 +215,6 @@ namespace Server.Contents
 
                 zone.Items.Add(item);
             }
-            foreach (Zone z in GetAdjacentZones(gameObject.CellPos))
-            {
-                foreach (Player p in z.FindAll())
-                {
-                    p.Vision.UpdateImmediately();
-                }
-            }
         }
 
         public void LeaveRoom(int objectId)
@@ -318,13 +311,6 @@ namespace Server.Contents
             else
             {
                 return;
-            }
-            foreach (Zone z in GetAdjacentZones(cellPos))
-            {
-                foreach (Player p in z.FindAll())
-                {
-                    p.Vision.UpdateImmediately();
-                }
             }
         }
         public GameObject Find(int objectId)

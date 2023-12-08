@@ -147,14 +147,26 @@ namespace Server.Contents
                     list.Add((EquipType)i);
             }
             if (list.Count < num)
-                num = list.Count;
-            for (int i = 0; i < num; i++)
+            {
+                if (list.Count == 0)
+                    return;
+                for(int i =0;i < list.Count; i++)
+                {
+                    EquipType type = list[i];
+                    equip.Equips.Add(type);
+                    list.Remove(type);
+                }
+            }
+            else
             {
                 Random rand = new Random();
-                int value = rand.Next(list.Count - i);
-                EquipType type = list[value];
-                equip.Equips.Add(type);
-                list.Remove(type);
+                for (int i = 0; i < num; i++)
+                {
+                    int value = rand.Next(list.Count);
+                    EquipType type = list[value];
+                    equip.Equips.Add(type);
+                    list.Remove(type);
+                }
             }
 
             if (Session != null)

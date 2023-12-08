@@ -113,6 +113,7 @@ namespace Server
 
 				Room room = RoomManager.Instance.Find(1);				
 				room.Push(room.LeaveRoom, MyPlayer.Info.ObjectId);
+				room.Push(MyPlayer.Vision.Destroy);
 			});
 
 			SessionManager.Instance.Remove(this);

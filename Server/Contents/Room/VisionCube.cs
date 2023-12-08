@@ -125,7 +125,7 @@ namespace Server.Contents
 
             PreviousObjects = currentObjects;
 
-            _job = Owner.Room.PushAfter(300, Update);
+            _job = Owner.Room.PushAfter(100, Update);
         }
         public void UpdateImmediately()
         {
@@ -170,9 +170,23 @@ namespace Server.Contents
             PreviousObjects = currentObjects;
             _job = Owner.Room.PushAfter(300, Update);
         }
-        public void Clear()
+        public void Start()
         {
-            PreviousObjects.Clear();
+            if(_job != null)
+            {
+                _job.Cancel = true;
+                _job = null;
+            }
+            _job = Owner.Room.PushAfter(100, Update);
+        }
+        public void Destroy()
+        {
+            if (_job != null)
+            {
+                _job.Cancel = true;
+                _job = null;
+            }
+            Owner = null;
         }
     }
 }

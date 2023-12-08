@@ -66,6 +66,8 @@ namespace Server.Contents.Object
         }
         public override void CheckAttack()
         {
+            if (X == 0 && AfterX == 0)
+                return;
             base.CheckAttack();
 
             int level;
