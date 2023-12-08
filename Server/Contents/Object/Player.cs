@@ -151,7 +151,7 @@ namespace Server.Contents
             for (int i = 0; i < num; i++)
             {
                 Random rand = new Random();
-                int value = rand.Next(list.Count - i);
+                int value = rand.Next(list.Count);
                 EquipType type = list[value];
                 equip.Equips.Add(type);
                 list.Remove(type);
