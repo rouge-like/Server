@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 class PacketHandler
 {
+    static int count;
     public static void S_EnterGameHandler(PacketSession session, IMessage packet)
     {
         S_EnterGame enterGamePacket = packet as S_EnterGame;
@@ -99,6 +100,24 @@ class PacketHandler
         S_GetItem getItem = (S_GetItem)packet;
     }
     public static void S_EquipInfoHandler(PacketSession session, IMessage packet)
+    {
+
+    }
+    public static void S_RankingHandler(PacketSession session, IMessage packet)
+    {
+
+    }
+    public static void S_ConnectedHandler(PacketSession session, IMessage packet)
+    {
+        ServerSession serverSession = session as ServerSession;
+        C_Login login = new C_Login();
+        Random rand = new Random();
+        login.PlayerCode = rand.Next(1048575);
+        login.PlayerName = $"Bot{count++}";
+
+        serverSession.p.Send(login);
+    }
+    public static void S_LoginHandler(PacketSession session, IMessage packet)
     {
 
     }

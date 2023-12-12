@@ -168,7 +168,7 @@ namespace Server.Contents
             }   
 
             PreviousObjects = currentObjects;
-            _job = Owner.Room.PushAfter(300, Update);
+            _job = Owner.Room.PushAfter(100, Update);
         }
         public void Start()
         {

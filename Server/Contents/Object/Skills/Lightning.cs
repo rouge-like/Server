@@ -63,13 +63,13 @@ namespace Server.Contents.Object
                 return;
             if (Owner == null || Owner.Room == null)
                 return;
-
-            List<Zone> zones = Owner.Room.GetAdjacentZones(Owner.CellPos);
-            int ownerX = Owner.PosInfo.PosX;
-            int ownerY = Owner.PosInfo.PosY;
+            Player owner = Owner;
+            List<Zone> zones = owner.Room.GetAdjacentZones(owner.CellPos);
+            int ownerX = owner.PosInfo.PosX;
+            int ownerY = owner.PosInfo.PosY;
 
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Lightning , out level))
+            if (owner.EquipsA.TryGetValue(EquipType.Lightning , out level))
                 StatInfo.Level = level;
 
             LightningInfo data = null;
@@ -96,19 +96,19 @@ namespace Server.Contents.Object
                         Vector2 d = new Vector2(m.PosInfo.PosX, m.PosInfo.PosY);
                         if (InTriangle(a, b, c, d))
                         {
-                            m.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
+                            m.OnDamaged(this, StatInfo.Attack * owner.StatInfo.Attack);
                         }
                     }
                     foreach (Player p in zone.Players)
                     {
-                        if (p == Owner)
+                        if (p == owner)
                             continue;
 
                         Vector2 t_OwerPos = new Vector2(p.PosInfo.PosX, p.PosInfo.PosY);
 
                         if (InTriangle(a, b, c, t_OwerPos))
                         {
-                            p.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
+                            p.OnDamaged(this, StatInfo.Attack * owner.StatInfo.Attack);
                         }
                     }
                 }

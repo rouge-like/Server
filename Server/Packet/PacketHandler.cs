@@ -69,4 +69,28 @@ class PacketHandler
 
         myPlayer.SelectEquip(c_equip.Equip);
     }
+
+    public static void C_LoginHandler(PacketSession session, IMessage packet)
+    {
+        ClientSession clientSession = (ClientSession)session;
+        C_Login login = (C_Login)packet;
+
+        Player player = ObjectManager.Instance.Add<Player>();
+        {
+            player.Info.Name = $"{login.PlayerName}";
+            player.Info.Prefab = login.PlayerCode;
+            player.Info.PosInfo = new PosInfo();
+
+            player.Session = clientSession;
+        }
+
+        clientSession.MyPlayer = player;
+
+        RoomManager.Instance.Push(() =>
+        {
+            Room room = RoomManager.Instance.Find(1);
+            room.Push(room.EnterRoom, player);
+        });
+
+    }
 }

@@ -46,9 +46,9 @@ namespace Server.Contents
 				return;
 			if (Owner == null || Owner.Room == null)
 				return;
-
-            PosInfo.PosX = Owner.CellPos.x;
-            PosInfo.PosY = Owner.CellPos.y;
+            Player owner = Owner;
+            PosInfo.PosX = owner.CellPos.x;
+            PosInfo.PosY = owner.CellPos.y;
 
             var pi = Math.PI;
             Degree += Speed;
@@ -63,8 +63,7 @@ namespace Server.Contents
             packet.Degree = Degree;
             packet.ObjectId = Id;
             packet.Dir = Speed > 0;
-
-            Room.Push(Room.Broadcast, Owner.CellPos, packet);
+            owner.Room.Push(owner.Room.Broadcast, owner.CellPos, packet);
 
             if (Degree > 360)
                 Degree -= 360;

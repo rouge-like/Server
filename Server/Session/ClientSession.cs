@@ -82,6 +82,7 @@ namespace Server
 			Console.WriteLine($"OnConnected : {endPoint}");
 
 			// PROTO Test
+			/*
 			MyPlayer = ObjectManager.Instance.Add<Player>();
             {
 				MyPlayer.Info.Name = $"P{MyPlayer.Info.ObjectId}";
@@ -94,7 +95,11 @@ namespace Server
 			{
 				Room room = RoomManager.Instance.Find(1);
 				room.Push(room.EnterRoom, MyPlayer);
-			});
+			});*/
+			{
+				S_Connected packet = new S_Connected();
+				Send(packet);
+			}
 
 			RoomManager.Instance.PushAfter(5000, Ping);
 		}

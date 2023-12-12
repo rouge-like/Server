@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Protocol;
+using Google.Protobuf.WellKnownTypes;
 using Server.Contents.Object;
 using Server.Data;
 using System;
@@ -47,8 +48,8 @@ namespace Server.Contents
             if(Room == null)
                 return;
             _isInvincibility = false;
-            _selectCount += 1;
-            SelectEquip(EquipType.Sword);
+            SelectEquip(EquipType.Sword, true);
+            //SelectEquip(EquipType.Fire);
         }
         bool _slideCooltime = false;
         int _slidetick;
@@ -116,8 +117,20 @@ namespace Server.Contents
             Room.Push(Room.Broadcast, CellPos, packet);
             Room.PushAfter(500, Room.LeaveRoom, item.Id);
         }
-        void SetEquips(int num)
+        public void SetEquips()
         {
+            Random rand = new Random();
+            int value = rand.Next(100);
+            int num;
+            if (value < 30 - (PlayerStat.Luck * 10))
+                num = 2;
+            else if (value < 80)
+                num = 3;
+            else if (value < 95 - (PlayerStat.Luck * 5))
+                num = 4;
+            else
+                num = 5;
+
             S_SelectEquip equip = new S_SelectEquip();
             List<EquipType> list = new List<EquipType>();
             if(EquipsA.Count == 5)
@@ -159,11 +172,10 @@ namespace Server.Contents
             }
             else
             {
-                Random rand = new Random();
                 for (int i = 0; i < num; i++)
                 {
-                    int value = rand.Next(list.Count);
-                    EquipType type = list[value];
+                    int v = rand.Next(list.Count);
+                    EquipType type = list[v];
                     equip.Equips.Add(type);
                     list.Remove(type);
                 }
@@ -189,22 +201,14 @@ namespace Server.Contents
                 DataManager.StatDict.TryGetValue(Level, out stat);
                 StatInfo.MergeFrom(stat);
 
-                Random rand = new Random();
-                int value = rand.Next(100);
-                int num;
-                if (value < 30 - (PlayerStat.Luck * 10))
-                    num = 2;
-                else if (value < 80)
-                    num = 3;
-                else if (value < 95 -(PlayerStat.Luck * 5))
-                    num = 4;
-                else
-                    num = 5;
-                SetEquips(num);
+                if(_selectCount == 1)
+                    SetEquips();
+                
 
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.Attack, Value = StatInfo.Attack });
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.Level, Value = StatInfo.Level });
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.MaxHp, Value = StatInfo.MaxHp });
+                packet.Info.Add(new ChangeStatInfo() { Type = StatType.Hp, Value = StatInfo.Hp });
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.TotalExp, Value = StatInfo.TotalExp });
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.Exp, Value = StatInfo.Exp });
 
@@ -225,12 +229,15 @@ namespace Server.Contents
             Room.Push(Room.Broadcast, CellPos, packet);
         }
 
-        public void SelectEquip(EquipType type)
+        public void SelectEquip(EquipType type, bool force = false)
         {
-            if (_selectCount <= 0)
-                return;
+            if (!force)
+            {
+                if (_selectCount <= 0)
+                    return;
 
-            _selectCount--;
+                _selectCount--;
+            }
 
             if (EquipsA.ContainsKey(type))
                 EquipsA[type] += 1;
@@ -387,7 +394,11 @@ namespace Server.Contents
                                 EquipsS[type] += 1;
                             else
                                 EquipsS.Add(type, 1);
-                            ChangeStat(StatType.MaxHp, StatInfo.MaxHp);
+                            S_ChangeStat heartPacket = new S_ChangeStat();
+                            heartPacket.PlayerId = Id;
+                            heartPacket.Info.Add(new ChangeStatInfo() { Type = StatType.MaxHp, Value = StatInfo.MaxHp });
+                            heartPacket.Info.Add(new ChangeStatInfo() { Type = StatType.Hp, Value = StatInfo.Hp });
+                            Room.Push(Room.Broadcast, CellPos, heartPacket);
                         }
 
 
@@ -470,6 +481,8 @@ namespace Server.Contents
 
             Console.WriteLine($"Player_{Id} : Select {type.ToString()}");
             CheckTrigonNumber();
+            if (_selectCount > 0)
+                SetEquips();
         }
         void CheckTrigonNumber(int tick = 0, int degree = 0)
         {
@@ -579,6 +592,7 @@ namespace Server.Contents
 
             StatInfo.Hp -= (int)(damage - (damage * (PlayerStat.Defense / 100f)));
             StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
+            StatInfo.Hp = Math.Min(StatInfo.Hp, StatInfo.MaxHp);
 
             //Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
             packet.EffectId = EffectId;

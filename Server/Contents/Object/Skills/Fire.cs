@@ -36,14 +36,17 @@ namespace Server.Contents.Object
 
             StatInfo.Attack = data.attack;
             _coolTime = data.cooltime;
-
+            float value = 0.05f;
+            if (data.area.Count > 9)
+                value = 0.1f;
             Area area = ObjectManager.Instance.Add<Area>();
             {
                 area.Owner = Owner;
                 area.Info.Name = Info.Name;
                 area.Info.Prefab = 0;
+                area.Info.Degree = value;
                 area.CellPos = CellPos;
-                area.StatInfo.Attack = StatInfo.Attack;
+                area.StatInfo.Attack = 1;//StatInfo.Attack;
                 area.AttackCount = 1;
                 area.AttackArea = data.area;
             }

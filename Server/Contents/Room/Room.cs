@@ -55,7 +55,6 @@ namespace Server.Contents
             }
 
             PushAfter(100, SpawnMonster);
- 
         }
 
         public void Update()
@@ -78,12 +77,13 @@ namespace Server.Contents
 
                 StatInfo stat = null;
                 DataManager.StatDict.TryGetValue(1, out stat);
+                stat.Exp = 0;
                 player.StatInfo.MergeFrom(stat);
               
                 Random rand = new Random();
                 while (true)
                 {
-                    Vector2Int random = new Vector2Int(rand.Next(100), rand.Next(100));
+                    Vector2Int random = new Vector2Int(rand.Next(300), rand.Next(300));
                     if (Map.CanGo(random))
                     {
                         player.CellPos = random;
@@ -105,7 +105,7 @@ namespace Server.Contents
                 }
                 //player.Vision.Clear();
                 player.Vision.Start();
-                Console.WriteLine($"{player.Info.Name} Spawn in {player.CellPos.x}, {player.CellPos.y}");
+                Console.WriteLine($"{player.Info.Name} {player.Info.Prefab} Spawn in {player.CellPos.x}, {player.CellPos.y}");
             }
             else if (type == GameObjectType.Projectile)
             {
@@ -214,6 +214,11 @@ namespace Server.Contents
                 item.Init();
 
                 zone.Items.Add(item);
+            }
+            foreach(Zone z in GetAdjacentZones(gameObject.CellPos))
+            {
+                foreach (Player p in z.FindAll())
+                    p.Vision.UpdateImmediately();
             }
         }
 
@@ -461,12 +466,12 @@ namespace Server.Contents
         }
         void SpawnMonster()
         {
-            if(_monsters.Count < 1000)
+            if(_monsters.Count < 3000)
             {
-                MonsterSpawner(200, 1, 0, 100, 0, 100);
-                //MonsterSpawner(20, 2, 0, 100, 0, 100);
-                //MonsterSpawner(20, 3, 0, 100, 0, 100);
-                //MonsterSpawner(20, 4, 0, 100, 0, 100);
+                MonsterSpawner(100, 1, 0, 300, 0, 300);
+                MonsterSpawner(100, 2, 0, 300, 0, 300);
+                MonsterSpawner(20, 3, 0, 300, 0, 300);
+                MonsterSpawner(20, 4, 0, 300, 0, 300);
             }
 
 

@@ -13,8 +13,6 @@ namespace Server.Contents
             StatInfo.Attack = 1;
         }
 
-        List<List<int>> _area = new List<List<int>>();
-
         public override void Init()
         {
             base.Init();
@@ -57,12 +55,15 @@ namespace Server.Contents
                     }
                     break;
                 }
-
+                float value = 0.1f;
+                if (data.area.Count > 4)
+                    value = 0.2f;
                 Area area = ObjectManager.Instance.Add<Area>();
                 {
                     area.Owner = Owner;
                     area.Info.Name = Info.Name;
                     area.Info.Prefab = 1;
+                    area.Info.Degree = value;
                     area.CellPos = CellPos + random;
                     area.StatInfo.Attack = StatInfo.Attack;
                     area.AttackCount = data.attackcount;
