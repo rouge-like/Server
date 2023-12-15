@@ -121,4 +121,8 @@ class PacketHandler
     {
 
     }
+    public static void S_PingInfoHandler(PacketSession session, IMessage packet)
+    {
+
+    }
 }

@@ -24,6 +24,7 @@ namespace Server
 		long _lastSendTick = 0;
 
 		long _pingpongTick = 0;
+		int _pingInfo = 0;
 		public void Ping()
 		{
 			if (_pingpongTick > 0)
@@ -39,13 +40,18 @@ namespace Server
 
 			S_Ping pingPacket = new S_Ping();
 			Send(pingPacket);
+			_pingInfo = Environment.TickCount;
 
-			RoomManager.Instance.PushAfter(5000, Ping);
+            RoomManager.Instance.PushAfter(5000, Ping);
 		}
 		public void HandlePong() 
 		{
-			_pingpongTick = System.Environment.TickCount64;
-		}
+			S_PingInfo packet = new S_PingInfo();
+			packet.Ms = Environment.TickCount - _pingInfo;
+			Send(packet);
+            _pingpongTick = System.Environment.TickCount64;
+			_pingInfo = Environment.TickCount;
+        }
 		public void Send(IMessage packet)
         {
 			string msgName = packet.Descriptor.Name.Replace("_", string.Empty);
