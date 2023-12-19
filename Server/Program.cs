@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -55,9 +56,19 @@ namespace Server
 
 			//Task networkTask = new Task(NetworkTask, TaskCreationOptions.LongRunning);
 			//networkTask.Start();
+			WebRequest request = WebRequest.Create("https://luckysurvior-5e2d9-default-rtdb.firebaseio.com/users.json");
+			request.Method = "Get";
 
-            while (true)
-            {
+			WebResponse response;
+			using (response = request.GetResponse())
+			{
+				StreamReader reader = new StreamReader(response.GetResponseStream());
+				string result = reader.ReadToEnd();
+				Console.WriteLine(result);
+			}
+
+			while (true)
+			{
 				List<ClientSession> sessions = SessionManager.Instance.GetSessions();
 				foreach (ClientSession session in sessions)
 					session.Flush();
