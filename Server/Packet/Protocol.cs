@@ -68,39 +68,39 @@ namespace Google.Protobuf.Protocol {
             "eW91GAIgASgJEg8KB3JhbmtpbmcYAyABKAUiDQoLU19Db25uZWN0ZWQiGgoH",
             "U19Mb2dpbhIPCgdsb2dpbk9LGAEgASgIIjEKB0NfTG9naW4SEgoKcGxheWVy",
             "Q29kZRgBIAEoBRISCgpwbGF5ZXJOYW1lGAIgASgJIhgKClNfUGluZ0luZm8S",
-            "CgoCbXMYASABKAUiLwoMU19EaWVfUGxheWVyEgwKBHRpbWUYASABKAUSEQoJ",
-            "ZWFyblBvaW50GAIgASgFIiEKEUNfUmVzcGF3bl9Pcl9FeGl0EgwKBGV4aXQY",
-            "ASABKAgqogMKBU1zZ0lkEhAKDFNfRU5URVJfR0FNRRAAEhAKDFNfTEVBVkVf",
-            "R0FNRRABEgsKB1NfU1BBV04QAhINCglTX0RFU1BBV04QAxIKCgZTX1BJTkcQ",
-            "BBIKCgZDX1BPTkcQBRIKCgZTX01PVkUQBhIKCgZDX01PVkUQBxILCgdTX1NL",
-            "SUxMEAgSCwoHQ19TS0lMTBAJEg8KC1NfQ0hBTkdFX0hQEAoSEAoMU19NT1ZF",
-            "X0ZMT0FUEAsSCQoFU19ESUUQDBIQCgxTX0hJVF9UUklHT04QDRIRCg1TX0NI",
-            "QU5HRV9TVEFUEA4SEgoOU19TRUxFQ1RfRVFVSVAQDxISCg5DX1NFTEVDVF9F",
-            "UVVJUBAQEg4KClNfR0VUX0lURU0QERIQCgxTX0VRVUlQX0lORk8QEhINCglT",
-            "X1JBTktJTkcQExIPCgtTX0NPTk5FQ1RFRBAUEgsKB1NfTE9HSU4QFRILCgdD",
-            "X0xPR0lOEBYSDwoLU19QSU5HX0lORk8QFxIQCgxTX0RJRV9QTEFZRVIQGBIV",
-            "ChFDX1JFU1BBV05fT1JfRVhJVBAZKmIKBVN0YXRlEggKBElkbGUQABIKCgZN",
-            "b3ZpbmcQARIKCgZBdHRhY2sQAhIJCgVTa2lsbBADEggKBERlYWQQBBINCglL",
-            "bm9ja2JhY2sQBRIICgRTdHVuEAYSCQoFU2xpZGUQBypiCgNEaXISBgoCVVAQ",
-            "ABIICgRET1dOEAESCQoFUklHSFQQAhIICgRMRUZUEAMSCwoHVVBSSUdIVBAE",
-            "EgoKBlVQTEVGVBAFEg0KCURPV05SSUdIVBAGEgwKCERPV05MRUZUEAcqhwEK",
-            "DkdhbWVPYmplY3RUeXBlEggKBE5PTkUQABIKCgZQTEFZRVIQARILCgdNT05T",
-            "VEVSEAISDgoKUFJPSkVDVElMRRADEgoKBlRSSUdPThAEEggKBEFSRUEQBRIL",
-            "CgdDSVJDTEVSEAYSCgoGRElSRUNUEAcSCAoESVRFTRAIEgkKBURVTU1ZEAkq",
-            "eAoJU2tpbGxUeXBlEg4KClNLSUxMX05PTkUQABIUChBTS0lMTF9QUk9KRUNU",
-            "SUxFEAESDgoKU0tJTExfQVJFQRACEhEKDVNLSUxMX0NJUkNMRVIQAxIQCgxT",
-            "S0lMTF9UUklHT04QBBIQCgxTS0lMTF9ESVJFQ1QQBSrIAQoIU3RhdFR5cGUS",
-            "CQoFTEVWRUwQABIGCgJIUBABEgoKBk1BWF9IUBACEgoKBkFUVEFDSxADEgsK",
-            "B0RFRkVOU0UQBBIHCgNFWFAQBRINCglUT1RBTF9FWFAQBhIICgRMVUNLEAcS",
-            "DgoKSVRFTV9SQU5HRRAIEgoKBk5VTUJFUhAJEhAKDEFUVEFDS19TUEVFRBAK",
-            "EhIKDlNMSURFX0NPT0xUSU1FEAsSDAoIQ09PTFRJTUUQDBISCg5BRERJVElP",
-            "QU5MX0VYUBANKu0BCglFcXVpcFR5cGUSCQoFQVJST1cQABIJCgVTV09SRBAB",
-            "EggKBEZJUkUQAhINCglMSUdIVE5JTkcQAxIHCgNJQ0UQBBIJCgVFQVJUSBAF",
-            "EgcKA0FJUhAGEgkKBUxJR0hUEAcSCAoEREFSSxAIEgoKBlBPSVNPThAJEgwK",
-            "CE1VU0hST09NEAoSCgoGU0hJRUxEEAsSCQoFSEVBUlQQDBIMCghORUNLTEFD",
-            "RRANEgkKBVNIT0VTEA4SCgoGTUFHTkVUEA8SCgoGQ0xPVkVSEBASCAoEQk9P",
-            "SxAREgkKBUdMT1ZFEBISCAoEUklORxATQhuqAhhHb29nbGUuUHJvdG9idWYu",
-            "UHJvdG9jb2xiBnByb3RvMw=="));
+            "CgoCbXMYASABKAUiLgoLU19EaWVQbGF5ZXISDAoEdGltZRgBIAEoBRIRCgll",
+            "YXJuUG9pbnQYAiABKAUiHwoPQ19SZXNwYXduT3JFeGl0EgwKBGV4aXQYASAB",
+            "KAgqogMKBU1zZ0lkEhAKDFNfRU5URVJfR0FNRRAAEhAKDFNfTEVBVkVfR0FN",
+            "RRABEgsKB1NfU1BBV04QAhINCglTX0RFU1BBV04QAxIKCgZTX1BJTkcQBBIK",
+            "CgZDX1BPTkcQBRIKCgZTX01PVkUQBhIKCgZDX01PVkUQBxILCgdTX1NLSUxM",
+            "EAgSCwoHQ19TS0lMTBAJEg8KC1NfQ0hBTkdFX0hQEAoSEAoMU19NT1ZFX0ZM",
+            "T0FUEAsSCQoFU19ESUUQDBIQCgxTX0hJVF9UUklHT04QDRIRCg1TX0NIQU5H",
+            "RV9TVEFUEA4SEgoOU19TRUxFQ1RfRVFVSVAQDxISCg5DX1NFTEVDVF9FUVVJ",
+            "UBAQEg4KClNfR0VUX0lURU0QERIQCgxTX0VRVUlQX0lORk8QEhINCglTX1JB",
+            "TktJTkcQExIPCgtTX0NPTk5FQ1RFRBAUEgsKB1NfTE9HSU4QFRILCgdDX0xP",
+            "R0lOEBYSDwoLU19QSU5HX0lORk8QFxIQCgxTX0RJRV9QTEFZRVIQGBIVChFD",
+            "X1JFU1BBV05fT1JfRVhJVBAZKmIKBVN0YXRlEggKBElkbGUQABIKCgZNb3Zp",
+            "bmcQARIKCgZBdHRhY2sQAhIJCgVTa2lsbBADEggKBERlYWQQBBINCglLbm9j",
+            "a2JhY2sQBRIICgRTdHVuEAYSCQoFU2xpZGUQBypiCgNEaXISBgoCVVAQABII",
+            "CgRET1dOEAESCQoFUklHSFQQAhIICgRMRUZUEAMSCwoHVVBSSUdIVBAEEgoK",
+            "BlVQTEVGVBAFEg0KCURPV05SSUdIVBAGEgwKCERPV05MRUZUEAcqhwEKDkdh",
+            "bWVPYmplY3RUeXBlEggKBE5PTkUQABIKCgZQTEFZRVIQARILCgdNT05TVEVS",
+            "EAISDgoKUFJPSkVDVElMRRADEgoKBlRSSUdPThAEEggKBEFSRUEQBRILCgdD",
+            "SVJDTEVSEAYSCgoGRElSRUNUEAcSCAoESVRFTRAIEgkKBURVTU1ZEAkqeAoJ",
+            "U2tpbGxUeXBlEg4KClNLSUxMX05PTkUQABIUChBTS0lMTF9QUk9KRUNUSUxF",
+            "EAESDgoKU0tJTExfQVJFQRACEhEKDVNLSUxMX0NJUkNMRVIQAxIQCgxTS0lM",
+            "TF9UUklHT04QBBIQCgxTS0lMTF9ESVJFQ1QQBSrIAQoIU3RhdFR5cGUSCQoF",
+            "TEVWRUwQABIGCgJIUBABEgoKBk1BWF9IUBACEgoKBkFUVEFDSxADEgsKB0RF",
+            "RkVOU0UQBBIHCgNFWFAQBRINCglUT1RBTF9FWFAQBhIICgRMVUNLEAcSDgoK",
+            "SVRFTV9SQU5HRRAIEgoKBk5VTUJFUhAJEhAKDEFUVEFDS19TUEVFRBAKEhIK",
+            "DlNMSURFX0NPT0xUSU1FEAsSDAoIQ09PTFRJTUUQDBISCg5BRERJVElPQU5M",
+            "X0VYUBANKu0BCglFcXVpcFR5cGUSCQoFQVJST1cQABIJCgVTV09SRBABEggK",
+            "BEZJUkUQAhINCglMSUdIVE5JTkcQAxIHCgNJQ0UQBBIJCgVFQVJUSBAFEgcK",
+            "A0FJUhAGEgkKBUxJR0hUEAcSCAoEREFSSxAIEgoKBlBPSVNPThAJEgwKCE1V",
+            "U0hST09NEAoSCgoGU0hJRUxEEAsSCQoFSEVBUlQQDBIMCghORUNLTEFDRRAN",
+            "EgkKBVNIT0VTEA4SCgoGTUFHTkVUEA8SCgoGQ0xPVkVSEBASCAoEQk9PSxAR",
+            "EgkKBUdMT1ZFEBISCAoEUklORxATQhuqAhhHb29nbGUuUHJvdG9idWYuUHJv",
+            "dG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), typeof(global::Google.Protobuf.Protocol.StatType), typeof(global::Google.Protobuf.Protocol.EquipType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -136,8 +136,8 @@ namespace Google.Protobuf.Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Login), global::Google.Protobuf.Protocol.S_Login.Parser, new[]{ "LoginOK" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_Login), global::Google.Protobuf.Protocol.C_Login.Parser, new[]{ "PlayerCode", "PlayerName" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_PingInfo), global::Google.Protobuf.Protocol.S_PingInfo.Parser, new[]{ "Ms" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Die_Player), global::Google.Protobuf.Protocol.S_Die_Player.Parser, new[]{ "Time", "EarnPoint" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_Respawn_Or_Exit), global::Google.Protobuf.Protocol.C_Respawn_Or_Exit.Parser, new[]{ "Exit" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_DiePlayer), global::Google.Protobuf.Protocol.S_DiePlayer.Parser, new[]{ "Time", "EarnPoint" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_RespawnOrExit), global::Google.Protobuf.Protocol.C_RespawnOrExit.Parser, new[]{ "Exit" }, null, null, null, null)
           }));
     }
     #endregion
@@ -5568,11 +5568,11 @@ namespace Google.Protobuf.Protocol {
 
   }
 
-  public sealed partial class S_Die_Player : pb::IMessage<S_Die_Player> {
-    private static readonly pb::MessageParser<S_Die_Player> _parser = new pb::MessageParser<S_Die_Player>(() => new S_Die_Player());
+  public sealed partial class S_DiePlayer : pb::IMessage<S_DiePlayer> {
+    private static readonly pb::MessageParser<S_DiePlayer> _parser = new pb::MessageParser<S_DiePlayer>(() => new S_DiePlayer());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<S_Die_Player> Parser { get { return _parser; } }
+    public static pb::MessageParser<S_DiePlayer> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -5585,22 +5585,22 @@ namespace Google.Protobuf.Protocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S_Die_Player() {
+    public S_DiePlayer() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S_Die_Player(S_Die_Player other) : this() {
+    public S_DiePlayer(S_DiePlayer other) : this() {
       time_ = other.time_;
       earnPoint_ = other.earnPoint_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public S_Die_Player Clone() {
-      return new S_Die_Player(this);
+    public S_DiePlayer Clone() {
+      return new S_DiePlayer(this);
     }
 
     /// <summary>Field number for the "time" field.</summary>
@@ -5627,11 +5627,11 @@ namespace Google.Protobuf.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as S_Die_Player);
+      return Equals(other as S_DiePlayer);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(S_Die_Player other) {
+    public bool Equals(S_DiePlayer other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -5690,7 +5690,7 @@ namespace Google.Protobuf.Protocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(S_Die_Player other) {
+    public void MergeFrom(S_DiePlayer other) {
       if (other == null) {
         return;
       }
@@ -5725,11 +5725,11 @@ namespace Google.Protobuf.Protocol {
 
   }
 
-  public sealed partial class C_Respawn_Or_Exit : pb::IMessage<C_Respawn_Or_Exit> {
-    private static readonly pb::MessageParser<C_Respawn_Or_Exit> _parser = new pb::MessageParser<C_Respawn_Or_Exit>(() => new C_Respawn_Or_Exit());
+  public sealed partial class C_RespawnOrExit : pb::IMessage<C_RespawnOrExit> {
+    private static readonly pb::MessageParser<C_RespawnOrExit> _parser = new pb::MessageParser<C_RespawnOrExit>(() => new C_RespawnOrExit());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<C_Respawn_Or_Exit> Parser { get { return _parser; } }
+    public static pb::MessageParser<C_RespawnOrExit> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -5742,21 +5742,21 @@ namespace Google.Protobuf.Protocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public C_Respawn_Or_Exit() {
+    public C_RespawnOrExit() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public C_Respawn_Or_Exit(C_Respawn_Or_Exit other) : this() {
+    public C_RespawnOrExit(C_RespawnOrExit other) : this() {
       exit_ = other.exit_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public C_Respawn_Or_Exit Clone() {
-      return new C_Respawn_Or_Exit(this);
+    public C_RespawnOrExit Clone() {
+      return new C_RespawnOrExit(this);
     }
 
     /// <summary>Field number for the "exit" field.</summary>
@@ -5772,11 +5772,11 @@ namespace Google.Protobuf.Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as C_Respawn_Or_Exit);
+      return Equals(other as C_RespawnOrExit);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(C_Respawn_Or_Exit other) {
+    public bool Equals(C_RespawnOrExit other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -5826,7 +5826,7 @@ namespace Google.Protobuf.Protocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(C_Respawn_Or_Exit other) {
+    public void MergeFrom(C_RespawnOrExit other) {
       if (other == null) {
         return;
       }
