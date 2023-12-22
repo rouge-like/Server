@@ -56,7 +56,9 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.SLogin, MakePacket<S_Login>);
 		_handler.Add((ushort)MsgId.SLogin, PacketHandler.S_LoginHandler);		
 		_onRecv.Add((ushort)MsgId.SPingInfo, MakePacket<S_PingInfo>);
-		_handler.Add((ushort)MsgId.SPingInfo, PacketHandler.S_PingInfoHandler);
+		_handler.Add((ushort)MsgId.SPingInfo, PacketHandler.S_PingInfoHandler);		
+		_onRecv.Add((ushort)MsgId.SDiePlayer, MakePacket<S_DiePlayer>);
+		_handler.Add((ushort)MsgId.SDiePlayer, PacketHandler.S_DiePlayerHandler);
 	}
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{

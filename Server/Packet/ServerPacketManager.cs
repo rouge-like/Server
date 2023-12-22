@@ -28,7 +28,9 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.CSelectEquip, MakePacket<C_SelectEquip>);
 		_handler.Add((ushort)MsgId.CSelectEquip, PacketHandler.C_SelectEquipHandler);		
 		_onRecv.Add((ushort)MsgId.CLogin, MakePacket<C_Login>);
-		_handler.Add((ushort)MsgId.CLogin, PacketHandler.C_LoginHandler);
+		_handler.Add((ushort)MsgId.CLogin, PacketHandler.C_LoginHandler);		
+		_onRecv.Add((ushort)MsgId.CRespawnOrExit, MakePacket<C_RespawnOrExit>);
+		_handler.Add((ushort)MsgId.CRespawnOrExit, PacketHandler.C_RespawnOrExitHandler);
 	}
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{
