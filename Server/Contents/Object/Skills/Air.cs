@@ -11,9 +11,12 @@ namespace Server.Contents
 		}
         int[] _x = new int[] { 0, 1, 0, -1, 1, 1, -1, -1 };
         int[] _y = new int[] { 1, 0, -1, 0, 1, -1, 1, -1 };
+        AdditionalWeaponStat _addData = null;
+
         public override void Init()
         {
             base.Init();
+            Owner.AdditionalStat.TryGetValue(EquipType.Air, out _addData);
             _job = Room.PushAfter(100, Update);
         }
         public override void Update()
@@ -33,7 +36,10 @@ namespace Server.Contents
             AirInfo data = null;
             DataManager.AirDict.TryGetValue(StatInfo.Level, out data);
 
-            _coolTime = data.cooltime;
+            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
+            StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
+            StatInfo.Attack = (int)(data.attack * (_addData.attack / 100f));
+            _coolTime = (int)(data.cooltime * ((200 - _addData.cooltime - Owner.PlayerStat.Cooltime) / 100f));
 
             Vector2Int dirVector = DirToVector(Dir);
             if (dirVector.x == 0 || dirVector.y == 0)
@@ -49,10 +55,10 @@ namespace Server.Contents
                     projectile.SetDir(dir);
                     projectile.PosInfo.PosX = PosInfo.PosX;
                     projectile.PosInfo.PosY = PosInfo.PosY;
-                    projectile.Speed = data.speed;
-                    projectile.StatInfo.Attack = data.attack;
+                    projectile.Speed = StatInfo.Speed;
+                    projectile.StatInfo.Attack = StatInfo.Attack;
                     projectile.Penetrate = true;
-                    projectile.ProjectileRange = data.range;
+                    projectile.ProjectileRange = (int)StatInfo.Range;
 
                     Vector2Int desPos = projectile.GetFrontCellPos();
                     int id = Room.Map.FindId(desPos);
@@ -80,17 +86,16 @@ namespace Server.Contents
                     projectile.SetDir(dir);
                     projectile.PosInfo.PosX = PosInfo.PosX;
                     projectile.PosInfo.PosY = PosInfo.PosY;
-                    projectile.Speed = data.speed;
-                    projectile.StatInfo.Attack = data.attack;
+                    projectile.Speed = StatInfo.Speed;
+                    projectile.StatInfo.Attack = StatInfo.Attack;
                     projectile.Penetrate = true;
-                    projectile.ProjectileRange = data.range;
+                    projectile.ProjectileRange = (int)StatInfo.Range;
 
                     Vector2Int desPos = projectile.GetFrontCellPos();
                     int id = Room.Map.FindId(desPos);
                     if (Room.Map.CanGo(desPos))
                     {
                         Room.Push(Room.EnterRoom, projectile);
-                        Console.WriteLine($"Daager_{projectile.Id} Enter By Player_{Owner.Id}");
                     }
 
                     else if (id != 0)
@@ -99,7 +104,7 @@ namespace Server.Contents
                     }
                 }
             }
-            _job = Room.PushAfter(_coolTime, Update);
+            _job = Room.PushAfter(_coolTime * 100, Update);
         }
     }
 }

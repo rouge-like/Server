@@ -5,16 +5,18 @@ using Server.Data;
 
 namespace Server.Contents
 {
-	public class Dagger : Passive
+	public class Arrow : Passive
 	{
-		public Dagger()
+		public Arrow()
 		{
 		}
+        AdditionalWeaponStat _addData = null;
+
         public override void Init()
         {
             base.Init();
             _job = Room.PushAfter(100, Update);
-            _coolTime = 1000;
+            Owner.AdditionalStat.TryGetValue(EquipType.Arrow, out _addData);
         }
         public override void Update()
         {
@@ -27,11 +29,18 @@ namespace Server.Contents
 
             PosInfo = Owner.PosInfo;
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Dagger, out level))
+            if (Owner.EquipsA.TryGetValue(EquipType.Arrow, out level))
                 StatInfo.Level = level;
 
             ArrowInfo data = null;
             DataManager.ArrowDict.TryGetValue(StatInfo.Level, out data);
+
+            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
+            StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
+            StatInfo.Attack = (int)(data.attack * (_addData.attack / 100f));
+            _coolTime = (int)(data.cooltime * ((200 - _addData.cooltime - Owner.PlayerStat.Cooltime) / 100f));
+
+
             for (int i = 0; i < data.number + Owner.PlayerStat.Number; i++)
             {
                 Projectile projectile = ObjectManager.Instance.Add<Projectile>();
@@ -42,10 +51,10 @@ namespace Server.Contents
                 projectile.SetDir(PosInfo.Dir);
                 projectile.PosInfo.PosX = PosInfo.PosX;
                 projectile.PosInfo.PosY = PosInfo.PosY;
-                projectile.Speed = data.speed;
-                projectile.StatInfo.Attack = data.attack;
+                projectile.Speed = StatInfo.Speed ;
+                projectile.StatInfo.Attack = StatInfo.Attack;
                 projectile.Penetrate = false;
-                projectile.ProjectileRange = data.range;
+                projectile.ProjectileRange = (int)StatInfo.Range;
 
 
                 Vector2Int desPos = projectile.GetFrontCellPos();
@@ -53,18 +62,14 @@ namespace Server.Contents
                 if (Room.Map.CanGo(desPos))
                 {
                     Room.Push(Room.EnterRoom, projectile);
-                    //Console.WriteLine($"Daager_{projectile.Id} Enter By Player_{Owner.Id}");
-                }
-                    
+                }          
                 else if (id != 1 && id != 0 && id != Owner.Id)
                 {
                     GameObject target = Room.Find(id);
-                    target.OnDamaged(projectile, data.attack * Owner.StatInfo.Attack);
+                    target.OnDamaged(projectile, StatInfo.Attack * Owner.StatInfo.Attack);
                 }
-                else
-                    Console.WriteLine("Cannot Enter Projectile : Wrong Position");
             }
-            _job = Room.PushAfter(_coolTime, Update);
+            _job = Room.PushAfter(_coolTime * 100, Update);
         }
     }
 }

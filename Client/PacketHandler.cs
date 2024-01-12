@@ -16,6 +16,7 @@ class PacketHandler
 
         serverSession.p.PosInfo = enterGamePacket.Player.PosInfo;
         serverSession.p.Id = enterGamePacket.Player.ObjectId;
+        serverSession.p.Start();
     }
     public static void S_LeaveGameHandler(PacketSession session, IMessage packet)
     {
@@ -124,5 +125,13 @@ class PacketHandler
     public static void S_PingInfoHandler(PacketSession session, IMessage packet)
     {
 
+    }
+    public static void S_DiePlayerHandler(PacketSession session, IMessage packet)
+    {
+        ServerSession serverSession = session as ServerSession;
+        C_RespawnOrExit respwan = new C_RespawnOrExit();
+        respwan.Exit = false;
+
+        serverSession.p.Send(respwan);
     }
 }

@@ -35,7 +35,13 @@ namespace Server.Contents
 
                     if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
                         continue;
+
                     objects.Add(player);
+
+                    foreach (Trigon trigon in player.Trigons.Values)
+                    {
+                        objects.Add(trigon);
+                    }
                 }
                 foreach(Monster monster in zone.Monsters)
                 {
@@ -54,16 +60,7 @@ namespace Server.Contents
                     if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
                         continue;
                     objects.Add(projectile);
-                }
-                foreach(Trigon trigon in zone.Trigons)
-                {
-                    int dx = trigon.CellPos.x - pos.x;
-                    int dy = trigon.CellPos.y - pos.y;
-
-                    if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
-                        continue;
-                    objects.Add(trigon);
-                }
+                }                
                 foreach (Area area in zone.Areas)
                 {
                     int dx = area.CellPos.x - pos.x;

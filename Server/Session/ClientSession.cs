@@ -42,7 +42,7 @@ namespace Server
 			Send(pingPacket);
 			_pingInfo = Environment.TickCount;
 
-            RoomManager.Instance.PushAfter(5000, Ping);
+            RoomManager.Instance.PushAfter(1000, Ping);
 		}
 		public void HandlePong() 
 		{

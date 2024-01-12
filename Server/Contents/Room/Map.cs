@@ -204,11 +204,6 @@ namespace Server.Contents
                 {
                     now.Players.Remove(p);
                     after.Players.Add(p);
-                    foreach(Trigon t in p.Trigons.Values)
-                    {
-                        now.Trigons.Remove(t);
-                        after.Trigons.Add(t);
-                    }
                 }
                 else
                 {
@@ -298,11 +293,6 @@ namespace Server.Contents
                 {
                     now.Players.Remove(p);
                     after.Players.Add(p);
-                    foreach (Trigon t in p.Trigons.Values)
-                    {
-                        now.Trigons.Remove(t);
-                        after.Trigons.Add(t);
-                    }
                 }
 
                 _map[go.CellPos.x, go.CellPos.y] = 0;

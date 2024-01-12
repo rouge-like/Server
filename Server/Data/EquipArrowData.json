@@ -5,6 +5,7 @@
       "range": "500",
       "attack": "5",
       "speed": "20",
+      "cooltime" : "10",
       "number": "1"
     },
     {
@@ -12,6 +13,7 @@
       "range": "500",
       "attack": "5",
       "speed": "20",
+      "cooltime": "10",
       "number": "2"
     },
     {
@@ -19,6 +21,7 @@
       "range": "500",
       "attack": "6",
       "speed": "20",
+      "cooltime": "10",
       "number": "2"
     },
     {
@@ -26,6 +29,7 @@
       "range": "500",
       "attack": "7",
       "speed": "20",
+      "cooltime": "10",
       "number": "2"
     },
     {
@@ -33,6 +37,7 @@
       "range": "500",
       "attack": "7",
       "speed": "20",
+      "cooltime": "10",
       "number": "3"
     },
     {
@@ -40,6 +45,7 @@
       "range": "500",
       "attack": "8",
       "speed": "20",
+      "cooltime": "10",
       "number": "3"
     },
     {
@@ -47,6 +53,7 @@
       "range": "500",
       "attack": "9",
       "speed": "20",
+      "cooltime": "10",
       "number": "3"
     },
     {
@@ -54,6 +61,7 @@
       "range": "500",
       "attack": "10",
       "speed": "20",
+      "cooltime": "10",
       "number": "3"
     }
   ]

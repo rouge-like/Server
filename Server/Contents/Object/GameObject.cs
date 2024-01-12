@@ -173,10 +173,6 @@ namespace Server.Contents
                     if (attacker.Info.Prefab == 0)
                     {
                         EffectId = 0;
-                        if (_preSword == attacker.Id)
-                            return -1;
-                        _preSword = attacker.Id;
-                        Room.PushAfter(500, SwordCooltimeOver);
                     }
                     else if (attacker.Info.Prefab == 1)
                     {
@@ -195,6 +191,7 @@ namespace Server.Contents
                         EffectId = 1;
                         Dir d = GetDirFromVec(CellPos - attacker.CellPos);
                         Vector2Int dirVector = DirToVector(d);
+                        State = State.Moving;
 
                         Room.Push(Room.HandleSlide, this, dirVector, 3);
                     }
@@ -220,16 +217,15 @@ namespace Server.Contents
 				return;
             S_ChangeHp packet = new S_ChangeHp();
             int EffectId = GetEffectNum(attacker);
-            if (EffectId == -1)
-                return;
             StatInfo.Hp -= damage;
-			StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
 
             //Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
             packet.EffectId = EffectId;
 			packet.ObjectId = Id;
 			packet.Hp = StatInfo.Hp;
-			Room.Push(Room.Broadcast,CellPos, packet);
+            StatInfo.Hp = Math.Max(StatInfo.Hp, 0);
+
+            Room.Push(Room.Broadcast,CellPos, packet);
 
 			if(StatInfo.Hp <= 0)
             {
@@ -237,11 +233,6 @@ namespace Server.Contents
             }
         }
 		protected bool _isInvincibility = false;
-		protected int _preSword;
-		protected virtual void SwordCooltimeOver()
-		{
-			_preSword = 0;
-		}
 		protected virtual void OnDead(GameObject attacker)
         {
 			Room.Map.LeaveCollision(this);

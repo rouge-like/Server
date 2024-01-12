@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Google.Protobuf.Protocol;
 using Server.Contents;
 using Server.Data;
@@ -43,7 +45,7 @@ namespace Server
 			// DNS (Domain Name System)
 			string host = Dns.GetHostName();
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
-			IPAddress ipAddr = IPAddress.Parse("192.168.51.61");// ipHost.AddressList[3];// IPAddress.Parse("192.168.51.61");
+			IPAddress ipAddr = ipHost.AddressList[3];// ipHost.AddressList[3];// IPAddress.Parse("192.168.51.30");
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
             Console.WriteLine("Host Name : " + host);
@@ -51,21 +53,13 @@ namespace Server
 			Console.WriteLine("End Point : " + endPoint.ToString());
 			Console.WriteLine("Listening...");
 
+			FirebaseApp.Create(new AppOptions()
+			{
+				Credential = GoogleCredential.FromFile("../../../luckysurvior-5e2d9-36f0d4345e3c.json")
+			});
+
 			Task roomTask = new Task(RoomTask, TaskCreationOptions.LongRunning);
 			roomTask.Start();
-
-			//Task networkTask = new Task(NetworkTask, TaskCreationOptions.LongRunning);
-			//networkTask.Start();
-			WebRequest request = WebRequest.Create("https://luckysurvior-5e2d9-default-rtdb.firebaseio.com/users.json");
-			request.Method = "Get";
-
-			WebResponse response;
-			using (response = request.GetResponse())
-			{
-				StreamReader reader = new StreamReader(response.GetResponseStream());
-				string result = reader.ReadToEnd();
-				Console.WriteLine(result);
-			}
 
 			while (true)
 			{

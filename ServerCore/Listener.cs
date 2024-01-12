@@ -40,7 +40,7 @@ namespace ServerCore
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.WriteLine($"RegisterAccept Error: {e}");
             }
         }
 
@@ -59,7 +59,7 @@ namespace ServerCore
             }
 			catch(Exception e)
 			{
-				Console.WriteLine(e);
+				Console.WriteLine($"OnAcceptCompleted : {e}");
 			}
 
 			RegisterAccept(args);

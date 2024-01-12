@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using Google.Protobuf.Protocol;
+using Newtonsoft.Json;
 using Server.Data;
 
 namespace Server.Contents.Object
@@ -10,6 +13,7 @@ namespace Server.Contents.Object
 		public Sword()
 		{
             IsSword = true;
+            _coolTime = false;
             Info.Prefab = 0;
 		}
 
@@ -50,8 +54,17 @@ namespace Server.Contents.Object
             return InTriangle(a, b, c, e) && !IsSame1(d, e, f, c);
         }
 
-        bool _coolTime;
-
+        bool _swordCoolTime;
+        AdditionalWeaponStat _addData;
+        public override void Init()
+        {
+            base.Init();
+            SwordInfo data = null;
+            DataManager.SwordDict.TryGetValue(StatInfo.Level, out data);
+            Owner.AdditionalStat.TryGetValue(EquipType.Sword, out _addData);
+            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
+            StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
+        }
         public override void Update()
         {
             base.Update();
@@ -64,6 +77,7 @@ namespace Server.Contents.Object
             CheckAttack();
             
         }
+
         public override void CheckAttack()
         {
             if (X == 0 && AfterX == 0)
@@ -77,17 +91,19 @@ namespace Server.Contents.Object
             SwordInfo data = null;
             DataManager.SwordDict.TryGetValue(StatInfo.Level, out data);
 
-            if(StatInfo.Speed > 0)
-                StatInfo.Speed = data.speed;
+            StatInfo.Attack = (int)(data.attack * (_addData.attack / 100f));
+            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
+
+            if (StatInfo.Speed > 0)
+                StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
             else
-                StatInfo.Speed = -data.speed;
-            StatInfo.Attack = data.attack;
+                StatInfo.Speed = -data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
 
             List<Zone> zones = Owner.Room.GetAdjacentZones(Owner.CellPos);
             int ownerX = Owner.PosInfo.PosX;
             int ownerY = Owner.PosInfo.PosY;
 
-            if (_coolTime == false)
+            if (_swordCoolTime == false)
             {
                 Vector2 a = new Vector2(ownerX, ownerY);
                 Vector2 b = new Vector2(X + ownerX, Y + ownerY);
@@ -97,18 +113,20 @@ namespace Server.Contents.Object
                 {
                     foreach (Monster m in zone.Monsters)
                     {
-                        Vector2 d = new Vector2(m.PosInfo.PosX, m.PosInfo.PosY);
+                        Vector2Int dirVec = Owner.CellPos - m.CellPos;
+                        Vector2 d = GetRBPos(m.CellPos, dirVec);
                         if (InTriangle(a, b, c, d))
                         {
                             m.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
                             if (m.IsMetal && m.State != State.Dead)
                             {
                                 Speed = Speed * -1;
-                                _coolTime = true;
+                                _swordCoolTime = true;
                                 Room.PushAfter(500, CoolTimeOver);
 
                                 S_HitTrigon hit = new S_HitTrigon();
                                 hit.Trigon1Id = Id;
+                                hit.Trigon2Id = m.Id;
 
                                 Room.Push(Room.Broadcast, Owner.CellPos, hit);
                             }
@@ -119,7 +137,8 @@ namespace Server.Contents.Object
                         if (p == Owner)
                             continue;
 
-                        Vector2 t_OwerPos = new Vector2(p.PosInfo.PosX, p.PosInfo.PosY);
+                        Vector2Int dirVec = Owner.CellPos - p.CellPos;
+                        Vector2 t_OwerPos = GetRBPos(p.CellPos, dirVec);
 
                         if (InTriangle(a, b, c, t_OwerPos))
                         {
@@ -144,7 +163,7 @@ namespace Server.Contents.Object
                                     continue;
 
                                 Speed = Speed * -1;
-                                _coolTime = true;
+                                _swordCoolTime = true;
                                 Room.PushAfter(500, CoolTimeOver);
 
                                 S_HitTrigon hit = new S_HitTrigon();
@@ -166,18 +185,18 @@ namespace Server.Contents.Object
         }
         public void CoolTimeOver()
         {
-            _coolTime = false;
+            _swordCoolTime = false;
         }
 
         public bool Hit()
         {
-            if (_coolTime == false)
+            if (_swordCoolTime == false)
             {
                 if (Room == null)
                     return false;
 
                 Speed = Speed * -1;
-                _coolTime = true;
+                _swordCoolTime = true;
                 Room.PushAfter(500, CoolTimeOver);
                 return true;
             }

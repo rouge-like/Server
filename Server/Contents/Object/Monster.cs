@@ -98,7 +98,7 @@ namespace Server.Contents
         }
 
 		Player _target;
-		int _searchTick = 0;
+		long _searchTick = 0;
         Dir GetRightDir(Dir dir)
         {
             switch (dir)
@@ -125,14 +125,14 @@ namespace Server.Contents
         }
         protected virtual void UpdateIdle()
 		{
-			if (_moveTick > Environment.TickCount)
+			if (_moveTick > (Environment.TickCount & Int32.MaxValue))
 				return;
 			int moveTick = (int)(1000 / Speed);
-			_moveTick = Environment.TickCount + moveTick;
+			_moveTick = Environment.TickCount & Int32.MaxValue + moveTick;
             List<Zone> zones = Room.GetAdjacentZones(CellPos, 10);
             // 플레이어 감지
             int d = int.MaxValue;
-			if (_searchTick > Environment.TickCount)
+			if (_searchTick > (Environment.TickCount & Int32.MaxValue))
 				return;
 			_searchTick = Environment.TickCount + 1000;
             foreach (Zone zone in zones)

@@ -42,7 +42,7 @@ namespace ServerCore
             }
 			catch(Exception e)
 			{
-				Console.WriteLine(e);
+				Console.WriteLine($"RegisterConnect Error : {e}");
 			}
 
 		}
@@ -64,7 +64,7 @@ namespace ServerCore
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e);
+				Console.WriteLine($"OnConnectCompleted Error: {e}");
 			}
 			
 		}

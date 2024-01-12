@@ -35,7 +35,7 @@ public class ServerSession : PacketSession
         //Console.WriteLine($"Transferred bytes: {numOfBytes}");
     }
     public void Update()
-    {
+    { 
         p.Update();
     }
 }

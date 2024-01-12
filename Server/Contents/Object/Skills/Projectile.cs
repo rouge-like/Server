@@ -24,7 +24,6 @@ namespace Server.Contents
                 return;
             if(_moved >= ProjectileRange)
             {
-                //Console.WriteLine($"Projectile {_moved} {CellPos.x},{CellPos.y}");
                 Room.Push(Room.LeaveRoom, Id);
                 return;
             }

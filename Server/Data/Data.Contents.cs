@@ -28,6 +28,8 @@ namespace Server.Data
         public int level;
         public int attack;
         public int speed;
+		public int range;
+		public int cooltime;
 		public int number;
     }
 	[Serializable]
@@ -49,9 +51,10 @@ namespace Server.Data
     public class ArrowInfo
     {
         public int level;
-		public int range;
         public int attack;
         public int speed;
+        public int range;
+		public int cooltime;
         public int number;
     }
     [Serializable]
@@ -98,6 +101,9 @@ namespace Server.Data
 		public int level;
 		public int attack;
 		public int speed;
+		public int range;
+		public int cooltime;
+		public int duration;
 		public int number;
 	}
 	[Serializable]
@@ -119,8 +125,10 @@ namespace Server.Data
     public class EarthInfo
     {
         public int level;
-		public int range;
         public int attack;
+        public int speed;
+        public int range;
+        public int cooltime;
         public int number;
     }
     [Serializable]
@@ -213,11 +221,14 @@ namespace Server.Data
 	[Serializable]
 	public class DarkInfo
 	{
-		public int level;
-		public int attack;
-		public int speed;
-		public int number;
-	}
+        public int level;
+        public int attack;
+        public int speed;
+        public int range;
+        public int cooltime;
+        public int duration;
+        public int number;
+    }
 	[Serializable]
 	public class DarkData : ILoader<int, DarkInfo>
 	{
@@ -254,4 +265,45 @@ namespace Server.Data
 			return dict;
 		}
 	}
+
+	[Serializable]
+    public class AdditionalWeaponStat
+    {
+        public int attack;
+        public int speed;
+        public int range;
+        public int cooltime;
+        public int duraion;
+
+        public AdditionalWeaponStat()
+        {
+            this.attack = 100;
+            this.speed = 100;
+            this.range = 100;
+            this.cooltime = 100;
+            this.duraion = 100;
+        }
+    }
+
+    [Serializable]
+    public class Weapons
+    {
+        public WeaponStat sword;
+        public WeaponStat arrow;
+        public WeaponStat fire;
+        public WeaponStat lightning;
+        public WeaponStat earth;
+        public WeaponStat air;
+        public WeaponStat ice;
+        public WeaponStat light;
+        public WeaponStat dark;
+        public WeaponStat poison;
+    }
+
+    [Serializable]
+    public class WeaponStat
+    {
+        public List<int> gems;
+        public int maximum;
+    }
 }

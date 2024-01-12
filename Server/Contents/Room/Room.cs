@@ -106,6 +106,7 @@ namespace Server.Contents
                 //player.Vision.Clear();
                 player.Vision.Start();
                 Console.WriteLine($"{player.Info.Name} {player.Info.Prefab} Spawn in {player.CellPos.x}, {player.CellPos.y}");
+                RankingSet();
             }
             else if (type == GameObjectType.Projectile)
             {
@@ -150,9 +151,7 @@ namespace Server.Contents
                     _trigons.Add(sword.Id, sword);
                     sword.Room = this;
 
-                    zone.Trigons.Add(sword);
-
-                    sword.Init();
+                    //zone.Trigons.Add(sword);
                 }
                 else if (gameObject.Info.Prefab == 1)
                 {
@@ -164,7 +163,7 @@ namespace Server.Contents
                     _trigons.Add(lightning.Id, lightning);
                     lightning.Room = this;
 
-                    zone.Trigons.Add(lightning);
+                    //zone.Trigons.Add(lightning);
                 }
                 else if (gameObject.Info.Prefab == 2)
                 {
@@ -176,7 +175,7 @@ namespace Server.Contents
                     _trigons.Add(dark.Id, dark);
                     dark.Room = this;
 
-                    zone.Trigons.Add(dark);
+                    //zone.Trigons.Add(dark);
                 }
             }
             else if (type == GameObjectType.Area)
@@ -367,7 +366,7 @@ namespace Server.Contents
                 }
                 if(!GetZone(player.CellPos).Players.Contains(player))
                     Console.WriteLine($"{player.CellPos.x}, {player.CellPos.y} : ERROR");
-                Console.WriteLine($"{player.Info.Name} : Move to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {s_MovePacket.PosInfo.Dir}");
+                //Console.WriteLine($"{player.Info.Name} : Move to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {s_MovePacket.PosInfo.Dir}");
             }
             else
             {                   
@@ -376,7 +375,7 @@ namespace Server.Contents
                 s_MovePacket.PosInfo.State = movePacket.PosInfo.State;
                 s_MovePacket.PosInfo.Dir = movePacket.PosInfo.Dir;
 
-                Console.WriteLine($"{player.Info.Name} : Stay to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {player.Info.PosInfo.Dir}");
+                //Console.WriteLine($"{player.Info.Name} : Stay to {s_MovePacket.PosInfo.PosX},{s_MovePacket.PosInfo.PosY}, {player.Info.PosInfo.Dir}");
             }
             Broadcast(player.CellPos, s_MovePacket);
 
@@ -390,21 +389,20 @@ namespace Server.Contents
             if (info.PosInfo.State != State.Idle && info.PosInfo.State != State.Moving)
                 return;
 
-            info.PosInfo.State = State.Skill;;
-            S_Skill skill = new S_Skill() { Info = new SkillInfo() };
-            skill.ObjectId = info.ObjectId;
-            skill.Info.SkillId = skillPacket.Info.SkillId;
-            Broadcast(player.CellPos, skill);
-
             if (skillPacket.Info.SkillId == 1)
             {
                 if (player.OnSlide())
                     return;
 
-                player.State = State.Slide;
                 Vector2Int dirVector = player.DirToVector();
 
                 HandleSlide(player, dirVector, 5);
+
+                info.PosInfo.State = State.Slide;
+                S_Skill skill = new S_Skill() { Info = new SkillInfo() };
+                skill.ObjectId = info.ObjectId;
+                skill.Info.SkillId = skillPacket.Info.SkillId;
+                Broadcast(player.CellPos, skill);
             }
             
         }

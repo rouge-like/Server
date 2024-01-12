@@ -17,7 +17,7 @@ class PacketHandler
         Player myPlayer = clientSession.MyPlayer;
         if (myPlayer == null)
         {
-            Console.WriteLine("NULL PLAYER");
+            Console.WriteLine("NULL PLAYER at Move");
             return;
         }
 
@@ -28,8 +28,7 @@ class PacketHandler
             return;
         }
 
-        room.Push(room.HandleMove,myPlayer, c_MovePacket);
-        
+        room.Push(room.HandleMove, myPlayer, c_MovePacket);
     }
 
     public static void C_SkillHandler(PacketSession session, IMessage packet)
@@ -40,7 +39,7 @@ class PacketHandler
         Player myPlayer = clientSession.MyPlayer;
         if (myPlayer == null)
         {
-            Console.WriteLine("NULL PLAYER");
+            Console.WriteLine("NULL PLAYER at Skill");
             return;
         }
 
@@ -66,22 +65,23 @@ class PacketHandler
         C_SelectEquip c_equip = (C_SelectEquip)packet;
 
         Player myPlayer = clientSession.MyPlayer;
+        Room room = myPlayer.Room;
 
-        myPlayer.SelectEquip(c_equip.Equip);
+        room.Push(myPlayer.SelectEquip, c_equip.Equip, false);
     }
 
     public static void C_LoginHandler(PacketSession session, IMessage packet)
     {
         ClientSession clientSession = (ClientSession)session;
         C_Login login = (C_Login)packet;
-
+        Console.WriteLine("Loging....");
         Player player = ObjectManager.Instance.Add<Player>();
         {
             player.Info.Name = $"{login.PlayerName}";
             player.Info.Prefab = login.PlayerCode;
             player.Info.PosInfo = new PosInfo();
-
             player.Session = clientSession;
+            player.MakeUidByToken(login.Token);
         }
 
         clientSession.MyPlayer = player;
@@ -91,6 +91,22 @@ class PacketHandler
             Room room = RoomManager.Instance.Find(1);
             room.Push(room.EnterRoom, player);
         });
+    }
+    public static void C_RespawnOrExitHandler(PacketSession session, IMessage packet)
+    {
+        ClientSession clientSession = (ClientSession)session;
+        C_RespawnOrExit respawnOrExit = (C_RespawnOrExit)packet;
 
+        Player player = clientSession.MyPlayer;
+        Room room = player.Room;
+
+        if (respawnOrExit.Exit)
+        {
+            clientSession.Disconnect();
+        }
+        else
+        {
+            room.Push(player.Respone);
+        }
     }
 }

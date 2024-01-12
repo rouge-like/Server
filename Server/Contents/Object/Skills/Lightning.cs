@@ -9,15 +9,27 @@ namespace Server.Contents.Object
 	{
 		public Lightning()
 		{
-            StatInfo.Speed = 10.0f;
-            StatInfo.Attack = 3;
-            R = 6.0f;
             Info.Prefab = 1;
             IsSword = false;
         }
+        AdditionalWeaponStat _addData = null;
+
         public override void Init()
         {
             base.Init();
+
+            LightningInfo data = null;
+            DataManager.LightningDict.TryGetValue(StatInfo.Level, out data);
+            Owner.AdditionalStat.TryGetValue(EquipType.Lightning, out _addData);
+
+            StatInfo.Attack = (int)(data.attack * (_addData.attack / 100f));
+            StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
+            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
+            _coolTimeTick = (int)(data.cooltime * ((200 - _addData.cooltime - Owner.PlayerStat.Cooltime) / 100f));
+            _durationTick = (int)(data.duration * ((_addData.duraion + Owner.PlayerStat.Duration) / 100f));
+
+            //Console.WriteLine($"{_coolTimeTick}, {_durationTick}");
+
             OnAttack();
         }
         bool IsSame2(Vector2 a, Vector2 b, Vector2 p, Vector2 q)
@@ -37,11 +49,9 @@ namespace Server.Contents.Object
             return a1 && a2 && a3;
         }
 
-
-        bool _coolTime;
         public int Tick;
-        int _onValue = 3;
-        int _offValue = 5;
+        int _coolTimeTick;
+        int _durationTick;
 
         public override void Update()
         {
@@ -57,6 +67,8 @@ namespace Server.Contents.Object
         }
         public override void CheckAttack()
         {
+            if (X == 0 && AfterX == 0)
+                return;
             base.CheckAttack();
 
             if (Room == null)
@@ -75,12 +87,16 @@ namespace Server.Contents.Object
             LightningInfo data = null;
             DataManager.LightningDict.TryGetValue(StatInfo.Level, out data);
 
-            StatInfo.Speed = data.speed;
-            StatInfo.Attack = data.attack;
+            StatInfo.Attack = (int)(data.attack * (_addData.attack / 100f));
+            StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
+            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
+            _coolTimeTick = (int)(data.cooltime * ((200 - _addData.cooltime - Owner.PlayerStat.Cooltime) / 100f));
+            _durationTick = (int)(data.duration * ((_addData.duraion + Owner.PlayerStat.Duration) / 100f));
+
 
             if (_coolTime == false)
             {
-                if (Tick > _offValue)
+                if (Tick > _durationTick)
                 {
                     OffAttack();
                     return;
@@ -93,7 +109,9 @@ namespace Server.Contents.Object
                 {
                     foreach (Monster m in zone.Monsters)
                     {
-                        Vector2 d = new Vector2(m.PosInfo.PosX, m.PosInfo.PosY);
+                        Vector2Int dirVec = Owner.CellPos - m.CellPos;
+                        Vector2 d = GetRBPos(m.CellPos, dirVec);
+
                         if (InTriangle(a, b, c, d))
                         {
                             m.OnDamaged(this, StatInfo.Attack * owner.StatInfo.Attack);
@@ -104,7 +122,8 @@ namespace Server.Contents.Object
                         if (p == owner)
                             continue;
 
-                        Vector2 t_OwerPos = new Vector2(p.PosInfo.PosX, p.PosInfo.PosY);
+                        Vector2Int dirVec = Owner.CellPos - p.CellPos;
+                        Vector2 t_OwerPos = GetRBPos(p.CellPos, dirVec);
 
                         if (InTriangle(a, b, c, t_OwerPos))
                         {
@@ -115,20 +134,18 @@ namespace Server.Contents.Object
             }
             else
             {
-                if (Tick > _onValue)
+                if (Tick > _coolTimeTick)
                     OnAttack();
             }
         }
         public void OnAttack()
         {
             _coolTime = false;
-            Room.Push(Room.EnterRoom, this);
             Tick = 0;
         }
         public void OffAttack()
         {
             _coolTime = true;
-            Room.Push(Room.LeaveRoom, Id);
             Tick = 0;
         }
     }

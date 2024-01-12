@@ -5,15 +5,12 @@ using System.Text;
 
 namespace Server.Contents
 {
-	public class Trigon : GameObject
+	public class Trigon : Weapon
 	{
         public Trigon()
 		{
 			ObjectType = GameObjectType.Trigon;
-			R = 3.0f;
 			Degree = 0;
-			Speed = 30.0f;
-			StatInfo.Attack = 5;
 			X = 0;
 			Y = 0; 
 			AfterX = 0;
@@ -22,26 +19,45 @@ namespace Server.Contents
 
 		public Player Owner;
 		public bool IsSword;
-		public float R;
         public float X;
         public float Y;
 		public float AfterX;
 		public float AfterY;
         public float Degree { get { return Info.Degree; } set { Info.Degree = value; } }
 		IJob _job;
-        bool _test = false;
+        protected bool _coolTime;
 
-		public override void Init()
+        public override void Init()
 		{
             Room.Push(Update);
-			StatInfo.Hp = (int)R;
             StatInfo.Level = 1;
         }
-
-		public override void Update()
+        protected Vector2 GetRBPos(Vector2Int pos, Vector2Int dir)
+        {
+            if (dir.x == 0 || dir.y == 0)
+            {
+                return new Vector2(pos.x, pos.y);
+            }
+            else if (dir.x > 0 && dir.y > 0)
+            {
+                return new Vector2(pos.x + 0.5f, pos.y + 0.5f);
+            }
+            else if (dir.x > 0 && dir.y < 0)
+            {
+                return new Vector2(pos.x + 0.5f, pos.y - 0.5f);
+            }
+            else if (dir.x < 0 && dir.y > 0)
+            {
+                return new Vector2(pos.x - 0.5f, pos.y + 0.5f);
+            }
+            else if (dir.x < 0 && dir.y < 0)
+            {
+                return new Vector2(pos.x - 0.5f, pos.y - 0.5f);
+            }
+            return new Vector2(pos.x, pos.y);
+        }
+        public override void Update()
 		{
-            if (_test)
-                Console.WriteLine($"{Id} is bug");
             if (Room == null)
 				return;
 			if (Owner == null || Owner.Room == null)
@@ -53,16 +69,17 @@ namespace Server.Contents
             var pi = Math.PI;
             Degree += Speed;
 
-            X = (float)(Math.Cos(Degree * 2 * pi / 360) * R);
-            Y = (float)(Math.Sin(Degree * 2 * pi / 360) * R);
+            X = (float)(Math.Cos(Degree * 2 * pi / 360) * StatInfo.Range);
+            Y = (float)(Math.Sin(Degree * 2 * pi / 360) * StatInfo.Range);
 
-            AfterX = (float)(Math.Cos((Degree + Speed) * 2 * pi / 360) * R);
-            AfterY = (float)(Math.Sin((Degree + Speed) * 2 * pi / 360) * R);
+            AfterX = (float)(Math.Cos((Degree + Speed) * 2 * pi / 360) * StatInfo.Range);
+            AfterY = (float)(Math.Sin((Degree + Speed) * 2 * pi / 360) * StatInfo.Range);
 
             S_MoveFloat packet = new S_MoveFloat();
             packet.Degree = Degree;
             packet.ObjectId = Id;
             packet.Dir = Speed > 0;
+            packet.On = !_coolTime;
             owner.Room.Push(owner.Room.Broadcast, owner.CellPos, packet);
 
             if (Degree > 360)
@@ -75,7 +92,9 @@ namespace Server.Contents
             _job = Room.PushAfter(100, Update);
 		}
 
-        public virtual void CheckAttack() { }
+        public virtual void CheckAttack()
+        {
+        }
 
 		public virtual void Destroy()
 		{
@@ -90,7 +109,6 @@ namespace Server.Contents
 				_job.Cancel = true;
 				_job = null;
 			}
-            _test = true;
             Console.WriteLine($"{Id} is Destroy");
             Owner.Trigons.Remove(Id);
 			Room.Push(Room.LeaveRoom, Id);

@@ -110,8 +110,15 @@ namespace Client
         int _updateCount;
         int _updateChange;
 
+        bool _init = false;
+        public void Start()
+        {
+            _init = true;
+        }
         public void Update()
         {
+            if (!_init)
+                return;
             _updateCount++;
             PosInfo.State = State.Moving;
             switch (PosInfo.State)
@@ -123,7 +130,7 @@ namespace Client
                     break;
                 case State.Moving:
                     {
-                        UpdateMoving();
+                        //UpdateMoving();
                     }
                     break;
             }

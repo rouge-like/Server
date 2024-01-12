@@ -4,52 +4,64 @@
       "level": "1",
       "range": "100",
       "attack": "10",
+      "speed": "8",
+      "cooltime": "20",
       "number": "1"
     },
     {
       "level": "2",
       "range": "100",
       "attack": "12",
+      "speed": "8",
+      "cooltime": "20",
       "number": "1"
     },
     {
       "level": "3",
       "range": "100",
       "attack": "12",
+      "speed": "8",
+      "cooltime": "20",
       "number": "2"
     },
     {
       "level": "4",
       "range": "150",
       "attack": "13",
+      "speed": "8",
+      "cooltime": "20",
       "number": "2"
     },
     {
       "level": "5",
       "range": "150",
       "attack": "13",
-      "speed": "15",
+      "speed": "8",
+      "cooltime": "20",
       "number": "3"
     },
     {
       "level": "6",
       "range": "150",
       "attack": "14",
-      "speed": "15",
+      "speed": "8",
+      "cooltime": "20",
       "number": "3"
     },
     {
       "level": "7",
       "range": "150",
       "attack": "16",
-      "speed": "15",
+      "speed": "8",
+      "cooltime": "20",
       "number": "3"
     },
     {
       "level": "8",
       "range": "150",
       "attack": "18",
-      "speed": "15",
+      "speed": "8",
+      "cooltime": "20",
       "number": "3"
     }
   ]
