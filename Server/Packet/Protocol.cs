@@ -96,13 +96,13 @@ namespace Google.Protobuf.Protocol {
             "AxILCgdERUZFTlNFEAQSBwoDRVhQEAUSDQoJVE9UQUxfRVhQEAYSCAoETFVD",
             "SxAHEg4KCklURU1fUkFOR0UQCBIKCgZOVU1CRVIQCRIQCgxBVFRBQ0tfU1BF",
             "RUQQChISCg5TTElERV9DT09MVElNRRALEgwKCENPT0xUSU1FEAwSEgoOQURE",
-            "SVRJT0FOTF9FWFAQDSrtAQoJRXF1aXBUeXBlEgkKBUFSUk9XEAASCQoFU1dP",
+            "SVRJT0FOTF9FWFAQDSqBAgoJRXF1aXBUeXBlEgkKBUFSUk9XEAASCQoFU1dP",
             "UkQQARIICgRGSVJFEAISDQoJTElHSFROSU5HEAMSBwoDSUNFEAQSCQoFRUFS",
             "VEgQBRIHCgNBSVIQBhIJCgVMSUdIVBAHEggKBERBUksQCBIKCgZQT0lTT04Q",
             "CRIMCghNVVNIUk9PTRAKEgoKBlNISUVMRBALEgkKBUhFQVJUEAwSDAoITkVD",
             "S0xBQ0UQDRIJCgVTSE9FUxAOEgoKBk1BR05FVBAPEgoKBkNMT1ZFUhAQEggK",
-            "BEJPT0sQERIJCgVHTE9WRRASEggKBFJJTkcQE0IbqgIYR29vZ2xlLlByb3Rv",
-            "YnVmLlByb3RvY29sYgZwcm90bzM="));
+            "BEJPT0sQERIJCgVHTE9WRRASEggKBFJJTkcQExIICgRHT0xEEBQSCAoESEVB",
+            "TBAVQhuqAhhHb29nbGUuUHJvdG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.State), typeof(global::Google.Protobuf.Protocol.Dir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), typeof(global::Google.Protobuf.Protocol.StatType), typeof(global::Google.Protobuf.Protocol.EquipType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -257,6 +257,8 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("BOOK")] Book = 17,
     [pbr::OriginalName("GLOVE")] Glove = 18,
     [pbr::OriginalName("RING")] Ring = 19,
+    [pbr::OriginalName("GOLD")] Gold = 20,
+    [pbr::OriginalName("HEAL")] Heal = 21,
   }
 
   #endregion
