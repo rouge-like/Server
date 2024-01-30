@@ -60,7 +60,9 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.SDiePlayer, MakePacket<S_DiePlayer>);
 		_handler.Add((ushort)MsgId.SDiePlayer, PacketHandler.S_DiePlayerHandler);		
 		_onRecv.Add((ushort)MsgId.STotalDamage, MakePacket<S_TotalDamage>);
-		_handler.Add((ushort)MsgId.STotalDamage, PacketHandler.S_TotalDamageHandler);
+		_handler.Add((ushort)MsgId.STotalDamage, PacketHandler.S_TotalDamageHandler);		
+		_onRecv.Add((ushort)MsgId.SShotProjectile, MakePacket<S_ShotProjectile>);
+		_handler.Add((ushort)MsgId.SShotProjectile, PacketHandler.S_ShotProjectileHandler);
 	}
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{
