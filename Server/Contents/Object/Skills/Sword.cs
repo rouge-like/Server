@@ -61,9 +61,9 @@ namespace Server.Contents.Object
             base.Init();
             SwordInfo data = null;
             DataManager.SwordDict.TryGetValue(StatInfo.Level, out data);
-            Owner.AdditionalStat.TryGetValue(EquipType.Sword, out _addData);
-            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
-            StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
+            Weapon.AdditionalStat.TryGetValue(EquipType.Sword, out _addData);
+            StatInfo.Range = data.range * ((_addData.range + Weapon.PlayerStat.WeaponRange) / 100f);
+            StatInfo.Speed = data.speed * ((_addData.speed + Weapon.PlayerStat.WeaponSpeed) / 100f);
         }
         public override void Update()
         {
@@ -85,19 +85,19 @@ namespace Server.Contents.Object
             base.CheckAttack();
 
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Sword, out level))
+            if (Weapon.EquipsA.TryGetValue(EquipType.Sword, out level))
                 StatInfo.Level = level;
             
             SwordInfo data = null;
             DataManager.SwordDict.TryGetValue(StatInfo.Level, out data);
 
-            StatInfo.Attack = (int)(data.attack * (_addData.attack / 100f));
-            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
+            StatInfo.Attack = data.attack;
+            StatInfo.Range = data.range * ((_addData.range + Weapon.PlayerStat.WeaponRange) / 100f);
 
             if (StatInfo.Speed > 0)
-                StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
+                StatInfo.Speed = data.speed * ((_addData.speed + Weapon.PlayerStat.WeaponSpeed) / 100f);
             else
-                StatInfo.Speed = -data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
+                StatInfo.Speed = -data.speed * ((_addData.speed + Weapon.PlayerStat.WeaponSpeed) / 100f);
 
             List<Zone> zones = Owner.Room.GetAdjacentZones(Owner.CellPos);
             int ownerX = Owner.PosInfo.PosX;
@@ -111,24 +111,29 @@ namespace Server.Contents.Object
 
                 foreach (Zone zone in zones)
                 {
-                    foreach (Monster m in zone.Monsters)
+                    if (Weapon.Target == null)
                     {
-                        Vector2Int dirVec = Owner.CellPos - m.CellPos;
-                        Vector2 d = GetRBPos(m.CellPos, dirVec);
-                        if (InTriangle(a, b, c, d))
+                        foreach (Monster m in zone.Monsters)
                         {
-                            m.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
-                            if (m.IsMetal && m.State != State.Dead)
+                            Vector2Int dirVec = Owner.CellPos - m.CellPos;
+                            Vector2 mPos = GetRBPos(m.CellPos, dirVec);
+                            if (InTriangle(a, b, c, mPos))
                             {
-                                Speed = Speed * -1;
-                                _swordCoolTime = true;
-                                Room.PushAfter(500, CoolTimeOver);
+                                m.OnDamaged(this, (int)(StatInfo.Attack * ((Owner.StatInfo.Attack * (_addData.attack / 100f)) + Weapon.PlayerStat.Attack)));
+                                if (m.IsMetal && m.State != State.Dead)
+                                {
+                                    Speed = Speed * -1;
+                                    _swordCoolTime = true;
+                                    Room.PushAfter(500, CoolTimeOver);
 
-                                S_HitTrigon hit = new S_HitTrigon();
-                                hit.Trigon1Id = Id;
-                                hit.Trigon2Id = m.Id;
+                                    S_HitTrigon hit = new S_HitTrigon();
+                                    hit.Trigon1Id = Id;
+                                    hit.Trigon2Id = m.Id;
 
-                                Room.Push(Room.Broadcast, Owner.CellPos, hit);
+                                    Room.Push(Room.Broadcast, Owner.CellPos, hit);
+
+                                    return;
+                                }
                             }
                         }
                     }
@@ -143,7 +148,7 @@ namespace Server.Contents.Object
                         if (InTriangle(a, b, c, t_OwerPos))
                         {
                             //Console.WriteLine($"{Id} : HIT Player{p.Id}!");
-                            p.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
+                            p.OnDamaged(this, (int)(StatInfo.Attack * ((Owner.StatInfo.Attack * (_addData.attack / 100f)) + Weapon.PlayerStat.Attack)));
                         }
                         foreach (Trigon t in p.Trigons.Values)
                         {

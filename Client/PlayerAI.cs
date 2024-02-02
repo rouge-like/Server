@@ -121,6 +121,11 @@ namespace Client
                 return;
             _updateCount++;
             PosInfo.State = State.Moving;
+            if (Dead)
+            {
+                UpdateDead();
+                return;
+            }
             switch (PosInfo.State)
             {
                 case State.Idle:
@@ -130,7 +135,7 @@ namespace Client
                     break;
                 case State.Moving:
                     {
-                        //UpdateMoving();
+                        UpdateMoving();
                     }
                     break;
             }
@@ -172,6 +177,15 @@ namespace Client
             }
             SendMove(GetFrontCellPos(Dir));
         }
+        public bool Dead = false;
+        int _deadTick;
+        void UpdateDead()
+        {
+            if (_deadTick > 2)
+                Respawn();
+            else
+                _deadTick++;
+        }
         void SendMove(Vector2Int pos)
         {
             C_Move movePacket = new C_Move();
@@ -203,7 +217,15 @@ namespace Client
 
             Session.Send(new ArraySegment<byte>(sendBuffer));
         }
+        void Respawn()
+        {
+            Dead = false;
+            _deadTick = 0;
+            C_RespawnOrExit respwan = new C_RespawnOrExit();
+            respwan.Exit = false;
 
+            Send(respwan);
+        }
     }
 }
 

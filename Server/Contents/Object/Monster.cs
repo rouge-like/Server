@@ -6,7 +6,7 @@ namespace Server.Contents
 {
 	public class Monster : GameObject
 	{
-		public Monster()
+        public Monster()
 		{
 			ObjectType = GameObjectType.Monster;
 		}
@@ -18,11 +18,12 @@ namespace Server.Contents
 			State = State.Idle;
 			Info.Prefab = StatInfo.Level - 1;
 			StatInfo.Hp = StatInfo.MaxHp;
-			if (Info.Prefab == 2 || Info.Prefab == 3)
+			if (Info.Prefab == 2)
 				IsMetal = true;
 			else
 				IsMetal = false;
-			Update();
+
+            Room.PushAfter(500, Update);
         }
         protected override void OnDead(GameObject attacker)
         {
@@ -37,7 +38,9 @@ namespace Server.Contents
 
             S_Die packet = new S_Die();
             packet.ObjectId = Id;
+            packet.ObjectName = Info.Name;
             packet.AttackerId = attacker.Id;
+            packet.AttackerName = "";
             Room.Broadcast(CellPos, packet);
 
             if (_job != null)
@@ -54,10 +57,15 @@ namespace Server.Contents
                 item.PosInfo.PosX = PosInfo.PosX;
                 item.PosInfo.PosY = PosInfo.PosY;
                 if (v > 7)
+                {
                     item.Info.Prefab = 0;
+                    item.Value = 50;
+                }
                 else
+                {
                     item.Info.Prefab = 1;
-                item.value = 10;
+                    item.Value = 10;
+                }
                 Room.Push(Room.EnterRoom, item);
             }
 
@@ -74,8 +82,10 @@ namespace Server.Contents
         public override void Update()
         {
 			_isInvincibility = false;
-			
-            base.Update();
+
+            if (Room == null)
+                return;
+
 			switch (State)
 			{
 				case State.Idle:
@@ -90,16 +100,19 @@ namespace Server.Contents
 				case State.Dead:
 					UpdateDead();
 					break;
+                case State.Slide:
+                    UpdateSlide();
+                    break;
 			}
 			// 목표 지정 및 추격
 			// 일정 거리 이후 추격 취소
-			if(Room != null)
-				_job = Room.PushAfter(200, Update);
+			_job = Room.PushAfter(200, Update);
         }
 
-		Player _target;
-		long _searchTick = 0;
-        Dir GetRightDir(Dir dir)
+		protected Player _target;
+
+		int _searchTick = 0;
+        protected Dir GetRightDir(Dir dir)
         {
             switch (dir)
             {
@@ -124,17 +137,15 @@ namespace Server.Contents
             return dir;
         }
         protected virtual void UpdateIdle()
-		{
-			if (_moveTick > (Environment.TickCount & Int32.MaxValue))
-				return;
-			int moveTick = (int)(1000 / Speed);
-			_moveTick = Environment.TickCount & Int32.MaxValue + moveTick;
-            List<Zone> zones = Room.GetAdjacentZones(CellPos, 10);
-            // 플레이어 감지
-            int d = int.MaxValue;
+        { 
 			if (_searchTick > (Environment.TickCount & Int32.MaxValue))
 				return;
 			_searchTick = Environment.TickCount + 1000;
+
+            List<Zone> zones = Room.GetAdjacentZones(CellPos, 10);
+            // 플레이어 감지
+            int d = int.MaxValue;
+
             foreach (Zone zone in zones)
             {
                 foreach (Player p in zone.Players)
@@ -156,14 +167,19 @@ namespace Server.Contents
 			State = State.Moving;
 			_searchTick = 0;
         }
-		long _moveTick = 0;
+		protected int _moveTick = 0;
 		protected virtual void UpdateMoving()
 		{
-			if (_target == null || _target.Room != Room)
+            if (_moveTick > (Environment.TickCount & Int32.MaxValue))
+                return;
+            int moveTick = (int)(1000 / Speed);
+            _moveTick = Environment.TickCount & Int32.MaxValue + moveTick;
+          
+            if (_target == null || _target.Room != Room)
             {
                 _target = null;
                 State = State.Idle;
-                BroadcaseMove();
+                BroadcastMove();
 
                 return;
             }
@@ -173,7 +189,7 @@ namespace Server.Contents
 			{
 				_target = null;
 				State = State.Idle;
-				BroadcaseMove();
+				BroadcastMove();
                 return;
 			}
 
@@ -226,23 +242,34 @@ namespace Server.Contents
 			Dir = GetDirFromVec(path[1] - CellPos);
 			Room.Map.MoveObject(this, path[1]);*/
 
-            BroadcaseMove();
+            BroadcastMove();
         }
 
-		void BroadcaseMove()
+		protected void BroadcastMove()
 		{
             S_Move movePacket = new S_Move();
             movePacket.ObjectId = Id;
             movePacket.PosInfo = PosInfo;
-			Room.Broadcast(CellPos, movePacket);
+			Room.Push(Room.Broadcast, CellPos, movePacket);
         }
-		protected virtual void UpdateSkill()
+
+        long _slideTick = 0;
+        protected virtual void UpdateSlide()
+        {
+            if (_slideTick > (Environment.TickCount & Int32.MaxValue))
+                return;
+            _slideTick = Environment.TickCount + 1000;
+            State = State.Moving;
+            _searchTick = 0;
+        }
+
+        protected virtual void UpdateSkill()
 		{
             if (_target == null || _target.Room != Room || _target.State == State.Dead)
             {
 				_target = null;
                 State = State.Idle;
-                BroadcaseMove();
+                BroadcastMove();
                 return;
             }
 
@@ -253,11 +280,11 @@ namespace Server.Contents
             if (dist > 1.5f)
 			{
 				State = State.Moving;
-                BroadcaseMove();
+                BroadcastMove();
                 return;
 			}
 			_target.OnDamaged(this, StatInfo.Attack);
-			BroadcaseMove();
+            BroadcastMove();
         }
 		protected virtual void UpdateDead()
 		{
@@ -267,12 +294,12 @@ namespace Server.Contents
         {
             if (_isInvincibility || State == State.Dead)
                 return;
-			if(_job != null)
+			/*if(_job != null)
 			{
 				_job.Cancel = true;
 				_job = null;
 			}
-            _job = Room.PushAfter(200, Update);
+            _job = Room.PushAfter(200, Update);*/
             base.OnDamaged(attacker, damage);
             //_isInvincibility = true;
             //Console.WriteLine($"OnDamaged Monster by {attacker.Id}");

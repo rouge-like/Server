@@ -36,6 +36,8 @@ namespace Server.Contents
         {
             lock (_lock)
             {
+                if (_counter > 16777215)
+                    _counter = 0;
                 return ((int)type << 24) | (_counter++);
             }
         }

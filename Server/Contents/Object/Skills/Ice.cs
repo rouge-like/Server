@@ -10,14 +10,15 @@ namespace Server.Contents
 		public Ice()
 		{
             ObjectType = GameObjectType.Area;
-            StatInfo.Attack = 1;
         }
+        AdditionalWeaponStat _addData;
 
         public override void Init()
         {
             base.Init();
             _job = Room.PushAfter(100, Update);
             _coolTime = 5000;
+            Weapon.AdditionalStat.TryGetValue(EquipType.Ice, out _addData);
         }
 
         public override void Update()
@@ -30,16 +31,16 @@ namespace Server.Contents
             CellPos = Owner.CellPos;
 
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Ice, out level))
+            if (Weapon.EquipsA.TryGetValue(EquipType.Ice, out level))
                 StatInfo.Level = level;
 
             IceInfo data;
             DataManager.IceDict.TryGetValue(StatInfo.Level, out data);
 
             StatInfo.Attack = data.attack;
-            _coolTime = data.cooltime;
+            _coolTime = (int)(data.cooltime * ((200 - _addData.cooltime - Weapon.PlayerStat.Cooltime) / 100f));
 
-            for (int i = 0; i < data.number + Owner.PlayerStat.Number; i++)
+            for (int i = 0; i < data.number + Weapon.PlayerStat.Number; i++)
             {
                 Random rand = new Random();
                 Vector2Int random;
@@ -66,8 +67,9 @@ namespace Server.Contents
                     area.Info.Degree = value;
                     area.CellPos = CellPos + random;
                     area.StatInfo.Attack = StatInfo.Attack;
-                    area.AttackCount = data.attackcount;
+                    area.AttackCount = (int)(data.attackcount * ((_addData.duraion + Weapon.PlayerStat.Duration) / 100f));
                     area.AttackArea = data.area;
+                    area.AdditionalAttack = _addData.attack;
                 }
 
                 Room.Push(Room.EnterRoom, area);

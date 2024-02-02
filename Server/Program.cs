@@ -45,7 +45,7 @@ namespace Server
 			// DNS (Domain Name System)
 			string host = Dns.GetHostName();
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
-			IPAddress ipAddr = ipHost.AddressList[3];// ipHost.AddressList[3];// IPAddress.Parse("192.168.51.30");
+			IPAddress ipAddr = IPAddress.Parse("192.168.51.26"); // ipHost.AddressList[3];// IPAddress.Parse("192.168.0.19");
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
             Console.WriteLine("Host Name : " + host);

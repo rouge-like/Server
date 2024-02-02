@@ -3,42 +3,42 @@
     {
       "level": "1",
       "attack": "5",
-      "attackcount": "3"
+      "attackcount": "6"
     },
     {
       "level": "2",
       "attack": "6",
-      "attackcount": "3"
+      "attackcount": "6"
     },
     {
       "level": "3",
       "attack": "7",
-      "attackcount": "3"
+      "attackcount": "6"
     },
     {
       "level": "4",
       "attack": "7",
-      "attackcount": "4"
+      "attackcount": "8"
     },
     {
       "level": "5",
       "attack": "7",
-      "attackcount": "5"
+      "attackcount": "8"
     },
     {
       "level": "6",
       "attack": "8",
-      "attackcount": "5"
+      "attackcount": "10"
     },
     {
       "level": "7",
       "attack": "9",
-      "attackcount": "5"
+      "attackcount": "10"
     },
     {
       "level": "8",
       "attack": "10",
-      "attackcount": "6"
+      "attackcount": "12"
     }
   ]
 }

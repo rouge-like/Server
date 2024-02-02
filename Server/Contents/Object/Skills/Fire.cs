@@ -12,10 +12,13 @@ namespace Server.Contents.Object
             ObjectType = GameObjectType.Area;
         }
 
+        AdditionalWeaponStat _addData;
+
         public override void Init()
         {
             base.Init();
             _job = Room.PushAfter(100, Update);
+            Weapon.AdditionalStat.TryGetValue(EquipType.Fire, out _addData);
         }
 
         public override void Update()
@@ -28,14 +31,15 @@ namespace Server.Contents.Object
             CellPos = Owner.CellPos;
 
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Fire, out level))
+            if (Weapon.EquipsA.TryGetValue(EquipType.Fire, out level))
                 StatInfo.Level = level;
 
             FireInfo data;
             DataManager.FireDict.TryGetValue(StatInfo.Level, out data);
 
             StatInfo.Attack = data.attack;
-            _coolTime = data.cooltime;
+            _coolTime = (int)(data.cooltime * ((200 - _addData.cooltime - Weapon.PlayerStat.Cooltime) / 100f));
+
             float value = 0.05f;
             if (data.area.Count > 9)
                 value = 0.1f;
@@ -46,9 +50,10 @@ namespace Server.Contents.Object
                 area.Info.Prefab = 0;
                 area.Info.Degree = value;
                 area.CellPos = CellPos;
-                area.StatInfo.Attack = 1;//StatInfo.Attack;
+                area.StatInfo.Attack = StatInfo.Attack;
                 area.AttackCount = 1;
                 area.AttackArea = data.area;
+                area.AdditionalAttack = _addData.attack;
             }
 
             Room.Push(Room.EnterRoom, area);

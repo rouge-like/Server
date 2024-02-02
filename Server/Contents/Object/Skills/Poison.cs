@@ -10,7 +10,6 @@ namespace Server.Contents
 		public Poison()
 		{
             ObjectType = GameObjectType.Area;
-            StatInfo.Attack = 5;
         }
 
         List<List<int>> _area = new List<List<int>>();
@@ -22,7 +21,9 @@ namespace Server.Contents
             _coolTime = 100;
             List<int> tmp = new List<int>() { 0, 0 };
             _area.Add(tmp);
+            Weapon.AdditionalStat.TryGetValue(EquipType.Poison, out _addData);
         }
+        AdditionalWeaponStat _addData = null;
 
         public override void Update()
         {
@@ -34,13 +35,14 @@ namespace Server.Contents
             CellPos = Owner.CellPos;
 
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Poison, out level))
+            if (Weapon.EquipsA.TryGetValue(EquipType.Poison, out level))
                 StatInfo.Level = level;
 
             PoisonInfo data;
             DataManager.PoisonDict.TryGetValue(StatInfo.Level, out data);
 
             StatInfo.Attack = data.attack;
+            _coolTime = (int)(100 * ((200 - _addData.cooltime - Weapon.PlayerStat.Cooltime) / 100f));
 
             Area area = ObjectManager.Instance.Add<Area>();
             {
@@ -49,8 +51,9 @@ namespace Server.Contents
                 area.Info.Prefab = 3;
                 area.CellPos = CellPos;
                 area.StatInfo.Attack = StatInfo.Attack;
-                area.AttackCount = data.attackcount;
+                area.AttackCount = (int)(data.attackcount * ((_addData.duraion + Weapon.PlayerStat.Duration) / 100f));
                 area.AttackArea = _area;
+                area.AdditionalAttack = _addData.attack;
             }
 
             Room.Push(Room.EnterRoom, area);

@@ -5,7 +5,7 @@ using Google.Protobuf.Protocol;
 
 namespace Server.Contents
 {
-	public class Area : GameObject
+	public class Area : Weapon
 	{
 		public Area()
 		{
@@ -13,7 +13,9 @@ namespace Server.Contents
 		}
 		public GameObject Owner;
         public List<List<int>> AttackArea;
+        public GameObject Target;
         public int AttackCount;
+        public int AdditionalAttack;
         IJob _job;
 
         public override void Init()
@@ -21,7 +23,7 @@ namespace Server.Contents
 			if (Room == null)
 				return;
 
-            _job = Room.PushAfter(100, Update);
+            Room.Push(Update);
         }
 
         int _attack = 0;
@@ -33,7 +35,7 @@ namespace Server.Contents
 
                 _attack++;
                 OnAttack();
-                _job = Room.PushAfter(200, Update);
+                _job = Room.PushAfter(100, Update);
             }
             else
             {
@@ -53,8 +55,13 @@ namespace Server.Contents
                 if (targetId != 0 && targetId != 1)
                 {
                     GameObject target = Room.Find(targetId);
+                    if (target == null)
+                        continue;
+                    if(((IWeaponAble)Owner).Target != null && target.ObjectType != GameObjectType.Player)
+                        continue;
+                    
                     if (target != Owner)
-                        target.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
+                        target.OnDamaged(this, (int)(StatInfo.Attack * (AdditionalAttack / 100f) * (Owner.StatInfo.Attack + ((IWeaponAble)Owner).PlayerStat.Attack)));
                 }
             }
         }

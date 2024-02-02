@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace Server.Contents
 {
@@ -213,12 +214,12 @@ namespace Server.Contents
                 item.Init();
 
                 zone.Items.Add(item);
-            }
+            }/**
             foreach(Zone z in GetAdjacentZones(gameObject.CellPos))
             {
                 foreach (Player p in z.FindAll())
                     p.Vision.UpdateImmediately();
-            }
+            }**/
         }
 
         public void LeaveRoom(int objectId)
@@ -261,17 +262,6 @@ namespace Server.Contents
                 Map.LeaveObject(monster);
                 monster.Room = null;
             }/**
-            else if (type == GameObjectType.Area)
-            {
-                Area area = null;
-                if (_areas.Remove(objectId, out area) == false)
-                    return;
-
-                cellPos = area.CellPos;
-                GetZone(area.CellPos).Remove(area);
-                area.Room = null;
-                
-            }
             else if (type == GameObjectType.Circler)
             {
                 Circler circler = null;
@@ -462,12 +452,37 @@ namespace Server.Contents
             }            
             return zones.ToList();
         }
+        public void Teleport(GameObject go, GameObject target)
+        {
+            Vector2Int dest = new Vector2Int();
+            while (true)
+            {
+                Random random = new Random();
+                Vector2Int dist = new Vector2Int(random.Next(-20, 20), random.Next(-20, 20));
+
+                dest = target.CellPos + dist;
+
+                float distance = dist.magnitude;
+
+                if (Map.CanGo(dest) && distance > 10.0f)
+                    break;
+            }
+            Console.WriteLine($"Teleport {go.Info.Name} to {target.Info.Name}");
+            Map.MoveObject(go, dest);
+            /**
+            foreach (Zone z in GetAdjacentZones(go.CellPos))
+            {
+                foreach (Player p in z.FindAll())
+                    p.Vision.UpdateImmediately();
+            }**/
+
+        }
         void SpawnMonster()
         {
-            if(_monsters.Count < 3000)
+            if (_monsters.Count < 3000)
             {
-                MonsterSpawner(100, 1, 0, 300, 0, 300);
-                MonsterSpawner(100, 2, 0, 300, 0, 300);
+                MonsterSpawner(300, 1, 0, 300, 0, 300);
+                MonsterSpawner(150, 2, 0, 300, 0, 300);
                 MonsterSpawner(20, 3, 0, 300, 0, 300);
                 MonsterSpawner(20, 4, 0, 300, 0, 300);
             }
@@ -481,7 +496,22 @@ namespace Server.Contents
             {
                 Monster monster = ObjectManager.Instance.Add<Monster>();
                 {
-                    monster.Info.Name = $"Slime{level-1}_{monster.Id}";
+                    switch (level)
+                    {
+                        case 1:
+                            monster.Info.Name = "Slime";
+                            break;
+                        case 2:
+                            monster.Info.Name = "Leaf Slime";
+                            break;
+                        case 3:
+                            monster.Info.Name = "Metal Slime";
+                            break;
+                        case 4:
+                            monster.Info.Name = "King Slime";
+                            break;
+                    }
+
                 }
                 Random rand = new Random();
                 while (true)
@@ -497,6 +527,7 @@ namespace Server.Contents
                 EnterRoom(monster);
             }
         }
+   
         public void RankingSet()
         {
             List<Player> players = new List<Player>();
@@ -516,9 +547,10 @@ namespace Server.Contents
                 info.Name = players[i].Info.Name;
                 info.Level = players[i].Level;
                 packet.Players.Add(info);
+                //Console.WriteLine($"Ranking {i+1} : {players[i].CellPos.x},{players[i].CellPos.y}");
             }
 
-            for(int i =0; i < players.Count; i++)
+            for(int i = 0; i < players.Count; i++)
             {
                 if (players[i].Session == null)
                     continue;

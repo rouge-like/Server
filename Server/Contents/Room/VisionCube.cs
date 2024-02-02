@@ -51,6 +51,14 @@ namespace Server.Contents
                     if (Math.Abs(dx) > Room.VisionCells || Math.Abs(dy) > Room.VisionCells)
                         continue;
                     objects.Add(monster);
+                    if(monster.GetWeapon() != null)
+                    {
+                        TargetMonster targetMonster = (TargetMonster)monster;
+                        foreach (Trigon trigon in targetMonster.Trigons.Values)
+                        {
+                            objects.Add(trigon);
+                        }
+                    }
                 }
                 foreach (Projectile projectile in zone.Projectiles)
                 {
@@ -124,7 +132,7 @@ namespace Server.Contents
 
             _job = Owner.Room.PushAfter(100, Update);
         }
-        public void UpdateImmediately()
+        public void UpdateImmediate()
         {
             if (Owner == null || Owner.Room == null)
                 return;

@@ -13,42 +13,46 @@ using FirebaseAdmin.Auth;
 
 namespace Server.Contents
 {
-    public class Player : GameObject
+    public class Player : GameObject, IWeaponAble
     {
         public ClientSession Session { get; set; }
         public VisionCube Vision { get; private set; }
+
         public Dictionary<EquipType, int> EquipsA { get; set; } = new Dictionary<EquipType, int>();
         public Dictionary<EquipType, int> EquipsS { get; set; } = new Dictionary<EquipType, int>();
+        public Dictionary<EquipType, int> TotalDamages { get; set; } = new Dictionary<EquipType, int>();
         public Dictionary<int, Trigon> Trigons { get; set; } = new Dictionary<int, Trigon>();
         public Dictionary<int, Passive> Passives { get; set; } = new Dictionary<int, Passive>();
         public int Level { get { return StatInfo.Level; } set { StatInfo.Level = value; } }
         public int EXP { get { return StatInfo.Exp; } set { StatInfo.Exp = value; } }
-        public PlayerStatInfo PlayerStat = new PlayerStatInfo();
+        public PlayerStatInfo PlayerStat { get; set; } = new PlayerStatInfo();
+        public Player Target { get; set; } = null;
 
+        Dictionary<EquipType, int> _equipsTicks = new Dictionary<EquipType, int>();
         string _uid;
         int _selectCount;
         int _tick;
+        int _gold = 0;
+        string _lastAttackPlayer = "";
         
         public Player()
         {
             ObjectType = GameObjectType.Player;
             Vision = new VisionCube(this);
         }
-        #region DB 
-        public Dictionary<EquipType, AdditionalWeaponStat> AdditionalStat = new Dictionary<EquipType, AdditionalWeaponStat>();
+        #region DB
+        public Dictionary<EquipType, AdditionalWeaponStat> AdditionalStat { get; set; } = new Dictionary<EquipType, AdditionalWeaponStat>();
 
         async void GetAdditionalStat()
         {
-            if (AdditionalStat.Count > 0)
-                return;
             WebRequest request = WebRequest.Create($"https://luckysurvior-5e2d9-default-rtdb.firebaseio.com/users/{_uid}/weapons.json");
             request.Method = "Get";
 
-             using (var response = await request.GetResponseAsync())
+            using (var response = await request.GetResponseAsync())
             {
                 StreamReader reader = new StreamReader(response.GetResponseStream());
                 string result = reader.ReadToEnd();
-                Console.WriteLine($"{Info.Name}'s Data {result}");
+                Console.WriteLine($"{Info.Name}'s Data {result} / {_uid}");
                 Weapons weapons = JsonConvert.DeserializeObject<Weapons>(result);
                 CalAdditionalStats(weapons);
             }
@@ -56,20 +60,8 @@ namespace Server.Contents
 
         void CalAdditionalStats(Weapons weapons)
         {
-            if (weapons == null)
-            {
-                AdditionalStat.Add(EquipType.Sword, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Arrow, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Fire, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Lightning, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Ice, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Earth, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Air, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Light, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Dark, new AdditionalWeaponStat());
-                AdditionalStat.Add(EquipType.Poison, new AdditionalWeaponStat());
+            if (AdditionalStat.Count > 0)
                 return;
-            }
 
             CalAdditionalStat(EquipType.Sword, weapons.sword);
             CalAdditionalStat(EquipType.Arrow, weapons.arrow);
@@ -138,9 +130,12 @@ namespace Server.Contents
 
         public async void MakeUidByToken(string idToken)
         {
+            if (idToken == "")
+                return;
             FirebaseToken token = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
             _uid = token.Uid;
-            Console.WriteLine($"{_uid}");
+
+            GetAdditionalStat();
         }
 
         #endregion
@@ -158,15 +153,34 @@ namespace Server.Contents
             _tick = Environment.TickCount;
             Room.PushAfter(3000, AfterInvincibility);
             Update();
-
-            GetAdditionalStat();
+        }
+        public override IWeaponAble GetWeapon()
+        {
+            return this;
         }
         void AfterInvincibility()
         {
             if(Room == null)
                 return;
+            if (AdditionalStat.Count == 0)
+            {
+                AdditionalStat.Add(EquipType.Sword, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Arrow, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Fire, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Lightning, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Ice, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Earth, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Air, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Light, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Dark, new AdditionalWeaponStat());
+                AdditionalStat.Add(EquipType.Poison, new AdditionalWeaponStat());
+            }
             _isInvincibility = false;
-            SelectEquip(EquipType.Sword, true);
+            Room.Push(SelectEquip, EquipType.Sword, true);
+            if(Info.Name == "tester1")
+            {
+                PlayerStat.MaxHp = 100000;
+            }
             //SelectEquip(EquipType.Lightning, true);
         }
         bool _slideCooltime = false;
@@ -220,11 +234,11 @@ namespace Server.Contents
             switch (item.Info.Prefab)
             {
                 case 0:
-                    OnDamaged(this, -item.value);
+                    OnDamaged(this, -item.Value);
                     break;
                 case 1:
                     {
-                        EarnEXP(item.value);
+                        EarnEXP(item.Value);
                     }
                     break;
             }
@@ -234,7 +248,7 @@ namespace Server.Contents
             Room.Push(Room.Broadcast, CellPos, packet);
             Room.PushAfter(500, Room.LeaveRoom, item.Id);
         }
-        public void SetEquips()
+        public void MakeEquipsList()
         {
             Random rand = new Random();
             int value = rand.Next(100);
@@ -253,10 +267,7 @@ namespace Server.Contents
             if(EquipsA.Count == 5)
             {
                 foreach (EquipType e in EquipsA.Keys)
-                {
-                    if (EquipsA[e] < 8)
-                        list.Add(e);
-                }
+                    list.Add(e);
             }
             else
             {
@@ -266,26 +277,42 @@ namespace Server.Contents
             if(EquipsS.Count == 5)
             {
                 foreach (EquipType e in EquipsS.Keys)
-                {
-                    if (EquipsS[e] < 8)
-                        list.Add(e);
-                }
+                    list.Add(e);
             }
             else
             {
                 for (int i = 10; i < 20; i++)
                     list.Add((EquipType)i);
             }
+            List<EquipType> maxEquips = new List<EquipType>();
+            foreach(EquipType e  in list)
+            {
+                if (EquipsA.ContainsKey(e))
+                {
+                    if (EquipsA[e] >= 8)
+                        maxEquips.Add(e);
+                }
+                else if (EquipsS.ContainsKey(e))
+                {
+                    if (EquipsS[e] >= 8)
+                        maxEquips.Add(e);
+                    if (e == EquipType.Ring && EquipsS[e] >= 3)
+                        maxEquips.Add(e);
+                }
+            }
+            foreach(EquipType e in maxEquips)
+                list.Remove(e);
+            
             if (list.Count < num)
             {
-                if (list.Count == 0)
-                    return;
-                for(int i =0;i < list.Count; i++)
+                for (int i = 0; i < list.Count; i++)
                 {
                     EquipType type = list[i];
                     equip.Equips.Add(type);
                     list.Remove(type);
                 }
+                equip.Equips.Add(EquipType.Gold);
+                equip.Equips.Add(EquipType.Heal);
             }
             else
             {
@@ -312,16 +339,17 @@ namespace Server.Contents
             {
                 _selectCount++;
                 Level++;
-                StatInfo.Hp = StatInfo.MaxHp;
+               
                 StatInfo stat = null;
                 EXP -= StatInfo.TotalExp;
                 DataManager.StatDict.TryGetValue(Level, out stat);
                 StatInfo.MergeFrom(stat);
-                StatInfo.MaxHp += PlayerStat.MaxHp;
-                StatInfo.Attack += PlayerStat.Attack;
+                StatInfo.MaxHp = 200 + PlayerStat.MaxHp;
+                int HpLimit = 100 - (StatInfo.Level / 10);
+                StatInfo.Hp = Math.Max(StatInfo.Hp, (int)(StatInfo.MaxHp * (HpLimit / 100f)));
 
-                if (_selectCount == 1)
-                    SetEquips();
+                if (_selectCount == 1 && Info.Name != "tester1")
+                    Room.Push(MakeEquipsList);
                 
 
                 packet.Info.Add(new ChangeStatInfo() { Type = StatType.Attack, Value = StatInfo.Attack });
@@ -333,11 +361,37 @@ namespace Server.Contents
 
                 Room.Push(Room.Broadcast, CellPos, packet);
                 Room.Push(Room.RankingSet);
+
+                if(Level % 5 == 0 && Level > 9)
+                {
+                    SpawnTargetMonster(3 + (Level / 5));
+                    SpawnTargetMonster(3 + (Level / 5));
+                    SpawnTargetMonster(3 + (Level / 5));
+                }
+                if(Level % 10 == 0 && Level > 9)
+                {
+                    SpawnTargetMonster(3 + (Level / 5), true);
+                    SpawnTargetMonster(3 + (Level / 5), true);
+                }
+
                 return;
             }
 
             packet.Info.Add(new ChangeStatInfo() { Type = StatType.Exp, Value = EXP });
             Room.Push(Room.Broadcast, CellPos, packet);
+        }
+        void SpawnTargetMonster(int level, bool angel = false)
+        {
+            TargetMonster monster = ObjectManager.Instance.Add<TargetMonster>();
+            {
+                monster.SetTartget(this, angel);
+
+                StatInfo MonsterStat = null;
+                DataManager.MonsterDict.TryGetValue(level, out MonsterStat);
+                monster.StatInfo.MergeFrom(MonsterStat);
+                Room.Push(Room.EnterRoom, monster);
+            }
+
         }
 
         void ChangeStat(StatType type, int value)
@@ -350,7 +404,7 @@ namespace Server.Contents
 
         public void SelectEquip(EquipType type, bool force = false)
         {
-            if (!force)
+            if (!force && Info.Name != "tester1")
             {
                 if (_selectCount <= 0)
                     return;
@@ -359,7 +413,10 @@ namespace Server.Contents
             }
 
             if (EquipsA.ContainsKey(type))
+            {
                 EquipsA[type] += 1;
+            }
+
             else
             {
                 switch (type)
@@ -374,6 +431,8 @@ namespace Server.Contents
                             Passives.Add(d.Id, d);
                             d.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Arrow, Environment.TickCount);
                         }
                         break;
                     case EquipType.Sword:
@@ -387,6 +446,8 @@ namespace Server.Contents
                             EquipsA.Add(type, 1);
                             t.Init();
                             Room.Push(Room.EnterRoom, t);
+
+                            _equipsTicks.Add(EquipType.Sword, Environment.TickCount);
                         }
                         break;
                     case EquipType.Fire:
@@ -399,6 +460,8 @@ namespace Server.Contents
                             Passives.Add(f.Id, f);
                             f.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Fire, Environment.TickCount);
                         }
                         break;
                     case EquipType.Lightning:
@@ -411,6 +474,8 @@ namespace Server.Contents
                             Trigons.Add(l.Id, l);
                             l.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Lightning, Environment.TickCount);
                         }
                         break;
                     case EquipType.Ice:
@@ -423,6 +488,8 @@ namespace Server.Contents
                             Passives.Add(i.Id, i);
                             i.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Ice, Environment.TickCount);
                         }
                         break;
                     case EquipType.Earth:
@@ -435,6 +502,8 @@ namespace Server.Contents
                             Passives.Add(e.Id, e);
                             e.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Earth, Environment.TickCount);
                         }
                         break;
                     case EquipType.Air:
@@ -447,6 +516,8 @@ namespace Server.Contents
                             Passives.Add(a.Id, a);
                             a.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Air, Environment.TickCount);
                         }
                         break;
                     case EquipType.Light:
@@ -459,6 +530,8 @@ namespace Server.Contents
                             Passives.Add(i.Id, i);
                             i.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Light, Environment.TickCount);
                         }
                         break;
                     case EquipType.Dark:
@@ -471,6 +544,8 @@ namespace Server.Contents
                             Trigons.Add(d.Id, d);
                             d.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Dark, Environment.TickCount);
                         }
                         break;
                     case EquipType.Poison:
@@ -483,12 +558,13 @@ namespace Server.Contents
                             Passives.Add(p.Id, p);
                             p.Init();
                             EquipsA.Add(type, 1);
+
+                            _equipsTicks.Add(EquipType.Poison, Environment.TickCount);
                         }
                         break;
                     case EquipType.Mushroom:
                         {
-                            PlayerStat.Attack += 2;
-                            StatInfo.Attack += 2;
+                            PlayerStat.Attack += 1;
                             if (EquipsS.ContainsKey(type))
                                 EquipsS[type] += 1;
                             else
@@ -588,6 +664,20 @@ namespace Server.Contents
                                 EquipsS.Add(type, 1);
                         }
                         break;
+                    case EquipType.Heal:
+                        {
+                            StatInfo.Hp = StatInfo.MaxHp;
+                            S_ChangeStat heartPacket = new S_ChangeStat();
+                            heartPacket.PlayerId = Id;
+                            heartPacket.Info.Add(new ChangeStatInfo() { Type = StatType.Hp, Value = StatInfo.Hp });
+                            Room.Push(Room.Broadcast, CellPos, heartPacket);
+                        }
+                        break;
+                    case EquipType.Gold:
+                        {
+                            _gold += 10;
+                        }
+                        break;
                 }
             }
 
@@ -595,16 +685,18 @@ namespace Server.Contents
             packet.Equip = type;
             if (EquipsA.ContainsKey(type))
                 packet.Level = EquipsA[type];
-            else
+            else if(type != EquipType.Gold && type != EquipType.Heal)
                 packet.Level = EquipsS[type];
             if(Session != null)
                 Room.Push(Session.Send, packet);
 
-            Console.WriteLine($"Player_{Id} : Select {type.ToString()}");
+            //Console.WriteLine($"Player_{Id} : Select {type}");
             CheckTrigonNumber();
-            if (_selectCount > 0)
-                SetEquips();
+
+            if ((_selectCount > 0 && !force) || Info.Name == "tester1")
+                Room.Push(MakeEquipsList);
         }
+
         void CheckTrigonNumber(int tick = 0, int degree = 0)
         {
             List<Sword> swords = new List<Sword>();
@@ -633,7 +725,6 @@ namespace Server.Contents
                 DataManager.SwordDict.TryGetValue(EquipsA[EquipType.Sword], out data);
                 int d = data.number + PlayerStat.Number - swords.Count;
 
-                Console.WriteLine($"SwordCount {data.number + PlayerStat.Number} , {swords.Count}");
                 if (d > 0)
                 {
                     for(int i = 0; i < d; i++)
@@ -656,7 +747,6 @@ namespace Server.Contents
                 DataManager.LightningDict.TryGetValue(EquipsA[EquipType.Lightning], out data);
                 int n = data.number + PlayerStat.Number;
 
-                Console.WriteLine($"LightningCount {data.number + PlayerStat.Number} , {lightnings.Count}");
                 if (n != lightnings.Count)
                 {
                     foreach (Lightning l in lightnings)
@@ -679,13 +769,12 @@ namespace Server.Contents
             {
                 DarkInfo data = null;
                 DataManager.DarkDict.TryGetValue(EquipsA[EquipType.Dark], out data);
-                int d = data.number + PlayerStat.Number - darks.Count;
+                int d = data.number + PlayerStat.Number;
 
-                Console.WriteLine($"DarkCount {data.number + PlayerStat.Number} , {darks.Count}");
-                if (d > 0)
+                if (d != darks.Count)
                 {
                     foreach (Dark dark in darks)
-                        dark.Tick = 0;
+                        dark.Destroy();
                     for (int i = 0; i < d; i++)
                     {
                         Dark dark = ObjectManager.Instance.Add<Dark>();
@@ -695,7 +784,7 @@ namespace Server.Contents
                         dark.Info.Name = Id.ToString();
                         Trigons.Add(dark.Id, dark);
                         dark.Init();
-                        dark.Degree = darks[darks.Count - 1].Degree + (30*(i+1));
+                        dark.Degree = (360 / d) * (i);
                         dark.Tick = 0;
                     }
                 }
@@ -712,8 +801,27 @@ namespace Server.Contents
             if (EffectId == -1)
                 return;
 
-            StatInfo.Hp -= (int)(damage - (damage * (PlayerStat.Defense / 100f)));
+            switch (attacker.ObjectType)
+            {
+                case GameObjectType.Monster:
+                    _lastAttackPlayer = attacker.Info.Name;
+                    break;
+                case GameObjectType.Projectile:
+                    Projectile projectile = (Projectile)attacker;
+                    _lastAttackPlayer = projectile.Owner.Info.Name;
+                    break;
+                case GameObjectType.Trigon:
+                    Trigon triogn = (Trigon)attacker;
+                    _lastAttackPlayer = triogn.Owner.Info.Name;
+                    break;
+                case GameObjectType.Area:
+                    Area area = (Area)attacker;
+                    _lastAttackPlayer = area.Owner.Info.Name;
+                    break;
+            }
 
+            StatInfo.Hp -= (int)(damage - (damage * (PlayerStat.Defense / 100f)));
+            SetTotalDamage(attacker, (int)(damage - (damage * (PlayerStat.Defense / 100f))));
             //Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
             packet.EffectId = EffectId;
             packet.ObjectId = Id;
@@ -729,7 +837,6 @@ namespace Server.Contents
                 OnDead(attacker);
             }
         }
-
         protected override void OnDead(GameObject attacker)
 		{
             base.OnDead(attacker);
@@ -743,13 +850,32 @@ namespace Server.Contents
 
             S_Die packet = new S_Die();
             packet.ObjectId = Id;
+            packet.ObjectName = Info.Name;
             packet.AttackerId = attacker.Id;
+            packet.AttackerName = _lastAttackPlayer;
             Room.Push(Room.Broadcast,CellPos, packet);
 
+            Console.WriteLine($"{Info.Name} is Dead by {attacker.Info.Name}");
+
             S_DiePlayer playerPacket = new S_DiePlayer();
-            playerPacket.Time = Environment.TickCount - _tick;
-            playerPacket.EarnPoint = 0;
+            int time = Environment.TickCount - _tick;
+            playerPacket.Time = time;
+            playerPacket.EarnPoint = _gold + time / 1000;
             Room.Push(Session.Send, playerPacket);
+
+            S_TotalDamage damagePacket = new S_TotalDamage();
+            foreach(EquipType equip in TotalDamages.Keys)
+            {
+                DamgeInfo info = new DamgeInfo()
+                {
+                    Damage = TotalDamages[equip],
+                    Euip = equip,
+                    Tick = Environment.TickCount - _equipsTicks[equip]
+                };
+                damagePacket.TotalDamage.Add(info);
+            }
+
+            Room.Push(Session.Send, damagePacket);
 
             foreach (Trigon t in Trigons.Values)
             {
@@ -763,8 +889,13 @@ namespace Server.Contents
                 f.Destroy();
             }
 
+
             Passives.Clear();
             EquipsA.Clear();
+            EquipsS.Clear();
+            PlayerStat = new PlayerStatInfo();
+            TotalDamages.Clear();
+            _equipsTicks.Clear();
 
             if (_job != null)
             {
@@ -781,10 +912,17 @@ namespace Server.Contents
                 item.PosInfo.PosX = PosInfo.PosX;
                 item.PosInfo.PosY = PosInfo.PosY;
                 if (v > 7)
+                {
                     item.Info.Prefab = 0;
+                    item.Value = 50;
+                }
                 else
+                {
                     item.Info.Prefab = 1;
-                item.value = 10;
+                    item.Value = 10;
+                }
+
+
                 Room.Push(Room.EnterRoom, item);
             }
 
@@ -798,6 +936,20 @@ namespace Server.Contents
                 return;
             Room.Push(Room.LeaveRoom, Id);
             Room.Push(Room.EnterRoom, this);
+        }
+
+        public void SetDamages(EquipType equip, int damage)
+        {
+            int value;
+            if(TotalDamages.TryGetValue(equip, out value))
+            {
+                TotalDamages[equip] = value + damage;
+            }
+            else
+            {
+                if(EquipsA.ContainsKey(equip))
+                    TotalDamages.Add(equip, damage);
+            }
         }
     }
 }

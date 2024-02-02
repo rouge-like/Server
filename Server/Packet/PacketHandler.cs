@@ -81,7 +81,6 @@ class PacketHandler
             player.Info.Prefab = login.PlayerCode;
             player.Info.PosInfo = new PosInfo();
             player.Session = clientSession;
-            player.MakeUidByToken(login.Token);
         }
 
         clientSession.MyPlayer = player;
@@ -89,6 +88,7 @@ class PacketHandler
         RoomManager.Instance.Push(() =>
         {
             Room room = RoomManager.Instance.Find(1);
+            room.Push(player.MakeUidByToken, login.Token);
             room.Push(room.EnterRoom, player);
         });
     }

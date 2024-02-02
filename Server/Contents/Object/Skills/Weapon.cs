@@ -7,7 +7,6 @@ namespace Server.Contents
 	{
         public Weapon()
 		{
-
         }
     }
 }

@@ -17,7 +17,8 @@ namespace Server.Contents
 			AfterY = 0;
 		}
 
-		public Player Owner;
+		public GameObject Owner;
+        protected IWeaponAble Weapon;
 		public bool IsSword;
         public float X;
         public float Y;
@@ -31,6 +32,8 @@ namespace Server.Contents
 		{
             Room.Push(Update);
             StatInfo.Level = 1;
+
+            Weapon = Owner.GetWeapon();
         }
         protected Vector2 GetRBPos(Vector2Int pos, Vector2Int dir)
         {
@@ -62,7 +65,7 @@ namespace Server.Contents
 				return;
 			if (Owner == null || Owner.Room == null)
 				return;
-            Player owner = Owner;
+            GameObject owner = Owner;
             PosInfo.PosX = owner.CellPos.x;
             PosInfo.PosY = owner.CellPos.y;
 
@@ -105,12 +108,12 @@ namespace Server.Contents
 
             if (_job != null)
 			{
-                Console.WriteLine("Cancel Job");
+                //Console.WriteLine("Cancel Job");
 				_job.Cancel = true;
 				_job = null;
 			}
-            Console.WriteLine($"{Id} is Destroy");
-            Owner.Trigons.Remove(Id);
+            //Console.WriteLine($"{Id} is Destroy");
+            Weapon.Trigons.Remove(Id);
 			Room.Push(Room.LeaveRoom, Id);
             Room = null;
             Owner = null;

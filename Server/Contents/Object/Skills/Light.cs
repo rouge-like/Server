@@ -10,9 +10,8 @@ namespace Server.Contents
 		public Light()
 		{
             ObjectType = GameObjectType.Area;
-            StatInfo.Attack = 8;
         }
-
+        AdditionalWeaponStat _addData;
         List<List<int>> _area = new List<List<int>>();
 
         public override void Init()
@@ -22,6 +21,7 @@ namespace Server.Contents
             _coolTime = 5000;
             List<int> tmp = new List<int>() { 0, 0 };
             _area.Add(tmp);
+            Weapon.AdditionalStat.TryGetValue(EquipType.Light, out _addData);
         }
 
         public override void Update()
@@ -33,15 +33,20 @@ namespace Server.Contents
 
             CellPos = Owner.CellPos;
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Light, out level))
+            if (Weapon.EquipsA.TryGetValue(EquipType.Light, out level))
                 StatInfo.Level = level;
 
             List<Zone> zones = Room.GetAdjacentZones(Owner.CellPos, 3);
             List<GameObject> targets = new List<GameObject>();
+
             foreach (Zone zone in zones)
             {
-                foreach(Monster monster in zone.Monsters)
-                    targets.Add(monster);
+                if (Weapon.Target == null)
+                {
+                    foreach (Monster monster in zone.Monsters)
+                        targets.Add(monster);
+                }
+
 
                 foreach (Player player in zone.Players)
                 {
@@ -60,22 +65,23 @@ namespace Server.Contents
             DataManager.LightDict.TryGetValue(StatInfo.Level, out data);
 
             StatInfo.Attack = data.attack;
-            _coolTime = data.cooltime;
+            _coolTime = (int)(data.cooltime * ((200 - _addData.cooltime - Weapon.PlayerStat.Cooltime) / 100f));
 
-            for (int i = 0; i < data.number + Owner.PlayerStat.Number; i++)
+            for (int i = 0; i < Math.Min(data.number + Weapon.PlayerStat.Number, targets.Count); i++)
             {
-                            Area area = ObjectManager.Instance.Add<Area>();
-            {
-                area.Owner = Owner;
-                area.Info.Name = Info.Name;
-                area.Info.Prefab = 2;
-                area.CellPos = targets[random.Next(targets.Count)].CellPos;
-                area.StatInfo.Attack = StatInfo.Attack;
-                area.AttackCount = 1;
-                area.AttackArea = _area;
-            }
+                Area area = ObjectManager.Instance.Add<Area>();
+                {
+                    area.Owner = Owner;
+                    area.Info.Name = Info.Name;
+                    area.Info.Prefab = 2;
+                    area.CellPos = targets[random.Next(targets.Count)].CellPos;
+                    area.StatInfo.Attack = StatInfo.Attack;
+                    area.AttackCount = 1;
+                    area.AttackArea = _area;
+                    area.AdditionalAttack = _addData.attack;
+                }
 
-            Room.Push(Room.EnterRoom, area);
+                Room.Push(Room.EnterRoom, area);
             }
 
             _job = Room.PushAfter(_coolTime, Update);

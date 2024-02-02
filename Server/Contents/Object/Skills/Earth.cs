@@ -15,7 +15,7 @@ namespace Server.Contents
         {
             base.Init();
             _job = Room.PushAfter(100, Update);
-            Owner.AdditionalStat.TryGetValue(EquipType.Air, out _addData);
+            Weapon.AdditionalStat.TryGetValue(EquipType.Air, out _addData);
         }
         public override void Update()
         {
@@ -28,7 +28,7 @@ namespace Server.Contents
 
             PosInfo = Owner.PosInfo;
             int level;
-            if (Owner.EquipsA.TryGetValue(EquipType.Earth, out level))
+            if (Weapon.EquipsA.TryGetValue(EquipType.Earth, out level))
                 StatInfo.Level = level;
 
             EarthInfo data = null;
@@ -36,12 +36,17 @@ namespace Server.Contents
 
             DataManager.EarthDict.TryGetValue(StatInfo.Level, out data);
 
-            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
-            StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
-            StatInfo.Attack = (int)(data.attack * (_addData.attack / 100f));
-            _coolTime = (int)(data.cooltime * ((200 - _addData.cooltime - Owner.PlayerStat.Cooltime) / 100f));
+            StatInfo.Range = data.range * ((_addData.range + Weapon.PlayerStat.WeaponRange) / 100f);
+            StatInfo.Speed = data.speed * ((_addData.speed + Weapon.PlayerStat.WeaponSpeed) / 100f);
+            StatInfo.Attack = data.attack;
+            _coolTime = (int)(data.cooltime * ((200 - _addData.cooltime - Weapon.PlayerStat.Cooltime) / 100f));
 
-            for (int i = 0; i < Owner.PlayerStat.Number + data.number; i++)
+            S_ShotProjectile packet = new S_ShotProjectile();
+            packet.PlayerId = Owner.Id;
+            packet.Projectile = EquipType.Earth;
+            Room.Push(Room.Broadcast, CellPos, packet);
+
+            for (int i = 0; i < Weapon.PlayerStat.Number + data.number; i++)
             {
                 Dir randomDir = (Dir)random.Next(8);
                 Projectile projectile = ObjectManager.Instance.Add<Projectile>();
@@ -56,6 +61,7 @@ namespace Server.Contents
                 projectile.StatInfo.Attack = StatInfo.Attack;
                 projectile.Penetrate = false;
                 projectile.ProjectileRange = (int)StatInfo.Range;
+                projectile.AdditionalAttack = _addData.attack;
 
                 Vector2Int desPos = projectile.GetFrontCellPos();
                 int id = Room.Map.FindId(desPos);
@@ -67,7 +73,8 @@ namespace Server.Contents
                 else if (id != 1 && id != 0 && id != Owner.Id)
                 {
                     GameObject target = Room.Find(id);
-                    target.OnDamaged(projectile, StatInfo.Attack * Owner.StatInfo.Attack);
+                    if(target != null)
+                        target.OnDamaged(projectile, (int)(StatInfo.Attack * (_addData.attack / 100f) * (Owner.StatInfo.Attack + ((IWeaponAble)Owner).PlayerStat.Attack)));
                 }
             }
             _job = Room.PushAfter(_coolTime * 100, Update);

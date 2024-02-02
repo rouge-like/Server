@@ -129,9 +129,15 @@ class PacketHandler
     public static void S_DiePlayerHandler(PacketSession session, IMessage packet)
     {
         ServerSession serverSession = session as ServerSession;
-        C_RespawnOrExit respwan = new C_RespawnOrExit();
-        respwan.Exit = false;
 
-        serverSession.p.Send(respwan);
+        serverSession.p.Dead = true;
+    }
+    public static void S_TotalDamageHandler(PacketSession session, IMessage packet)
+    {
+
+    }
+    public static void S_ShotProjectileHandler(PacketSession session, IMessage packet)
+    {
+        
     }
 }

@@ -106,6 +106,14 @@ namespace Server.Contents
         {
             return (a.x * b.y) - (a.y * b.x);
         }
+        public static bool operator ==(Vector2 a, Vector2 b)
+        {
+            return (a.x == b.x) && (a.y == b.y);
+        }
+        public static bool operator !=(Vector2 a, Vector2 b)
+        {
+            return (a.x != b.x) || (a.y != b.y);
+        }
         public float magnitude { get { return (float)Math.Sqrt(sqrMangnitude); } }
         public float sqrMangnitude { get { return (x * x + y * y); } }
     }
@@ -142,6 +150,7 @@ namespace Server.Contents
 
             if (x >= SizeX || y >= SizeY || x < 0 || y < 0)
                 return false;
+
 
             if (_map[x, y] == 0)
                 return true;

@@ -21,13 +21,12 @@ namespace Server.Contents.Object
 
             DarkInfo data = null;
             DataManager.DarkDict.TryGetValue(StatInfo.Level, out data);
-            Owner.AdditionalStat.TryGetValue(EquipType.Dark, out _addData);
-
-            StatInfo.Attack = (int)(data.range * (_addData.attack / 100f));
-            StatInfo.Speed = data.speed * ((_addData.speed + Owner.PlayerStat.WeaponSpeed) / 100f);
-            StatInfo.Range = data.range * ((_addData.range + Owner.PlayerStat.WeaponRange) / 100f);
-            _coolTimeTick = (int)(data.cooltime * ((200 - _addData.cooltime - Owner.PlayerStat.Cooltime) / 100f));
-            _durationTick = (int)(data.duration * ((_addData.duraion + Owner.PlayerStat.Duration) / 100f));
+            Weapon.AdditionalStat.TryGetValue(EquipType.Dark, out _addData);
+            StatInfo.Attack = data.attack;
+            StatInfo.Speed = data.speed * ((_addData.speed + Weapon.PlayerStat.WeaponSpeed) / 100f);
+            StatInfo.Range = data.range * ((_addData.range + Weapon.PlayerStat.WeaponRange) / 100f);
+            _coolTimeTick = (int)(data.cooltime * ((200 - _addData.cooltime - Weapon.PlayerStat.Cooltime) / 100f));
+            _durationTick = (int)(data.duration * ((_addData.duraion + Weapon.PlayerStat.Duration) / 100f));
 
             //Console.WriteLine($"{_coolTimeTick}, {_durationTick}");
 
@@ -61,8 +60,8 @@ namespace Server.Contents.Object
             base.Update();
 
             var pi = Math.PI;
-            _smallX = (float)(Math.Cos(Degree * 2 * pi / 360) * (StatInfo.Range - 1));
-            _smallY = (float)(Math.Sin(Degree * 2 * pi / 360) * (StatInfo.Range - 1));
+            _smallX = (float)(Math.Cos(Degree * 2 * pi / 360) * (StatInfo.Range - 0.5f));
+            _smallY = (float)(Math.Sin(Degree * 2 * pi / 360) * (StatInfo.Range - 0.5f));
 
             if (Room == null)
                 return;
@@ -82,13 +81,13 @@ namespace Server.Contents.Object
                 return;
             if (Owner == null || Owner.Room == null)
                 return;
-            Player owner = Owner;
+            GameObject owner = Owner;
             List<Zone> zones = owner.Room.GetAdjacentZones(owner.CellPos);
             int ownerX = owner.PosInfo.PosX;
             int ownerY = owner.PosInfo.PosY;
 
             int level;
-            if (owner.EquipsA.TryGetValue(EquipType.Lightning, out level))
+            if (Weapon.EquipsA.TryGetValue(EquipType.Lightning, out level))
                 StatInfo.Level = level;
 
 
@@ -102,17 +101,27 @@ namespace Server.Contents.Object
                 Vector2 a = new Vector2(_smallX + ownerX, _smallY + ownerY);
                 Vector2 b = new Vector2(X + ownerX, Y + ownerY);
                 Vector2 c = new Vector2(AfterX + ownerX, AfterY + ownerY);
-
+                Vector2 test = new Vector2(0, 0);
+                if (InTriangle(a, b, c, test))
+                {
+                    Console.WriteLine("");
+                }
                 foreach (Zone zone in zones)
                 {
-                    foreach (Monster m in zone.Monsters)
+                    if (Weapon.Target == null)
                     {
-                        Vector2Int dirVec = Owner.CellPos - m.CellPos;
-                        Vector2 d = GetRBPos(m.CellPos, dirVec);
-
-                        if (InTriangle(a, b, c, d))
+                        foreach (Monster m in zone.Monsters)
                         {
-                            m.OnDamaged(this, StatInfo.Attack * owner.StatInfo.Attack);
+                            Vector2Int dirVec = Owner.CellPos - m.CellPos;
+                            Vector2 d = GetRBPos(m.CellPos, dirVec);
+
+
+                            if (InTriangle(a, b, c, d))
+                            {
+                                m.OnDamaged(this, (int)(StatInfo.Attack * (_addData.attack / 100f) * (owner.StatInfo.Attack + Weapon.PlayerStat.Attack)));
+                                if((owner.CellPos - m.CellPos).magnitude > 4)
+                                    Console.WriteLine("");
+                            }
                         }
                     }
                     foreach (Player p in zone.Players)
@@ -125,7 +134,7 @@ namespace Server.Contents.Object
 
                         if (InTriangle(a, b, c, t_OwerPos))
                         {
-                            p.OnDamaged(this, StatInfo.Attack * owner.StatInfo.Attack);
+                            p.OnDamaged(this, (int)(StatInfo.Attack * (_addData.attack / 100f) * (owner.StatInfo.Attack + Weapon.PlayerStat.Attack)));
                         }
                     }
                 }

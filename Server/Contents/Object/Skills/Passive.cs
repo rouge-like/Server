@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Server.Contents
 {
-	public class Passive : GameObject
+	public class Passive : Weapon
 	{
 		public Passive()
 		{
@@ -9,11 +9,13 @@ namespace Server.Contents
 		}
 		protected int _coolTime;
         protected IJob _job;
-        public Player Owner;
+        public GameObject Owner;
+        protected IWeaponAble Weapon;
         public override void Init()
         {
             base.Init();
             StatInfo.Level = 1;
+            Weapon = (IWeaponAble)Owner;
         }
         public virtual void Destroy()
         {
@@ -23,11 +25,11 @@ namespace Server.Contents
                 return;
             if (_job != null)
             {
-                Console.WriteLine("Cancel Job");
+                //Console.WriteLine("Cancel Job");
                 _job.Cancel = true;
                 _job = null;
             }
-            Owner.Passives.Remove(Id);
+            Weapon.Passives.Remove(Id);
             Owner = null;
             Room = null;
         }

@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace Server.Contents
 {
-    public class Projectile : GameObject
+    public class Projectile : Weapon
     {
         public Projectile()
         {
@@ -17,6 +17,7 @@ namespace Server.Contents
         public GameObject Owner;
         public int ProjectileRange;
         public bool Penetrate;
+        public int AdditionalAttack;
         int _moved;
         public override void Update()
         {
@@ -35,10 +36,10 @@ namespace Server.Contents
             if (obj != 0 && obj != 1)
             {
                 GameObject target = Room.Find(obj);
-                if (target != Owner)
+                if (target != Owner && target != null)
                 {
-                    target.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
-                    if(Penetrate == false)
+                    target.OnDamaged(this, (int)(StatInfo.Attack * (AdditionalAttack / 100f) * (Owner.StatInfo.Attack + ((IWeaponAble)Owner).PlayerStat.Attack)));
+                    if (Penetrate == false)
                     {
                         Room.Push(Room.LeaveRoom, Id);
                         return;
@@ -55,6 +56,7 @@ namespace Server.Contents
                 Room.Map.MoveObject(this, desPos);
 
                 S_Move movePakcet = new S_Move();
+          
                 movePakcet.ObjectId = Id;
                 movePakcet.PosInfo = PosInfo;
                 Room.Push(Room.Broadcast,CellPos, movePakcet);
@@ -71,8 +73,8 @@ namespace Server.Contents
                 {
                     GameObject target = Room.Find(targetId);
 
-                    if(target != Owner)
-                        target.OnDamaged(this, StatInfo.Attack * Owner.StatInfo.Attack);
+                    if (target != Owner && target != null)
+                        target.OnDamaged(this, (int)(StatInfo.Attack * (AdditionalAttack / 100f) * (Owner.StatInfo.Attack + ((IWeaponAble)Owner).PlayerStat.Attack)));
                 }
                 if(Penetrate == false || targetId == 0)
                     Room.Push(Room.LeaveRoom, Id);

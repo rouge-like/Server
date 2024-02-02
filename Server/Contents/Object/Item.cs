@@ -14,7 +14,7 @@ namespace Server.Contents
         int _destoryCount;
         IJob _job;
         public bool Destroyed;
-        public int value;
+        public int Value;
 
         // 가까이 범위에오면 먹어짐 이건 플레이어에게 다는 편이 좋을듯
         // 아이템 코드 필요 스킬과 유사하게

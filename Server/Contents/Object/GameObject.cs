@@ -191,7 +191,7 @@ namespace Server.Contents
                         EffectId = 1;
                         Dir d = GetDirFromVec(CellPos - attacker.CellPos);
                         Vector2Int dirVector = DirToVector(d);
-                        State = State.Moving;
+                        State = State.Slide;
 
                         Room.Push(Room.HandleSlide, this, dirVector, 3);
                     }
@@ -208,7 +208,50 @@ namespace Server.Contents
 
             return EffectId;
         }
+        protected virtual void SetTotalDamage(GameObject attacker, int damage)
+        {
+           if(attacker.ObjectType != GameObjectType.Player && attacker.ObjectType != GameObjectType.Monster)
+            {
+                switch (attacker.ObjectType)
+                {
+                    case GameObjectType.Projectile:
+                        {
+                            Projectile projectile = (Projectile)attacker;
+                            IWeaponAble proWeapon = (IWeaponAble)projectile.Owner;
+                            if (attacker.Info.Prefab == 0)
+                                proWeapon.SetDamages(EquipType.Arrow, damage);
+                            else if (attacker.Info.Prefab == 1)
+                                proWeapon.SetDamages(EquipType.Air, damage);
+                            else if (attacker.Info.Prefab == 2)
+                                proWeapon.SetDamages(EquipType.Earth, damage);
+                        }
+                        break;
 
+                    case GameObjectType.Trigon:
+                        Trigon triogn = (Trigon)attacker;
+                        IWeaponAble triWeapon = (IWeaponAble)triogn.Owner;
+                        if (attacker.Info.Prefab == 0)
+                            triWeapon.SetDamages(EquipType.Sword, damage);
+                        else if (attacker.Info.Prefab == 1)
+                            triWeapon.SetDamages(EquipType.Lightning, damage);
+                        else if (attacker.Info.Prefab == 2)
+                            triWeapon.SetDamages(EquipType.Dark, damage);
+                        break;
+                    case GameObjectType.Area:
+                        Area area = (Area)attacker;
+                        IWeaponAble areaWeapon = (IWeaponAble)area.Owner;
+                        if (attacker.Info.Prefab == 0)
+                            areaWeapon.SetDamages(EquipType.Fire, damage);
+                        else if (attacker.Info.Prefab == 1)
+                            areaWeapon.SetDamages(EquipType.Ice, damage);
+                        else if (attacker.Info.Prefab == 2)
+                            areaWeapon.SetDamages(EquipType.Light, damage);
+                        else if (attacker.Info.Prefab == 3)
+                            areaWeapon.SetDamages(EquipType.Poison, damage);
+                        break;
+                }
+            } 
+        }
 		public virtual void OnDamaged(GameObject attacker ,int damage)
         {
 			if (Room == null)
@@ -218,6 +261,7 @@ namespace Server.Contents
             S_ChangeHp packet = new S_ChangeHp();
             int EffectId = GetEffectNum(attacker);
             StatInfo.Hp -= damage;
+            SetTotalDamage(attacker, damage);
 
             //Console.WriteLine($"{Info.Name} On Damaged, HP : {StatInfo.Hp} by {attacker.Info.Name}");
             packet.EffectId = EffectId;
@@ -232,15 +276,20 @@ namespace Server.Contents
 				OnDead(attacker);
             }
         }
-		protected bool _isInvincibility = false;
+		public bool _isInvincibility = false;
 		protected virtual void OnDead(GameObject attacker)
         {
 			Room.Map.LeaveCollision(this);
+            //Console.WriteLine($"{Info.Name} is Dead");
         }
 
 		public virtual void Respone()
 		{
 
 		}
+        public virtual IWeaponAble GetWeapon()
+        {
+            return null;
+        }
 	}
 }
